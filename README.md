@@ -9,6 +9,7 @@ Simple `git clone` and Run.
 ```shell
 git clone https://github.com/heinthanth/uit
 cd uit
+composer install
 php uit.php script # to run script
 php uit.php # to run REPL
 ```
