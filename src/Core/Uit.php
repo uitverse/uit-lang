@@ -2,6 +2,7 @@
 
 namespace heinthanth\Uit\Core;
 
+use heinthanth\Uit\Lexer\Lexer;
 use JetBrains\PhpStorm\NoReturn;
 use League\CLImate\CLImate;
 
@@ -75,7 +76,8 @@ class Uit
      */
     private function runCode(string $code): void
     {
-        echo $code . PHP_EOL;
+        $tokens = (new Lexer($code))->tokenize();
+        echo implode(" ", $tokens) . PHP_EOL;
     }
 
     /**

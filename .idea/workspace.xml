@@ -2,17 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="aaa819aa-593a-41ec-b03c-66f16fedf525" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/uit.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/composer.lock" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/samples/dev.uit" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/samples/hello.uit" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Uit.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/uit.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Lexer/Lexer.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Lexer/Token.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Lexer/TokenDefinition.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Core/Uit.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Core/Uit.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -26,7 +21,9 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectId" id="1lSm85FE9epSoxeKswGcFXlE2Sp" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -46,6 +43,7 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/Lexer" />
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
@@ -57,7 +55,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1607598703895</updated>
-      <workItem from="1607598705211" duration="3264000" />
+      <workItem from="1607598705211" duration="5606000" />
     </task>
     <servers />
   </component>
