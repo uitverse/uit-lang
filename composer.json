@@ -1,0 +1,20 @@
+{
+  "name": "heinthanth/uit",
+  "description": "UIT Interpreter for Techie",
+  "type": "project",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Hein Thanth",
+      "email": "me@heinthanth.com"
+    }
+  ],
+  "require": {
+    "league/climate": "^3.6"
+  },
+  "autoload": {
+    "psr-4": {
+      "heinthanth\\Uit\\": "src"
+    }
+  }
+}
