@@ -2,6 +2,7 @@
 
 namespace heinthanth\Uit\Core;
 
+use heinthanth\Uit\Interpreter\Interpreter;
 use heinthanth\Uit\Lexer\Lexer;
 use heinthanth\Uit\Parser\Parser;
 use JetBrains\PhpStorm\NoReturn;
@@ -80,7 +81,9 @@ class Uit
         $tokens = (new Lexer($code))->tokenize();
         //echo implode(" ", $tokens) . PHP_EOL;
         $ast = (new Parser($tokens))->parse();
-        echo $ast . PHP_EOL;
+        //echo $ast . PHP_EOL;
+        $numberType = (new Interpreter())->interpret($ast);
+        echo $numberType->value . PHP_EOL;
     }
 
     /**
