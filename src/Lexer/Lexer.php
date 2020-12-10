@@ -70,6 +70,9 @@ class Lexer
             } elseif ($this->currentCharacter === ')') {
                 $tokens[] = new Token(T_RPARAN);
                 $this->goNext();
+            } else {
+                // invalid token
+                die("Error: Invalid Syntax" . PHP_EOL);
             }
         }
         $tokens[] = new Token(T_EOF);

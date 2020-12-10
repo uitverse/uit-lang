@@ -3,6 +3,7 @@
 namespace heinthanth\Uit\Core;
 
 use heinthanth\Uit\Lexer\Lexer;
+use heinthanth\Uit\Parser\Parser;
 use JetBrains\PhpStorm\NoReturn;
 use League\CLImate\CLImate;
 
@@ -77,7 +78,9 @@ class Uit
     private function runCode(string $code): void
     {
         $tokens = (new Lexer($code))->tokenize();
-        echo implode(" ", $tokens) . PHP_EOL;
+        //echo implode(" ", $tokens) . PHP_EOL;
+        $ast = (new Parser($tokens))->parse();
+        echo $ast . PHP_EOL;
     }
 
     /**
