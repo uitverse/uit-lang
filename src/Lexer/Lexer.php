@@ -64,6 +64,9 @@ class Lexer
             } elseif ($this->currentCharacter === '/') {
                 $tokens[] = new Token(T_SLASH);
                 $this->goNext();
+            } elseif ($this->currentCharacter === '%') {
+                $tokens[] = new Token(T_PERCENT);
+                $this->goNext();
             } elseif ($this->currentCharacter === '(') {
                 $tokens[] = new Token(T_LPARAN);
                 $this->goNext();

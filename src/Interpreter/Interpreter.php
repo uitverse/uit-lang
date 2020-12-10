@@ -56,6 +56,8 @@ class Interpreter
             return $left->times($right);
         } elseif ($node->operator->type === T_SLASH) {
             return $left->divide($right);
+        }  elseif ($node->operator->type === T_PERCENT) {
+            return $left->modulo($right);
         }
         die("Error: Something went wrong" . PHP_EOL);
     }

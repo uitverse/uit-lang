@@ -85,7 +85,7 @@ class Parser
     private function term(): OperationNodeInterface
     {
         $leftNode = $this->factor();
-        while ($this->currentToken->type === T_STAR || $this->currentToken->type === T_SLASH) {
+        while ($this->currentToken->type === T_STAR || $this->currentToken->type === T_SLASH || $this->currentToken->type === T_PERCENT) {
             $operator = $this->currentToken;
             $this->goNext();
             $rightNode = $this->factor();

@@ -66,4 +66,19 @@ class NumberType implements DataTypeInterface
         if (floor($result) === $result) $result = floor($result);
         return new NumberType(strval($result));
     }
+
+    /**
+     * Modulo operator. Divide number with another Number
+     * @param DataTypeInterface $next
+     * @return NumberType
+     */
+    #[NoReturn]
+    public function modulo(DataTypeInterface $next): NumberType
+    {
+        if (floatval($next->value) === 0)
+            die("Invalid Operation. Divided By Zero");
+        $result = floatval($this->value) % floatval($next->value);
+        if (floor($result) === $result) $result = floor($result);
+        return new NumberType(strval($result));
+    }
 }

@@ -18,7 +18,7 @@ php uit.php # to run REPL
 
 Since it's in development, currently, accept only number calculations.
 
-Make a file like the following. Eg. save as hello.uit
+Make a file like the following. E.g. save as `hello.uit`
 
 ```text
 4 + 5 * ( 4 + 3 / 2 ) - 4 
