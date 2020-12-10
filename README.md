@@ -14,7 +14,23 @@ php uit.php script # to run script
 php uit.php # to run REPL
 ```
 
-You'll need PHP 8.0 and above.
+## EXAMPLES
+
+Since it's in development, currently, accept only number calculations.
+
+Make a file like the following. Eg. save as hello.uit
+
+```text
+4 + 5 * ( 4 + 3 / 2 ) - 4 
+```
+
+Then run as the following. Result should be `27.5`.
+
+```shell
+php uit.php hello.uit
+```
+
+Good Luck playing! You'll need PHP 8.0 and above.
 
 ## FAQ
 
