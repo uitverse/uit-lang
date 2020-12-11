@@ -9,6 +9,8 @@ use heinthanth\Uit\Parser\OperationNode\BinOperationNode;
 use heinthanth\Uit\Parser\OperationNode\MonoOperationNode;
 use heinthanth\Uit\Parser\OperationNode\NumberNode;
 use heinthanth\Uit\Parser\OperationNode\OperationNodeInterface;
+use heinthanth\Uit\Parser\OperationNode\VariableAccessNode;
+use heinthanth\Uit\Parser\OperationNode\VariableAssignNode;
 
 class Parser
 {
@@ -67,6 +69,21 @@ class Parser
      */
     private function expression(): OperationNodeInterface
     {
+        if ($this->currentToken->type === T_KEYWORD && $this->currentToken->value === 'Num') {
+            $this->goNext();
+            if ($this->currentToken->type !== T_IDENTIFIER) {
+                die("Error: Invalid Syntax. Expecting Identifier");
+            }
+            $varName = $this->currentToken;
+            $this->goNext();
+            if ($this->currentToken->type !== T_EQUAL) {
+                die("Error: Invalid Syntax. Expecting '='");
+            }
+            $this->goNext();
+            $expression = $this->expression();
+            return new VariableAssignNode($varName, $expression);
+        }
+
         $leftNode = $this->term();
         while ($this->currentToken->type === T_PLUS || $this->currentToken->type === T_MINUS) {
             $operator = $this->currentToken;
@@ -120,7 +137,7 @@ class Parser
     private function power(): OperationNodeInterface
     {
         $leftNode = $this->atom();
-        if($this->currentToken->type === T_CARET) {
+        if ($this->currentToken->type === T_CARET) {
             $operator = $this->currentToken;
             $this->goNext();
             $rightNode = $this->factor();
@@ -139,6 +156,9 @@ class Parser
         if ($token->type === T_NUMBER) {
             $this->goNext();
             return new NumberNode($token);
+        } elseif ($token->type === T_IDENTIFIER) {
+            $this->goNext();
+            return new VariableAccessNode($token);
         } elseif ($token->type === T_LPARAN) {
             $this->goNext();
             $expr = $this->expression();

@@ -5,8 +5,8 @@ namespace heinthanth\Uit\Lexer;
 require_once __DIR__ . '/TokenDefinition.php';
 
 define('DIGIT_STRING', '0123456789');
-//define('LETTER_STRING', 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
-//define('LETTER_W_DIGIT_STRING', 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789');
+define('LETTER_STRING', 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
+define('LETTER_W_DIGIT_STRING', 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789');
 
 class Lexer
 {
@@ -52,6 +52,8 @@ class Lexer
                 $this->goNext();
             } elseif (str_contains(DIGIT_STRING, $this->currentCharacter)) {
                 $tokens[] = $this->makeNumber();
+            } elseif (str_contains(LETTER_STRING, $this->currentCharacter)) {
+                $tokens[] = $this->makeIdentifier();
             } elseif ($this->currentCharacter === '+') {
                 $tokens[] = new Token(T_PLUS);
                 $this->goNext();
@@ -70,6 +72,9 @@ class Lexer
             } elseif ($this->currentCharacter === '^') {
                 $tokens[] = new Token(T_CARET);
                 $this->goNext();
+            } elseif ($this->currentCharacter === '=') {
+                $tokens[] = new Token(T_EQUAL);
+                $this->goNext();
             } elseif ($this->currentCharacter === '(') {
                 $tokens[] = new Token(T_LPARAN);
                 $this->goNext();
@@ -85,6 +90,10 @@ class Lexer
         return $tokens;
     }
 
+    /**
+     * Analyze Number strings
+     * @return Token
+     */
     private function makeNumber(): Token
     {
         $numberString = '';
@@ -100,5 +109,15 @@ class Lexer
             $this->goNext();
         }
         return new Token(T_NUMBER, $numberString);
+    }
+
+    private function makeIdentifier(): Token
+    {
+        $identifierString = '';
+        while ($this->currentCharacter !== null && str_contains(LETTER_W_DIGIT_STRING . '_', $this->currentCharacter)) {
+            $identifierString .= $this->currentCharacter;
+            $this->goNext();
+        }
+        return new Token(in_array($identifierString, UIT_KEYWORD) ? T_KEYWORD : T_IDENTIFIER, $identifierString);
     }
 }

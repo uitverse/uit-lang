@@ -3,6 +3,7 @@
 namespace heinthanth\Uit\Core;
 
 use heinthanth\Uit\Interpreter\Interpreter;
+use heinthanth\Uit\Interpreter\Memory\Memory;
 use heinthanth\Uit\Lexer\Lexer;
 use heinthanth\Uit\Parser\Parser;
 use JetBrains\PhpStorm\NoReturn;
@@ -51,10 +52,11 @@ class Uit
     #[NoReturn]
     private function runREPL(): void
     {
+        $memory = new Memory();
         while (true) {
             $input = $this->cliMate->input('uit > ')->prompt();
             if ($input === 'exit') exit(0);
-            if ($input != null && ord($input) != 4) $this->runCode($input);
+            if ($input != null && ord($input) != 4) $this->runCode($input, $memory);
         }
     }
 
@@ -69,20 +71,20 @@ class Uit
             $this->cliMate->to('error')->red("Oops! No such file, '$path'");
             exit(1);
         }
-        $this->runCode(file_get_contents($absolutePath));
+        $this->runCode(file_get_contents($absolutePath), new Memory());
     }
 
     /**
      * Interpret code string
      * @param string $code
      */
-    private function runCode(string $code): void
+    private function runCode(string $code, Memory $memory): void
     {
         $tokens = (new Lexer($code))->tokenize();
         //echo implode(" ", $tokens) . PHP_EOL;
         $ast = (new Parser($tokens))->parse();
         //echo $ast . PHP_EOL;
-        $numberType = (new Interpreter())->interpret($ast);
+        $numberType = (new Interpreter($memory))->interpret($ast);
         echo $numberType->value . PHP_EOL;
     }
 
