@@ -2,21 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="aaa819aa-593a-41ec-b03c-66f16fedf525" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/samples/condition.uit" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Interpreter/DataTypes/BooleanType.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Interpreter/DataTypes/DataTypeInterface.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Interpreter/DataTypes/DataTypeInterface.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Interpreter/DataTypes/NullType.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Interpreter/DataTypes/NullType.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Interpreter/DataTypes/NumberType.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Interpreter/DataTypes/NumberType.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Interpreter/Interpreter.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Interpreter/Interpreter.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Lexer/Lexer.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Lexer/Lexer.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Lexer/Token.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Lexer/Token.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Lexer/TokenDefinition.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Lexer/TokenDefinition.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Parser/OperationNode/OperationNodeInterface.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Parser/OperationNode/OperationNodeInterface.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Parser/OperationNode/VariableAccessNode.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Parser/OperationNode/VariableAccessNode.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Parser/OperationNode/VariableAssignNode.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Parser/OperationNode/VariableAssignNode.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Parser/Parser.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Parser/Parser.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.uit" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -76,7 +64,7 @@
       <updated>1607598703895</updated>
       <workItem from="1607598705211" duration="12615000" />
       <workItem from="1607655701922" duration="5720000" />
-      <workItem from="1607664154903" duration="8843000" />
+      <workItem from="1607664154903" duration="9617000" />
     </task>
     <servers />
   </component>

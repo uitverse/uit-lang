@@ -1,5 +1,9 @@
 # UIT
 
+[![MIT license](https://img.shields.io/badge/License-MIT-green.svg)](https://lbesson.mit-license.org/)
+[![Line Count](https://img.shields.io/static/v1.svg?label=PHP+Line+Count&message=765&color=blue)](https://shields.io/)
+[![Total Line Count](https://img.shields.io/static/v1.svg?label=Total+Line+Count&message=1414&color=blue)](https://shields.io/)
+
 UIT Interpreter for Techie - a simple interpreter written in PHP for PseudoCode like Programming Language.
 
 ## HOW TO RUN
@@ -16,7 +20,8 @@ php uit.php # to run REPL
 
 ## EXAMPLES
 
-လောလောဆယ် development အဆင့်မှာပဲရှိသေးတယ်ဆိုတော့ အများကြီး မရသေးဘူး။ ဂဏန်း ပေါင်း၊ နုတ်၊ မြောက်၊ စား ရမယ်။ number variable ရမယ်။ logical operator တွေရမယ်။ ကျန်တာတွေ ထပ် implement လုပ်နေတုန်းပါပဲ။
+လောလောဆယ် development အဆင့်မှာပဲရှိသေးတယ်ဆိုတော့ အများကြီး မရသေးဘူး။ ဂဏန်း ပေါင်း၊ နုတ်၊ မြောက်၊ စား ရမယ်။ number
+variable ရမယ်။ logical operator တွေရမယ်။ ကျန်တာတွေ ထပ် implement လုပ်နေတုန်းပါပဲ။
 
 file လေး တစ် file ရေးကြည့်ပေါ့။ အောက်က အတိုင်းပေါ့ ဥပမာ - `hello.uit` ဆိုပြီး save လိုက်မယ်။
 
@@ -64,17 +69,22 @@ logical operator (AND, OR) တွေရမယ်။
 
 ### WHY I MADE THIS
 
-လုပ်ဖြစ်တဲ့ အကြောင်းအရင်းကတော့ ထွေထွေထူးထူးမရှိပါဘူး။ ကျွန်တော် first year တုန်းက တစ်ချို့ သူငယ်ချင်းတွေက ဆေးကျောင်းတက်ချင်ပေမယ့် အခြေအနေတစ်ခုကြောင့် UIT ရောက်လာကြတဲ့အခါ အဆင်မပြေတာလေးတွေတွေ့ရတယ်ဗျ။\
-ကျောင်းမှာ pseudo-code သင်တဲ့အခါ ကျွန်တော်တော့ programming နဲ့ ရင်းနှီးတဲ့အတွက် နားလည်တယ်ဗျ။ သူတို့ကျတော့ မရင်းနှီးတော့ မမြင်သာသလိုဖြစ်နေရော။ အဲ့အချိန်ကတည်းက pseudo-code ကိုသာ programming language တစ်ခုလို run လို့ရမယ်ဆိုရင် အဆင်ပြေလိမ့်မယ်ဆိုပြီး တွေးမိတယ်။\
+လုပ်ဖြစ်တဲ့ အကြောင်းအရင်းကတော့ ထွေထွေထူးထူးမရှိပါဘူး။ ကျွန်တော် first year တုန်းက တစ်ချို့ သူငယ်ချင်းတွေက
+ဆေးကျောင်းတက်ချင်ပေမယ့် အခြေအနေတစ်ခုကြောင့် UIT ရောက်လာကြတဲ့အခါ အဆင်မပြေတာလေးတွေတွေ့ရတယ်ဗျ။\
+ကျောင်းမှာ pseudo-code သင်တဲ့အခါ ကျွန်တော်တော့ programming နဲ့ ရင်းနှီးတဲ့အတွက် နားလည်တယ်ဗျ။ သူတို့ကျတော့ မရင်းနှီးတော့
+မမြင်သာသလိုဖြစ်နေရော။ အဲ့အချိန်ကတည်းက pseudo-code ကိုသာ programming language တစ်ခုလို run လို့ရမယ်ဆိုရင်
+အဆင်ပြေလိမ့်မယ်ဆိုပြီး တွေးမိတယ်။\
 အဲ့ကတည်းက interpreter ရေးဖို့ကြိုးစားခဲ့တာ အခုထိပဲဆိုပါစို့။
 
 ### WHY NAMED 'UIT'
 
-အကြောင်းပြချက်မရှိပါဘူး။ ဒီအတိုင်းပဲပေးလိုက်တာ။ `PHP HyperText Processor (PHP)` ဆိုတဲ့ Recursive Acronym ကို သဘောကျတာရယ်၊ ကျောင်းနာမည်နဲ့လည်း တိုက်ဆိုင်တာရယ်ကြောင့် `UIT - Interpreter for Techie ( UIT )`  ဆိုပြီးပေးဖြစ်သွားပါတယ်။
+အကြောင်းပြချက်မရှိပါဘူး။ ဒီအတိုင်းပဲပေးလိုက်တာ။ `PHP HyperText Processor (PHP)` ဆိုတဲ့ Recursive Acronym ကို
+သဘောကျတာရယ်၊ ကျောင်းနာမည်နဲ့လည်း တိုက်ဆိုင်တာရယ်ကြောင့် `UIT - Interpreter for Techie ( UIT )`  ဆိုပြီးပေးဖြစ်သွားပါတယ်။
 
 ### WHY NOT CHOOSING OTHER LANGUAGE
 
-ဟဟ၊ ဘာလို့ တခြား language မသုံးလဲဆိုတော့ ကျွန်တော်က PHP fan ဗျ။ တခြား language တွေထက်စာရင် ကျွန်တော်အကျွမ်းကျင်ဆုံးက PHP ပဲ။ ပြီးတော့ လူတစ်ချို့က PHP ကနှိမ်ကြတယ်ဗျ။ PHP လည်း ကောင်းပါသေးတယ်လို့ သက်သေပြချင်တာလည်း ပါတာပေါ့။\
+ဟဟ၊ ဘာလို့ တခြား language မသုံးလဲဆိုတော့ ကျွန်တော်က PHP fan ဗျ။ တခြား language တွေထက်စာရင် ကျွန်တော်အကျွမ်းကျင်ဆုံးက PHP
+ပဲ။ ပြီးတော့ လူတစ်ချို့က PHP ကနှိမ်ကြတယ်ဗျ။ PHP လည်း ကောင်းပါသေးတယ်လို့ သက်သေပြချင်တာလည်း ပါတာပေါ့။\
 တခြား language ( C, C++ ) တို့နဲ့ ပြန်ရေးဖို့တော့ ကြိုးစားနေပါတယ်။ skill တော့လိုသေးတာပေါ့။
 
 ## LICENSE
