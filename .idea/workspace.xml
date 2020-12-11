@@ -2,14 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="aaa819aa-593a-41ec-b03c-66f16fedf525" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/samples/loop.uit" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Parser/OperationNode/ForOperationNode.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Parser/OperationNode/WhileOperationNode.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Interpreter/Interpreter.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Interpreter/Interpreter.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Lexer/TokenDefinition.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Lexer/TokenDefinition.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Parser/Parser.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Parser/Parser.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,7 +64,7 @@
       <workItem from="1607598705211" duration="12615000" />
       <workItem from="1607655701922" duration="5720000" />
       <workItem from="1607664154903" duration="10126000" />
-      <workItem from="1607683839157" duration="7656000" />
+      <workItem from="1607683839157" duration="8172000" />
     </task>
     <servers />
   </component>

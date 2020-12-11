@@ -1,7 +1,7 @@
 # UIT
 
 [![MIT license](https://img.shields.io/badge/License-MIT-green.svg)](https://lbesson.mit-license.org/)
-[![Line Count](https://img.shields.io/static/v1.svg?label=Line+of+PHP+code&message=1388&color=blue)](https://shields.io/)
+[![Line Count](https://img.shields.io/static/v1.svg?label=Line+of+PHP+code&message=1515&color=blue)](https://shields.io/)
 
 UIT Interpreter for Techie - a simple interpreter written in PHP for PseudoCode like Programming Language.
 
@@ -16,6 +16,23 @@ composer install
 php uit.php script # to run script
 php uit.php # to run REPL
 ```
+
+## MILE STONE
+
+- [x] Number Type
+- [x] Arithmetic Operation (`+`, `-`, `*`, `/`, `%`, `^`)
+- [x] Variables
+- [x] Null Type  
+- [x] Boolean Type
+- [x] Logical Operator ( `AND`, `OR`, `==`, `<>`, `<`, `<=`, `>`, `>=` )
+- [x] Condition ( `IF` / `ELSEIF` / `ELSE` )
+- [x] Loop ( `FOR`, `WHILE` )
+- [ ] Function
+- [ ] String Type
+- [ ] Array Type
+- [ ] Built-in Functions
+- [ ] Multiple Line Statements
+- [ ] Comments
 
 ## EXAMPLES
 
