@@ -5,6 +5,7 @@
       <change afterPath="$PROJECT_DIR$/samples/condition.uit" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/Interpreter/DataTypes/BooleanType.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Interpreter/DataTypes/DataTypeInterface.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Interpreter/DataTypes/DataTypeInterface.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Interpreter/DataTypes/NullType.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Interpreter/DataTypes/NullType.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Interpreter/DataTypes/NumberType.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Interpreter/DataTypes/NumberType.php" afterDir="false" />
@@ -75,7 +76,7 @@
       <updated>1607598703895</updated>
       <workItem from="1607598705211" duration="12615000" />
       <workItem from="1607655701922" duration="5720000" />
-      <workItem from="1607664154903" duration="8598000" />
+      <workItem from="1607664154903" duration="8843000" />
     </task>
     <servers />
   </component>
