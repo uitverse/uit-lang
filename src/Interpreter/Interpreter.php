@@ -10,6 +10,7 @@ use heinthanth\Uit\Interpreter\DataTypes\NullType;
 use heinthanth\Uit\Interpreter\DataTypes\NumberType;
 use heinthanth\Uit\Interpreter\Memory\Memory;
 use heinthanth\Uit\Parser\OperationNode\BinOperationNode;
+use heinthanth\Uit\Parser\OperationNode\IfOperationNode;
 use heinthanth\Uit\Parser\OperationNode\MonoOperationNode;
 use heinthanth\Uit\Parser\OperationNode\NumberNode;
 use heinthanth\Uit\Parser\OperationNode\OperationNodeInterface;
@@ -55,6 +56,8 @@ class Interpreter
             return $this->visitVariableAssignNode($node);
         } elseif ($node instanceof VariableAccessNode) {
             return $this->visitVariableAccessNode($node);
+        } elseif ($node instanceof IfOperationNode) {
+            return $this->visitIfOperationNode($node);
         }
         die("Error: Invalid Operation" . PHP_EOL);
     }
@@ -187,6 +190,26 @@ class Interpreter
     private function visitVariableAssignNode(VariableAssignNode $node): NullType
     {
         $this->memory->symbols->set($node->variable->value, $this->visit($node->value));
+        return new NullType();
+    }
+
+    /**
+     * Eval if statement
+     * @param IfOperationNode $node
+     * @return DataTypeInterface
+     */
+    private function visitIfOperationNode(IfOperationNode $node): DataTypeInterface
+    {
+        foreach ($node->cases as $action) {
+            [$condition, $expr] = $action;
+            $conditionResult = $this->visit($condition);
+            if ($conditionResult->value === 'true') {
+                return $this->visit($expr);
+            }
+        }
+        if ($node->elseExpr) {
+            return $this->visit($node->elseExpr);
+        }
         return new NullType();
     }
 }

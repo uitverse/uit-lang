@@ -6,6 +6,7 @@ namespace heinthanth\Uit\Parser;
 
 use heinthanth\Uit\Lexer\Token;
 use heinthanth\Uit\Parser\OperationNode\BinOperationNode;
+use heinthanth\Uit\Parser\OperationNode\IfOperationNode;
 use heinthanth\Uit\Parser\OperationNode\MonoOperationNode;
 use heinthanth\Uit\Parser\OperationNode\NumberNode;
 use heinthanth\Uit\Parser\OperationNode\OperationNodeInterface;
@@ -69,7 +70,7 @@ class Parser
      */
     private function expression(): OperationNodeInterface
     {
-        if ($this->currentToken->type === UIT_T_KEYWORD && $this->currentToken->value === 'num') {
+        if ($this->currentToken->type === UIT_T_KEYWORD && $this->currentToken->value === 'Num') {
             $this->goNext();
             if ($this->currentToken->type !== UIT_T_IDENTIFIER) {
                 die("Error: Invalid Syntax. Expecting Identifier" . PHP_EOL);
@@ -186,6 +187,41 @@ class Parser
         return $leftNode;
     }
 
+    private function if(): OperationNodeInterface
+    {
+        $cases = [];
+        // TODO need to find datatype
+        $elseExpr = null;
+
+        $condition = $this->expression();
+        if ($this->currentToken->type !== UIT_T_KEYWORD && $this->currentToken->value !== 'THEN') {
+            die("Error: Syntax Error. Expecting 'THEN'" . PHP_EOL);
+        }
+        $this->goNext();
+        $expression = $this->expression();
+        $cases[] = [$condition, $expression];
+        while ($this->currentToken->type === UIT_T_KEYWORD && $this->currentToken->value === 'ELSEIF') {
+            $this->goNext();
+            $condition = $this->expression();
+            if (!($this->currentToken->type === UIT_T_KEYWORD && $this->currentToken->value === 'THEN')) {
+                die("Error: Syntax Error. Expecting 'THEN'" . PHP_EOL);
+            }
+            $this->goNext();
+            $expression = $this->expression();
+            $cases[] = [$condition, $expression];
+        }
+        if ($this->currentToken->type === UIT_T_KEYWORD && $this->currentToken->value === 'ELSE') {
+            $this->goNext();
+            $elseExpr = $this->expression();
+        }
+        if ($this->currentToken->type !== UIT_T_KEYWORD && $this->currentToken->value !== 'ENDIF') {
+            die("Error: Syntax Error. Expecting 'ENDIF'" . PHP_EOL);
+        } else {
+            $this->goNext();
+        }
+        return new IfOperationNode($cases, $elseExpr);
+    }
+
     /**
      * Solve number node, power node,etc
      * @return OperationNodeInterface
@@ -208,6 +244,9 @@ class Parser
             }
             // something went wrong here. invalid syntax missing ')'
             die("Error: Invalid Syntax. Expecting ')'" . PHP_EOL);
+        } elseif ($token->type === UIT_T_KEYWORD && $token->value === 'IF') {
+            $this->goNext();
+            return $this->if();
         }
         // something went wrong here. invalid syntax
         die("Error: Invalid Syntax. Expecting Number, Operator or '('" . PHP_EOL);

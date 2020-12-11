@@ -1,1 +1,3 @@
-4 == 4 AND 5 == 5
+Num a = 5 + 2
+
+IF a == 7 THEN 10 ELSE 01 ENDIF
