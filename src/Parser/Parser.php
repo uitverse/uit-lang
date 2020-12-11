@@ -6,12 +6,14 @@ namespace heinthanth\Uit\Parser;
 
 use heinthanth\Uit\Lexer\Token;
 use heinthanth\Uit\Parser\OperationNode\BinOperationNode;
+use heinthanth\Uit\Parser\OperationNode\ForOperationNode;
 use heinthanth\Uit\Parser\OperationNode\IfOperationNode;
 use heinthanth\Uit\Parser\OperationNode\MonoOperationNode;
 use heinthanth\Uit\Parser\OperationNode\NumberNode;
 use heinthanth\Uit\Parser\OperationNode\OperationNodeInterface;
 use heinthanth\Uit\Parser\OperationNode\VariableAccessNode;
 use heinthanth\Uit\Parser\OperationNode\VariableAssignNode;
+use heinthanth\Uit\Parser\OperationNode\WhileOperationNode;
 
 class Parser
 {
@@ -44,6 +46,7 @@ class Parser
     {
         $node = $this->expression();
         if ($this->currentToken->type !== UIT_T_EOF) {
+            //print_r($this->currentToken);
             // not reached end of token. Must be error exist.
             die("Error: Invalid Syntax [ PARSER ]" . PHP_EOL);
         }
@@ -187,6 +190,10 @@ class Parser
         return $leftNode;
     }
 
+    /**
+     * solve if statement
+     * @return OperationNodeInterface
+     */
     private function if(): OperationNodeInterface
     {
         $cases = [];
@@ -216,10 +223,52 @@ class Parser
         }
         if ($this->currentToken->type !== UIT_T_KEYWORD && $this->currentToken->value !== 'ENDIF') {
             die("Error: Syntax Error. Expecting 'ENDIF'" . PHP_EOL);
-        } else {
-            $this->goNext();
         }
+        $this->goNext();
         return new IfOperationNode($cases, $elseExpr);
+    }
+
+    /**
+     * solve while statement
+     * @return OperationNodeInterface
+     */
+    private function while(): OperationNodeInterface
+    {
+        $condition = $this->expression();
+        if ($this->currentToken->type !== UIT_T_KEYWORD && $this->currentToken->value !== 'DO') die("Error: Syntax Error. Expecting 'DO'." . PHP_EOL);
+        $this->goNext();
+        $expression = $this->expression();
+        if ($this->currentToken->type !== UIT_T_KEYWORD && $this->currentToken->value !== 'ENDWHILE') die("Error: Syntax Error. Expecting 'ENDWHILE'." . PHP_EOL);
+        $this->goNext();
+        return new WhileOperationNode($condition, $expression);
+    }
+
+    /**
+     * Solve for statement
+     * @return OperationNodeInterface
+     */
+    private function for(): OperationNodeInterface
+    {
+        if ($this->currentToken->type !== UIT_T_IDENTIFIER) die("Error: Syntax Error. Expecting Loop Control variable in FOR loop." . PHP_EOL);
+        $loopControl = $this->currentToken;
+        $this->goNext();
+        if ($this->currentToken->type !== UIT_T_EQUAL) die("Error: Syntax Error. Expecting '=' " . PHP_EOL);
+        $this->goNext();
+        $startNode = $this->expression();
+        if ($this->currentToken->type !== UIT_T_KEYWORD && $this->currentToken->value !== 'TO') die("Error: Syntax Error. Expecting 'TO'." . PHP_EOL);
+        $this->goNext();
+        $endNode = $this->expression();
+        $stepNode = new NumberNode(new Token(UIT_T_NUMBER, '1'));
+        if ($this->currentToken->type === UIT_T_KEYWORD && $this->currentToken->value === 'STEP') {
+            $this->goNext();
+            $stepNode = $this->expression();
+        }
+        if ($this->currentToken->type !== UIT_T_KEYWORD && $this->currentToken->value !== 'DO') die("Error: Syntax Error. Expecting 'DO'." . PHP_EOL);
+        $this->goNext();
+        $expression = $this->expression();
+        if ($this->currentToken->type !== UIT_T_KEYWORD && $this->currentToken->value !== 'ENDFOR') die("Error: Syntax Error. Expecting 'ENDFOR'." . PHP_EOL);
+        $this->goNext();
+        return new ForOperationNode($loopControl, $startNode, $endNode, $stepNode, $expression);
     }
 
     /**
@@ -247,6 +296,12 @@ class Parser
         } elseif ($token->type === UIT_T_KEYWORD && $token->value === 'IF') {
             $this->goNext();
             return $this->if();
+        } elseif ($token->type === UIT_T_KEYWORD && $token->value === 'FOR') {
+            $this->goNext();
+            return $this->for();
+        } elseif ($token->type === UIT_T_KEYWORD && $token->value === 'WHILE') {
+            $this->goNext();
+            return $this->while();
         }
         // something went wrong here. invalid syntax
         die("Error: Invalid Syntax. Expecting Number, Operator or '('" . PHP_EOL);

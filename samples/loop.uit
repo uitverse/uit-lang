@@ -1,0 +1,3 @@
+Num result = 120
+
+WHILE result > 0 DO Num result = result - 10 ENDWHILE

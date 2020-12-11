@@ -10,12 +10,14 @@ use heinthanth\Uit\Interpreter\DataTypes\NullType;
 use heinthanth\Uit\Interpreter\DataTypes\NumberType;
 use heinthanth\Uit\Interpreter\Memory\Memory;
 use heinthanth\Uit\Parser\OperationNode\BinOperationNode;
+use heinthanth\Uit\Parser\OperationNode\ForOperationNode;
 use heinthanth\Uit\Parser\OperationNode\IfOperationNode;
 use heinthanth\Uit\Parser\OperationNode\MonoOperationNode;
 use heinthanth\Uit\Parser\OperationNode\NumberNode;
 use heinthanth\Uit\Parser\OperationNode\OperationNodeInterface;
 use heinthanth\Uit\Parser\OperationNode\VariableAccessNode;
 use heinthanth\Uit\Parser\OperationNode\VariableAssignNode;
+use heinthanth\Uit\Parser\OperationNode\WhileOperationNode;
 use JetBrains\PhpStorm\NoReturn;
 use JetBrains\PhpStorm\Pure;
 
@@ -58,6 +60,10 @@ class Interpreter
             return $this->visitVariableAccessNode($node);
         } elseif ($node instanceof IfOperationNode) {
             return $this->visitIfOperationNode($node);
+        } elseif ($node instanceof ForOperationNode) {
+            return $this->visitForOperationNode($node);
+        } elseif ($node instanceof WhileOperationNode) {
+            return $this->visitWhileOperationNode($node);
         }
         die("Error: Invalid Operation" . PHP_EOL);
     }
@@ -209,6 +215,49 @@ class Interpreter
         }
         if ($node->elseExpr) {
             return $this->visit($node->elseExpr);
+        }
+        return new NullType();
+    }
+
+    /**
+     * Evaluate For statement
+     * @param ForOperationNode $node
+     * @return DataTypeInterface
+     */
+    private function visitForOperationNode(ForOperationNode $node): DataTypeInterface
+    {
+        $startNode = intval($this->visit($node->start)->value);
+        $endNode = intval($this->visit($node->end)->value);
+        $stepNode = intval($this->visit($node->step)->value);
+        $counter = $startNode;
+
+        if ($stepNode >= 0) {
+            while ($counter < $endNode) {
+                $this->memory->symbols->set($node->loopControl->value, new NumberType(strval($counter)));
+                $counter += $stepNode;
+                $this->visit($node->expression);
+            }
+        } else {
+            while ($counter > $endNode) {
+                $this->memory->symbols->set($node->loopControl->value, new NumberType(strval($counter)));
+                $counter -= $stepNode;
+                $this->visit($node->expression);
+            }
+        }
+        return new NullType();
+    }
+
+    /**
+     * Evaluate While statement
+     * @param WhileOperationNode $node
+     * @return NullType
+     */
+    private function visitWhileOperationNode(WhileOperationNode $node): DataTypeInterface
+    {
+        while (true) {
+            $condition = $this->visit($node->condition);
+            if ($condition->value === 'false') break;
+            $this->visit($node->expression);
         }
         return new NullType();
     }

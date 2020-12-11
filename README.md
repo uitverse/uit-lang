@@ -20,7 +20,7 @@ php uit.php # to run REPL
 ## EXAMPLES
 
 လောလောဆယ် development အဆင့်မှာပဲရှိသေးတယ်ဆိုတော့ အများကြီး မရသေးဘူး။ ဂဏန်း ပေါင်း၊ နုတ်၊ မြောက်၊ စား ရမယ်။ number
-variable ရမယ်။ logical operator တွေရမယ်။ ကျန်တာတွေ ထပ် implement လုပ်နေတုန်းပါပဲ။
+variable ရမယ်။ logical operator တွေရမယ်။ loop ရမယ်။ ကျန်တာတွေ ထပ် implement လုပ်နေတုန်းပါပဲ။
 
 file လေး တစ် file ရေးကြည့်ပေါ့။ အောက်က အတိုင်းပေါ့ ဥပမာ - `hello.uit` ဆိုပြီး save လိုက်မယ်။
 
@@ -62,6 +62,12 @@ logical operator (AND, OR) တွေရမယ်။
 ```text
 4 == 4
 5 == 1 OR 4 == 4
+```
+
+loop မှာဆို WHILE နဲ့ FOR ရမယ်။
+
+```text
+FOR i = 1 TO 6 step 3 DO Num result = i ENDFOR
 ```
 
 ## FAQ
