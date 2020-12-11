@@ -10,6 +10,7 @@ define('T_MINUS', 'T_MINUS');
 define('T_STAR', 'T_STAR');
 define('T_SLASH', 'T_SLASH');
 define('T_PERCENT', 'T_PERCENT');
+define('T_CARET', 'T_CARET');
 
 # parenthesis
 define('T_LPARAN', 'T_LPARAN');

@@ -4,8 +4,8 @@
 namespace heinthanth\Uit\Interpreter;
 
 
-use heinthanth\Uit\Interpreter\Types\DataTypeInterface;
-use heinthanth\Uit\Interpreter\Types\NumberType;
+use heinthanth\Uit\Interpreter\DataTypes\DataTypeInterface;
+use heinthanth\Uit\Interpreter\DataTypes\NumberType;
 use heinthanth\Uit\Parser\OperationNode\BinOperationNode;
 use heinthanth\Uit\Parser\OperationNode\MonoOperationNode;
 use heinthanth\Uit\Parser\OperationNode\NumberNode;
@@ -15,11 +15,21 @@ use JetBrains\PhpStorm\Pure;
 
 class Interpreter
 {
+    /**
+     * Interpret parser Operation Node
+     * @param OperationNodeInterface $node
+     * @return DataTypeInterface
+     */
     public function interpret(OperationNodeInterface $node): DataTypeInterface
     {
         return $this->visit($node);
     }
 
+    /**
+     * Recursively visit parsed nodes and solve to value
+     * @param OperationNodeInterface $node
+     * @return DataTypeInterface
+     */
     private function visit(OperationNodeInterface $node): DataTypeInterface
     {
         if ($node instanceof NumberNode) {
@@ -42,6 +52,11 @@ class Interpreter
         return new NumberType($node->token->value);
     }
 
+    /**
+     * Solve Binary Operation Node
+     * @param BinOperationNode $node
+     * @return DataTypeInterface
+     */
     #[NoReturn]
     private function visitBinOperationNode(BinOperationNode $node): DataTypeInterface
     {
@@ -58,6 +73,8 @@ class Interpreter
             return $left->divide($right);
         }  elseif ($node->operator->type === T_PERCENT) {
             return $left->modulo($right);
+        } elseif ($node->operator->type === T_CARET) {
+            return $left->power($right);
         }
         die("Error: Something went wrong" . PHP_EOL);
     }

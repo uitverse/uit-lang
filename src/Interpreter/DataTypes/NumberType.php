@@ -1,6 +1,6 @@
 <?php
 
-namespace heinthanth\Uit\Interpreter\Types;
+namespace heinthanth\Uit\Interpreter\DataTypes;
 
 use JetBrains\PhpStorm\NoReturn;
 use JetBrains\PhpStorm\Pure;
@@ -78,6 +78,18 @@ class NumberType implements DataTypeInterface
         if (floatval($next->value) === 0)
             die("Invalid Operation. Divided By Zero");
         $result = floatval($this->value) % floatval($next->value);
+        if (floor($result) === $result) $result = floor($result);
+        return new NumberType(strval($result));
+    }
+
+    /**
+     * Exponent function. Get power of a given number
+     * @param DataTypeInterface $next
+     * @return NumberType
+     */
+    #[Pure] public function power(DataTypeInterface $next): NumberType
+    {
+        $result = pow(floatval($this->value), floatval($next->value));
         if (floor($result) === $result) $result = floor($result);
         return new NumberType(strval($result));
     }

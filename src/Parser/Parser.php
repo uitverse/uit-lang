@@ -109,12 +109,29 @@ class Parser
             $factor = $this->factor();
             return new MonoOperationNode($token, $factor);
         }
-        // else just solve number or other functions
-        return $this->atom();
+        // else maybe power expression.
+        return $this->power();
+    }
+
+    /**
+     * Solve power (exponential) expression
+     * @return OperationNodeInterface
+     */
+    private function power(): OperationNodeInterface
+    {
+        $leftNode = $this->atom();
+        if($this->currentToken->type === T_CARET) {
+            $operator = $this->currentToken;
+            $this->goNext();
+            $rightNode = $this->factor();
+            $leftNode = new BinOperationNode($leftNode, $operator, $rightNode);
+        }
+        return $leftNode;
     }
 
     /**
      * Solve number node, power node,etc
+     * @return OperationNodeInterface
      */
     private function atom(): OperationNodeInterface
     {
@@ -133,6 +150,6 @@ class Parser
             die("Error: Invalid Syntax. Expecting ')'" . PHP_EOL);
         }
         // something went wrong here. invalid syntax
-        die("Error: Invalid Syntax. Expecting Number" . PHP_EOL);
+        die("Error: Invalid Syntax. Expecting Number, Operator or '('" . PHP_EOL);
     }
 }

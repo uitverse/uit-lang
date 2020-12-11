@@ -30,7 +30,17 @@ Then run as the following. Result should be `27.5`.
 php uit.php hello.uit
 ```
 
+or just run `REPL` with
+
+```shell
+php uit.php
+```
+
 Good Luck playing! You'll need PHP 8.0 and above.
+
+## NOTES
+
+In calculation, Uit supports `+`, `-`, `*`, `/`, `%`,`^` operators.
 
 ## FAQ
 
@@ -50,7 +60,7 @@ No reason. I just want to make my Uni proud. And maybe I want to help them in sp
 
 LOL. I'm a PHP fan and PHP is like an army swift knife for me. And it's the only language I can master ( use well ).\
 Maybe you can port to other languages. Feel free to show me your work! I'm trying to port to C++ or C, too (or maybe
-Java). According to my skills of writing in PHP, I need language which support interface in OOP.
+Java). According to my skill of writing in PHP, I need language which support interface in OOP.
 
 ## LICENSE
 
