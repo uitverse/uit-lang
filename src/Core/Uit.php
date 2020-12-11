@@ -74,7 +74,11 @@ class Uit
         if ($code === '-') {
             $code = file_get_contents("php://stdin");
         }
-        if(trim($code) !== '') $this->runCode($code, new Memory());
+        $memory = new Memory();
+        $lines = explode("\n", $code);
+        foreach ($lines as $line) {
+            if (trim($line) !== '') $this->runCode($line, $memory);
+        }
     }
 
     /**
@@ -102,8 +106,8 @@ class Uit
         //echo implode(" ", $tokens) . PHP_EOL;
         $ast = (new Parser($tokens))->parse();
         //echo $ast . PHP_EOL;
-        $numberType = (new Interpreter($memory))->interpret($ast);
-        echo $numberType->value . PHP_EOL;
+        $dataType = (new Interpreter($memory))->interpret($ast);
+        if ($dataType->value !== "\0") echo $dataType->value . PHP_EOL;
     }
 
     /**

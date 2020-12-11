@@ -5,6 +5,7 @@ namespace heinthanth\Uit\Interpreter;
 
 
 use heinthanth\Uit\Interpreter\DataTypes\DataTypeInterface;
+use heinthanth\Uit\Interpreter\DataTypes\NullType;
 use heinthanth\Uit\Interpreter\DataTypes\NumberType;
 use heinthanth\Uit\Interpreter\Memory\Memory;
 use heinthanth\Uit\Parser\OperationNode\BinOperationNode;
@@ -126,8 +127,7 @@ class Interpreter
      */
     private function visitVariableAssignNode(VariableAssignNode $node): DataTypeInterface
     {
-        $value = $this->visit($node->value);
-        $this->memory->symbols->set($node->variable->value, $value);
-        return $value;
+        $this->memory->symbols->set($node->variable->value, $this->visit($node->value));
+        return new NullType();
     }
 }

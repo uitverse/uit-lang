@@ -2,11 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="aaa819aa-593a-41ec-b03c-66f16fedf525" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/Interpreter/DataTypes/NullType.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Core/Uit.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Core/Uit.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Interpreter/DataTypes/NumberType.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Interpreter/DataTypes/NumberType.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Lexer/Lexer.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Lexer/Lexer.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Parser/Parser.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Parser/Parser.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Interpreter/Interpreter.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Interpreter/Interpreter.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,7 +65,7 @@
       <updated>1607598703895</updated>
       <workItem from="1607598705211" duration="12615000" />
       <workItem from="1607655701922" duration="5720000" />
-      <workItem from="1607664154903" duration="1309000" />
+      <workItem from="1607664154903" duration="1858000" />
     </task>
     <servers />
   </component>
