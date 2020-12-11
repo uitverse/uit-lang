@@ -4,6 +4,7 @@
 namespace heinthanth\Uit\Interpreter;
 
 
+use heinthanth\Uit\Interpreter\DataTypes\BooleanType;
 use heinthanth\Uit\Interpreter\DataTypes\DataTypeInterface;
 use heinthanth\Uit\Interpreter\DataTypes\NullType;
 use heinthanth\Uit\Interpreter\DataTypes\NumberType;
@@ -79,18 +80,66 @@ class Interpreter
         $left = $this->visit($node->leftNode);
         $right = $this->visit($node->rightNode);
 
-        if ($node->operator->type === T_PLUS) {
-            return $left->add($right);
-        } elseif ($node->operator->type === T_MINUS) {
-            return $left->minus($right);
-        } elseif ($node->operator->type === T_STAR) {
-            return $left->times($right);
-        } elseif ($node->operator->type === T_SLASH) {
-            return $left->divide($right);
-        } elseif ($node->operator->type === T_PERCENT) {
-            return $left->modulo($right);
-        } elseif ($node->operator->type === T_CARET) {
-            return $left->power($right);
+        if ($node->operator->type === UIT_T_PLUS) {
+            if ($left instanceof NumberType && $right instanceof NumberType) {
+                return $left->add($right);
+            } else {
+                die("Error: cannot plus non-numbers" . PHP_EOL);
+            }
+        } elseif ($node->operator->type === UIT_T_MINUS) {
+            if ($left instanceof NumberType && $right instanceof NumberType) {
+                return $left->minus($right);
+            } else {
+                die("Error: cannot subtract non-numbers" . PHP_EOL);
+            }
+        } elseif ($node->operator->type === UIT_T_STAR) {
+            if ($left instanceof NumberType && $right instanceof NumberType) {
+                return $left->times($right);
+            } else {
+                die("Error: cannot multiply non-numbers" . PHP_EOL);
+            }
+        } elseif ($node->operator->type === UIT_T_SLASH) {
+            if ($left instanceof NumberType && $right instanceof NumberType) {
+                return $left->divide($right);
+            } else {
+                die("Error: cannot divides non-numbers" . PHP_EOL);
+            }
+        } elseif ($node->operator->type === UIT_T_PERCENT) {
+            if ($left instanceof NumberType && $right instanceof NumberType) {
+                return $left->modulo($right);
+            } else {
+                die("Error: cannot calculate reminder on non-numbers" . PHP_EOL);
+            }
+        } elseif ($node->operator->type === UIT_T_CARET) {
+            if ($left instanceof NumberType && $right instanceof NumberType) {
+                return $left->power($right);
+            } else {
+                die("Error: cannot calculate exponent of non-numbers" . PHP_EOL);
+            }
+        } elseif ($node->operator->type === UIT_T_EQ) {
+            return $left->equal($right);
+        } elseif ($node->operator->type === UIT_T_NE) {
+            return $left->notEqual($right);
+        } elseif ($node->operator->type === UIT_T_LT) {
+            return $left->lessThan($right);
+        } elseif ($node->operator->type === UIT_T_LE) {
+            return $left->lessThanEqual($right);
+        } elseif ($node->operator->type === UIT_T_GT) {
+            return $left->greaterThan($right);
+        } elseif ($node->operator->type === UIT_T_GE) {
+            return $left->greaterThanEqual($right);
+        } elseif ($node->operator->type === UIT_T_KEYWORD && $node->operator->value === "AND") {
+            if ($left instanceof BooleanType && $right instanceof BooleanType) {
+                return $left->and($right);
+            } else {
+                die("Error: cannot use AND with non-boolean" . PHP_EOL);
+            }
+        } elseif ($node->operator->type === UIT_T_KEYWORD && $node->operator->value === "OR") {
+            if ($left instanceof BooleanType && $right instanceof BooleanType) {
+                return $left->or($right);
+            } else {
+                die("Error: cannot use OR with non-boolean" . PHP_EOL);
+            }
         }
         die("Error: Something went wrong" . PHP_EOL);
     }
@@ -103,11 +152,21 @@ class Interpreter
     #[NoReturn]
     private function visitMonoOperationNode(MonoOperationNode $node): DataTypeInterface
     {
-        $number = $this->visit($node->rightNode);
-        if ($node->operator->type === T_MINUS) {
-            $number = $number->times(new NumberType('-1'));
+        $data = $this->visit($node->rightNode);
+        if ($node->operator->type === UIT_T_MINUS) {
+            if ($data instanceof NumberType) {
+                $data = $data->times(new NumberType('-1'));
+            } else {
+                die("Error: cannot negate non-number" . PHP_EOL);
+            }
+        } elseif ($node->operator->type === UIT_T_KEYWORD && $node->operator->value === 'NOT') {
+            if ($data instanceof BooleanType) {
+                $data = $data->not();
+            } else {
+                die("Error: cannot use NOT with non-boolean" . PHP_EOL);
+            }
         }
-        return $number;
+        return $data;
     }
 
     /**
@@ -123,9 +182,9 @@ class Interpreter
     /**
      * Assign value to variable name
      * @param VariableAssignNode $node
-     * @return DataTypeInterface
+     * @return NullType
      */
-    private function visitVariableAssignNode(VariableAssignNode $node): DataTypeInterface
+    private function visitVariableAssignNode(VariableAssignNode $node): NullType
     {
         $this->memory->symbols->set($node->variable->value, $this->visit($node->value));
         return new NullType();

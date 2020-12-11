@@ -4,9 +4,9 @@ namespace heinthanth\Uit\Lexer;
 
 require_once __DIR__ . '/TokenDefinition.php';
 
-define('DIGIT_STRING', '0123456789');
+define('DIGIUIT_T_STRING', '0123456789');
 define('LETTER_STRING', 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
-define('LETTER_W_DIGIT_STRING', 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789');
+define('LETTER_W_DIGIUIT_T_STRING', 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789');
 
 class Lexer
 {
@@ -50,43 +50,74 @@ class Lexer
         while ($this->currentCharacter !== "\0") {
             if ($this->currentCharacter === ' ' || $this->currentCharacter === "\t" || $this->currentCharacter === "\n") {
                 $this->goNext();
-            } elseif (str_contains(DIGIT_STRING, $this->currentCharacter)) {
+            } elseif (str_contains(DIGIUIT_T_STRING, $this->currentCharacter)) {
                 $tokens[] = $this->makeNumber();
             } elseif (str_contains(LETTER_STRING, $this->currentCharacter)) {
                 $tokens[] = $this->makeIdentifier();
             } elseif ($this->currentCharacter === '+') {
-                $tokens[] = new Token(T_PLUS);
+                $tokens[] = new Token(UIT_T_PLUS);
                 $this->goNext();
             } elseif ($this->currentCharacter === '-') {
-                $tokens[] = new Token(T_MINUS);
+                $tokens[] = new Token(UIT_T_MINUS);
                 $this->goNext();
             } elseif ($this->currentCharacter === '*') {
-                $tokens[] = new Token(T_STAR);
+                $tokens[] = new Token(UIT_T_STAR);
                 $this->goNext();
             } elseif ($this->currentCharacter === '/') {
-                $tokens[] = new Token(T_SLASH);
+                $tokens[] = new Token(UIT_T_SLASH);
                 $this->goNext();
             } elseif ($this->currentCharacter === '%') {
-                $tokens[] = new Token(T_PERCENT);
+                $tokens[] = new Token(UIT_T_PERCENT);
                 $this->goNext();
             } elseif ($this->currentCharacter === '^') {
-                $tokens[] = new Token(T_CARET);
-                $this->goNext();
-            } elseif ($this->currentCharacter === '=') {
-                $tokens[] = new Token(T_EQUAL);
+                $tokens[] = new Token(UIT_T_CARET);
                 $this->goNext();
             } elseif ($this->currentCharacter === '(') {
-                $tokens[] = new Token(T_LPARAN);
+                $tokens[] = new Token(UIT_T_LPARAN);
                 $this->goNext();
             } elseif ($this->currentCharacter === ')') {
-                $tokens[] = new Token(T_RPARAN);
+                $tokens[] = new Token(UIT_T_RPARAN);
                 $this->goNext();
+            } elseif ($this->currentCharacter === '=') {
+                $this->goNext();
+                if ($this->currentCharacter === '=') {
+                    // == logical operator
+                    $tokens[] = new Token(UIT_T_EQ);
+                    $this->goNext();
+                } else {
+                    // just = operator
+                    $tokens[] = new Token(UIT_T_EQUAL);
+                }
+            } elseif ($this->currentCharacter === '<') {
+                $this->goNext();
+                if ($this->currentCharacter === '=') {
+                    // <= logical operator
+                    $tokens[] = new Token(UIT_T_LE);
+                    $this->goNext();
+                } elseif ($this->currentCharacter === '>') {
+                    // <> not equal operator
+                    $tokens[] = new Token(UIT_T_NE);
+                    $this->goNext();
+                } else {
+                    // just < operator
+                    $tokens[] = new Token(UIT_T_LT);
+                }
+            } elseif ($this->currentCharacter === '>') {
+                $this->goNext();
+                if ($this->currentCharacter === '=') {
+                    // >= logical operator
+                    $tokens[] = new Token(UIT_T_GE);
+                    $this->goNext();
+                } else {
+                    // just > operator
+                    $tokens[] = new Token(UIT_T_GT);
+                }
             } else {
                 // invalid token
-                die("Error: Invalid Syntax" . PHP_EOL);
+                die("Error: Invalid Syntax [ Lexer ]" . PHP_EOL);
             }
         }
-        $tokens[] = new Token(T_EOF);
+        $tokens[] = new Token(UIT_T_EOF);
         return $tokens;
     }
 
@@ -98,7 +129,7 @@ class Lexer
     {
         $numberString = '';
         $dotCount = 0;
-        while ($this->currentCharacter !== null && str_contains(DIGIT_STRING . '.', $this->currentCharacter)) {
+        while ($this->currentCharacter !== null && str_contains(DIGIUIT_T_STRING . '.', $this->currentCharacter)) {
             if ($this->currentCharacter === '.') {
                 if ($dotCount === 1) break;
                 $dotCount++;
@@ -108,16 +139,16 @@ class Lexer
             }
             $this->goNext();
         }
-        return new Token(T_NUMBER, $numberString);
+        return new Token(UIT_T_NUMBER, $numberString);
     }
 
     private function makeIdentifier(): Token
     {
         $identifierString = '';
-        while ($this->currentCharacter !== null && str_contains(LETTER_W_DIGIT_STRING . '_', $this->currentCharacter)) {
+        while ($this->currentCharacter !== null && str_contains(LETTER_W_DIGIUIT_T_STRING . '_', $this->currentCharacter)) {
             $identifierString .= $this->currentCharacter;
             $this->goNext();
         }
-        return new Token(in_array($identifierString, UIT_KEYWORD) ? T_KEYWORD : T_IDENTIFIER, $identifierString);
+        return new Token(in_array($identifierString, UIT_KEYWORDS) ? UIT_T_KEYWORD : UIT_T_IDENTIFIER, $identifierString);
     }
 }

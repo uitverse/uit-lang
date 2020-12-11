@@ -93,4 +93,70 @@ class NumberType implements DataTypeInterface
         if (floor($result) === $result) $result = floor($result);
         return new NumberType(strval($result));
     }
+
+    /**
+     * Equal comparison
+     * @param DataTypeInterface $next
+     * @return BooleanType
+     */
+    #[Pure] public function equal(DataTypeInterface $next): BooleanType
+    {
+        $result = floatval($this->value) === floatval($next->value);
+        return new BooleanType($result ? 'true' : 'false');
+    }
+
+    /**
+     * Not equal comparison
+     * @param DataTypeInterface $next
+     * @return BooleanType
+     */
+    #[Pure] public function notEqual(DataTypeInterface $next): BooleanType
+    {
+        $result = floatval($this->value) !== floatval($next->value);
+        return new BooleanType($result ? 'true' : 'false');
+    }
+
+    /**
+     * less than comparison
+     * @param DataTypeInterface $next
+     * @return BooleanType
+     */
+    #[Pure] public function lessThan(DataTypeInterface $next): BooleanType
+    {
+        $result = floatval($this->value) < floatval($next->value);
+        return new BooleanType($result ? 'true' : 'false');
+    }
+
+    /**
+     * less than or equal comparison
+     * @param DataTypeInterface $next
+     * @return BooleanType
+     */
+    #[Pure] public function lessThanEqual(DataTypeInterface $next): BooleanType
+    {
+        $result = floatval($this->value) <= floatval($next->value);
+        return new BooleanType($result ? 'true' : 'false');
+    }
+
+    /**
+     * Greater than comparison
+     * @param DataTypeInterface $next
+     * @return BooleanType
+     */
+    #[Pure] public function greaterThan(DataTypeInterface $next): BooleanType
+    {
+        $result = floatval($this->value) > floatval($next->value);
+        return new BooleanType($result ? 'true' : 'false');
+    }
+
+    /**
+     * Greater than or equal comparison
+     * @param DataTypeInterface $next
+     * @return BooleanType
+     */
+    #[Pure] public function greaterThanEqual(DataTypeInterface $next): BooleanType
+    {
+        $result = floatval($this->value) >= floatval($next->value);
+        return new BooleanType($result ? 'true' : 'false');
+    }
 }

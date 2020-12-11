@@ -1,25 +1,32 @@
 <?php
 
 # data types
-define('T_NUMBER', 'T_NUMBER');
+define('UIT_T_NUMBER', 'UIT_T_NUMBER');
 
-define('T_KEYWORD', 'T_KEYWORD');
-define('T_IDENTIFIER', 'T_IDENTIFIER');
-define('T_EOF', 'T_EOF');
+define('UIT_T_KEYWORD', 'UIT_T_KEYWORD');
+define('UIT_T_IDENTIFIER', 'UIT_T_IDENTIFIER');
+define('UIT_T_EOF', 'UIT_T_EOF');
 
 # operators
-define('T_PLUS', 'T_PLUS');
-define('T_MINUS', 'T_MINUS');
-define('T_STAR', 'T_STAR');
-define('T_SLASH', 'T_SLASH');
-define('T_PERCENT', 'T_PERCENT');
-define('T_CARET', 'T_CARET');
+define('UIT_T_PLUS', 'UIT_T_PLUS');
+define('UIT_T_MINUS', 'UIT_T_MINUS');
+define('UIT_T_STAR', 'UIT_T_STAR');
+define('UIT_T_SLASH', 'UIT_T_SLASH');
+define('UIT_T_PERCENT', 'UIT_T_PERCENT');
+define('UIT_T_CARET', 'UIT_T_CARET');
+define('UIT_T_EQUAL', 'UIT_T_EQUAL');
 
-define('T_EQUAL', 'T_EQUAL');
+# logic operator
+define('UIT_T_EQ', 'UIT_T_EQ');
+define('UIT_T_NE', 'UIT_T_NE');
+define('UIT_T_LT', 'UIT_T_LT');
+define('UIT_T_LE', 'UIT_T_LE');
+define('UIT_T_GT', 'UIT_T_GT');
+define('UIT_T_GE', 'UIT_T_GE');
 
 # parenthesis
-define('T_LPARAN', 'T_LPARAN');
-define('T_RPARAN', 'T_RPARAN');
+define('UIT_T_LPARAN', 'UIT_T_LPARAN');
+define('UIT_T_RPARAN', 'UIT_T_RPARAN');
 
 # keywords
-define('UIT_KEYWORD', ['Num']);
+define('UIT_KEYWORDS', ['num', 'AND', 'OR', 'NOT']);
