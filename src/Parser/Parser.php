@@ -72,12 +72,12 @@ class Parser
         if ($this->currentToken->type === T_KEYWORD && $this->currentToken->value === 'Num') {
             $this->goNext();
             if ($this->currentToken->type !== T_IDENTIFIER) {
-                die("Error: Invalid Syntax. Expecting Identifier");
+                die("Error: Invalid Syntax. Expecting Identifier" . PHP_EOL);
             }
             $varName = $this->currentToken;
             $this->goNext();
             if ($this->currentToken->type !== T_EQUAL) {
-                die("Error: Invalid Syntax. Expecting '='");
+                die("Error: Invalid Syntax. Expecting '='" . PHP_EOL);
             }
             $this->goNext();
             $expression = $this->expression();

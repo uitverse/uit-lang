@@ -48,7 +48,7 @@ class Lexer
     {
         $tokens = [];
         while ($this->currentCharacter !== "\0") {
-            if ($this->currentCharacter === ' ' || $this->currentCharacter === "\t") {
+            if ($this->currentCharacter === ' ' || $this->currentCharacter === "\t" || $this->currentCharacter === "\n") {
                 $this->goNext();
             } elseif (str_contains(DIGIT_STRING, $this->currentCharacter)) {
                 $tokens[] = $this->makeNumber();

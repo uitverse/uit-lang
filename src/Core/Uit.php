@@ -36,7 +36,12 @@ class Uit
             if ($option == '-h' || $option == '--help' || $option == '-help') $this->showHelp();
             if ($option == '-v' || $option == '--version' || $option == '-version') $this->version();
             $this->runFile($option);
-        } elseif ($argsCount > 1) {
+        } elseif ($argsCount == 2) {
+            [$option, $code] = $args;
+            if ($option == '-e' || $option == '--eval' || $option == '-eval') {
+                $this->runFromString($code);
+            }
+        } elseif ($argsCount > 2) {
             // if malformed argument
             $this->showHelp(1);
         } else {
@@ -61,6 +66,18 @@ class Uit
     }
 
     /**
+     * Run from string such as -e argument, stdin
+     * @param string $code
+     */
+    private function runFromString(string $code): void
+    {
+        if ($code === '-') {
+            $code = file_get_contents("php://stdin");
+        }
+        if(trim($code) !== '') $this->runCode($code, new Memory());
+    }
+
+    /**
      * Run file if argument ( path to file ) exists.
      * @param string $path path to script file to run ( interpret )
      */
@@ -77,6 +94,7 @@ class Uit
     /**
      * Interpret code string
      * @param string $code
+     * @param Memory $memory
      */
     private function runCode(string $code, Memory $memory): void
     {
@@ -105,6 +123,9 @@ class Uit
         exit($exitCode);
     }
 
+    /**
+     * Show version info of interpreter
+     */
     #[NoReturn]
     private function version(): void
     {

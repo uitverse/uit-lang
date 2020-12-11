@@ -60,8 +60,8 @@ class NumberType implements DataTypeInterface
     #[NoReturn]
     public function divide(DataTypeInterface $next): NumberType
     {
-        if (floatval($next->value) === 0)
-            die("Invalid Operation. Divided By Zero");
+        if (intval($next->value) === 0)
+            die("Invalid Operation. Divided By Zero" . PHP_EOL);
         $result = floatval($this->value) / floatval($next->value);
         if (floor($result) === $result) $result = floor($result);
         return new NumberType(strval($result));
@@ -75,8 +75,8 @@ class NumberType implements DataTypeInterface
     #[NoReturn]
     public function modulo(DataTypeInterface $next): NumberType
     {
-        if (floatval($next->value) === 0)
-            die("Invalid Operation. Divided By Zero");
+        if (intval($next->value) === 0)
+            die("Invalid Operation. Divided By Zero" . PHP_EOL);
         $result = floatval($this->value) % floatval($next->value);
         if (floor($result) === $result) $result = floor($result);
         return new NumberType(strval($result));
