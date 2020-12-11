@@ -92,7 +92,7 @@ class Uit
             $this->cliMate->to('error')->red("Oops! No such file, '$path'");
             exit(1);
         }
-        $this->runCode(file_get_contents($absolutePath), new Memory());
+        $this->runFromString(file_get_contents($absolutePath));
     }
 
     /**

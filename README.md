@@ -16,7 +16,7 @@ php uit.php # to run REPL
 
 ## EXAMPLES
 
-လောလောဆယ် development အဆင့်မှာပဲရှိသေးတယ်ဆိုတော့ အများကြီး မရသေးဘူး။ ဂဏန်း ပေါင်း၊ နုတ်၊ မြောက်၊ စား တော့ ရပြီဗျ။
+လောလောဆယ် development အဆင့်မှာပဲရှိသေးတယ်ဆိုတော့ အများကြီး မရသေးဘူး။ ဂဏန်း ပေါင်း၊ နုတ်၊ မြောက်၊ စား ရမယ်။ number variable တော့ ရပြီဗျ။
 
 file လေး တစ် file ရေးကြည့်ပေါ့။ အောက်က အတိုင်းပေါ့ ဥပမာ - `hello.uit` ဆိုပြီး save လိုက်မယ်။
 
@@ -40,7 +40,18 @@ php uit.php
 
 ## NOTES
 
-အခု number calculation မှာဆိုရင် `+`, `-`, `*`, `/`, `%`,`^` operators တွေသုံးလို့ရပါတယ်။
+number calculation မှာဆိုရင် `+`, `-`, `*`, `/`, `%`,`^` operators တွေသုံးလို့ရပါတယ်။
+
+```text
+10 / 2 + 4 % ( 2 + 2 ) ^ 2
+```
+
+variable assignment မှာဆို Number Type ရမယ်။
+
+```text
+Num foo = 3
+foo + 3
+```
 
 ## FAQ
 
