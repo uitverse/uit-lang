@@ -221,22 +221,25 @@ class Interpreter
     /**
      * Get value from variable name
      * @param VariableAccessNode $node
-     * @return OperationNodeInterface|DataTypeInterface
+     * @return DataTypeInterface
      */
-    private function visitVariableAccessNode(VariableAccessNode $node): DataTypeInterface|OperationNodeInterface
+    private function visitVariableAccessNode(VariableAccessNode $node): DataTypeInterface
     {
         return $this->memory->symbols->get($node->variable->value);
     }
 
     /**
      * Assign value to variable name
-     * @param VariableDeclareNode $node
+     * @param VariableAssignNode $node
      * @return NullType
      */
     private function visitVariableAssignNode(VariableAssignNode $node): NullType
     {
         if (!$this->memory->symbols->isExist($node->variable->value)) die("Error: Syntax Error. Variable name '{$node->variable->value}' not exists" . PHP_EOL);
-        $this->memory->symbols->set($node->variable->value, $this->visit($node->value));
+        $orig = $this->memory->symbols->get($node->variable->value);
+        $next = $this->visit($node->value);
+        if ($orig::class !== $next::class) die("Error: Cannot Change Variable Data Type" . PHP_EOL);
+        $this->memory->symbols->set($node->variable->value, $next);
         return new NullType();
     }
 
@@ -248,7 +251,7 @@ class Interpreter
     public function visitVariableDeclareNode(VariableDeclareNode $node): NullType
     {
         if ($this->memory->symbols->isExist($node->variable->value)) die("Error: Syntax Error. Variable name '{$node->variable->value}' already exists" . PHP_EOL);
-        $this->memory->symbols->set($node->variable->value, $this->visit($node->value));
+        $this->memory->symbols->declare($node->variable->value, $this->visit($node->value));
         return new NullType();
     }
 
@@ -286,7 +289,7 @@ class Interpreter
 
         if ($stepNode >= 0) {
             while ($counter < $endNode) {
-                $this->memory->symbols->set($node->loopControl->value, new NumberType(strval($counter)));
+                $this->memory->symbols->declare($node->loopControl->value, new NumberType(strval($counter)));
                 $counter += $stepNode;
                 $this->visit($node->expression);
             }
@@ -328,7 +331,7 @@ class Interpreter
         foreach ($node->arguments as $args) {
             $argsName[] = $args->value;
         }
-        $this->memory->symbols->set($funcName, new FunctionType($funcName, $expression, $argsName));
+        $this->memory->symbols->declare($funcName, new FunctionType($funcName, $expression, $argsName));
         return new NullType();
     }
 

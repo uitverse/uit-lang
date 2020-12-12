@@ -12,7 +12,8 @@ class Memory
      * @param SymbolTable $symbols
      * @param ?Memory $parent
      */
-    #[Pure] public function __construct(public SymbolTable $symbols, public ?Memory $parent = null)
+    #[Pure] public function __construct(public SymbolTable $symbols, ?Memory $parent = null)
     {
+        if ($parent) $this->symbols->parent = $parent->symbols;
     }
 }

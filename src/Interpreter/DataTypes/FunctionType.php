@@ -36,7 +36,7 @@ class FunctionType implements DataTypeInterface
             // So, convert OperationNode to DataType with temporary Interpreter.
             $interpreter = new Interpreter($memory);
             $localValue = $interpreter->interpret($arguments[$i]);
-            $tempMem->symbols->set($localName, $localValue);
+            $tempMem->symbols->declare($localName, $localValue);
         }
         $interpreter = new Interpreter($tempMem);
         return $interpreter->interpret($this->expression);

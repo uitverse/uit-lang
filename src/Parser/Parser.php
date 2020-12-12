@@ -89,7 +89,7 @@ class Parser
             $this->goNext();
             $expression = $this->expression();
             return new VariableDeclareNode($varName, $expression);
-        } elseif($this->currentToken->type === UIT_T_KEYWORD && $this->currentToken->value === 'set') {
+        } elseif ($this->currentToken->type === UIT_T_KEYWORD && $this->currentToken->value === 'set') {
             $this->goNext();
             if ($this->currentToken->type !== UIT_T_IDENTIFIER) {
                 die("Error: Invalid Syntax. Expecting Identifier" . PHP_EOL);
@@ -324,16 +324,7 @@ class Parser
         if ($this->currentToken->type !== UIT_T_LPARAN) die("Error: Syntax Error. Expecting '(' " . PHP_EOL);
         $this->goNext();
         $argumentTokens = [];
-        if ($this->currentToken->type !== UIT_T_KEYWORD && $this->currentToken->value !== 'Num') {
-            die("Error: Syntax Error. Expecting Data type for argument." . PHP_EOL);
-        }
-        $this->goNext();
-        if ($this->currentToken->type !== UIT_T_IDENTIFIER) die("Error: Syntax Error. Expecting argument name IDENTIFIER." . PHP_EOL);
-        $argumentTokens[] = $this->currentToken;
-        $this->goNext();
-
-        while ($this->currentToken->type === UIT_T_COMMA) {
-            $this->goNext();
+        if ($this->currentToken->type !== UIT_T_RPARAN) {
             if ($this->currentToken->type !== UIT_T_KEYWORD && $this->currentToken->value !== 'Num') {
                 die("Error: Syntax Error. Expecting Data type for argument." . PHP_EOL);
             }
@@ -341,8 +332,18 @@ class Parser
             if ($this->currentToken->type !== UIT_T_IDENTIFIER) die("Error: Syntax Error. Expecting argument name IDENTIFIER." . PHP_EOL);
             $argumentTokens[] = $this->currentToken;
             $this->goNext();
-        }
 
+            while ($this->currentToken->type === UIT_T_COMMA) {
+                $this->goNext();
+                if ($this->currentToken->type !== UIT_T_KEYWORD && $this->currentToken->value !== 'Num') {
+                    die("Error: Syntax Error. Expecting Data type for argument." . PHP_EOL);
+                }
+                $this->goNext();
+                if ($this->currentToken->type !== UIT_T_IDENTIFIER) die("Error: Syntax Error. Expecting argument name IDENTIFIER." . PHP_EOL);
+                $argumentTokens[] = $this->currentToken;
+                $this->goNext();
+            }
+        }
         if ($this->currentToken->type !== UIT_T_RPARAN) die("Error: Syntax Error. Expecting ',' or ')' " . PHP_EOL);
         $this->goNext();
         $expr = $this->expression();

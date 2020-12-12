@@ -78,13 +78,13 @@ logical operator (AND, OR) တွေရမယ်။
 
 ```text
 4 == 4
-5 == 1 OR 4 == 4
+5 == 1 or 4 == 4
 ```
 
 loop မှာဆို WHILE နဲ့ FOR ရမယ်။
 
 ```text
-FOR i = 1 TO 6 step 3 DO Num result = i ENDFOR
+for i = 1 to 6 step 3 DO Num result = i endfor
 ```
 
 function ရမယ်။ return ကတော့ လုပ်နေတုန်းပါပဲ။

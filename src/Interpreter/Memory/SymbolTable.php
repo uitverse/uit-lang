@@ -17,9 +17,9 @@ class SymbolTable
     // todo need to get datatype of parent
     /**
      * Parent of symbol tables
-     * @var mixed|null
+     * @var ?SymbolTable
      */
-    private mixed $parent = null;
+    public SymbolTable|null $parent = null;
 
     /**
      * Get variable
@@ -35,7 +35,7 @@ class SymbolTable
                 return $this->parent->get($name);
             }
         }
-        die("Error: variable not defined" . PHP_EOL);
+        die("Error: variable $name not defined" . PHP_EOL);
     }
 
     /**
@@ -44,6 +44,20 @@ class SymbolTable
      * @param DataTypeInterface $value
      */
     public function set(string $name, DataTypeInterface $value)
+    {
+        if (isset($this->symbols[$name])) {
+            $this->symbols[$name] = $value;
+        } else {
+            $this->parent?->set($name, $value);
+        }
+    }
+
+    /**
+     * Declare variable
+     * @param string $name
+     * @param DataTypeInterface $value
+     */
+    public function declare(string $name, DataTypeInterface $value)
     {
         $this->symbols[$name] = $value;
     }
@@ -64,6 +78,6 @@ class SymbolTable
      */
     public function isExist(string $name): bool
     {
-        return isset($this->symbols[$name]);
+        return isset($this->symbols[$name]) || $this->parent?->isExist($name);
     }
 }

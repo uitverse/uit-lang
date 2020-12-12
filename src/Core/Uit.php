@@ -107,6 +107,7 @@ class Uit
         //echo implode(" ", $tokens) . PHP_EOL;
         $ast = (new Parser($tokens))->parse();
         //echo $ast . PHP_EOL;
+        //print_r($ast);
         $dataType = (new Interpreter($memory))->interpret($ast);
         if ($dataType->value !== "\0") echo $dataType->value . PHP_EOL;
     }
