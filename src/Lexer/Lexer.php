@@ -81,6 +81,9 @@ class Lexer
             } elseif ($this->currentCharacter === ',') {
                 $tokens[] = new Token(UIT_T_COMMA);
                 $this->goNext();
+            }  elseif ($this->currentCharacter === "\n" || $this->currentCharacter === ';') {
+                $tokens[] = new Token(UIT_T_NEWLINE);
+                $this->goNext();
             } elseif ($this->currentCharacter === '"') {
                 $tokens[] = $this->makeString();
             } elseif ($this->currentCharacter === '=') {

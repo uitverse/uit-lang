@@ -1,3 +1,0 @@
-String foo = "HELLO"
-
-if foo == "HELLO" then output "it works!" endif

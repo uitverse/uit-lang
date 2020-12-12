@@ -17,6 +17,7 @@ define('UIT_T_PERCENT', 'UIT_T_PERCENT');
 define('UIT_T_CARET', 'UIT_T_CARET');
 define('UIT_T_EQUAL', 'UIT_T_EQUAL');
 define('UIT_T_COMMA', 'UIT_T_COMMA');
+define('UIT_T_NEWLINE', 'UII_T_NEWLINE');
 
 # logic operator
 define('UIT_T_EQ', 'UIT_T_EQ');
@@ -52,5 +53,7 @@ define('UIT_KEYWORDS', [
     'endwhile',
     'func',
     'output',
-    'input'
+    'input',
+    'start',
+    'stop',
 ]);

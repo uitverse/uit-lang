@@ -1,3 +1,1 @@
-func demo(Num a) a + 4 stop
-
-demo(22)
+start func demo(Num a) a + 4 stop stop
