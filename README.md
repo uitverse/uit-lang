@@ -1,7 +1,7 @@
 # UIT
 
 [![MIT license](https://img.shields.io/badge/License-MIT-green.svg)](https://lbesson.mit-license.org/)
-[![Line Count](https://img.shields.io/static/v1.svg?label=Line+of+PHP+code&message=1728&color=blue)](https://shields.io/)
+[![Line Count](https://img.shields.io/static/v1.svg?label=Line+of+PHP+code&message=1781&color=blue)](https://shields.io/)
 
 UIT Interpreter for Techie - a simple interpreter written in PHP for PseudoCode like Programming Language.
 

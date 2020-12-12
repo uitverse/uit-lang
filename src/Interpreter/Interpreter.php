@@ -20,6 +20,7 @@ use heinthanth\Uit\Parser\OperationNode\NumberNode;
 use heinthanth\Uit\Parser\OperationNode\OperationNodeInterface;
 use heinthanth\Uit\Parser\OperationNode\VariableAccessNode;
 use heinthanth\Uit\Parser\OperationNode\VariableAssignNode;
+use heinthanth\Uit\Parser\OperationNode\VariableDeclareNode;
 use heinthanth\Uit\Parser\OperationNode\WhileOperationNode;
 use JetBrains\PhpStorm\NoReturn;
 use JetBrains\PhpStorm\Pure;
@@ -57,6 +58,8 @@ class Interpreter
             return $this->visitBinOperationNode($node);
         } elseif ($node instanceof MonoOperationNode) {
             return $this->visitMonoOperationNode($node);
+        } elseif ($node instanceof VariableDeclareNode) {
+            return $this->visitVariableDeclareNode($node);
         } elseif ($node instanceof VariableAssignNode) {
             return $this->visitVariableAssignNode($node);
         } elseif ($node instanceof VariableAccessNode) {
@@ -227,11 +230,24 @@ class Interpreter
 
     /**
      * Assign value to variable name
-     * @param VariableAssignNode $node
+     * @param VariableDeclareNode $node
      * @return NullType
      */
     private function visitVariableAssignNode(VariableAssignNode $node): NullType
     {
+        if (!$this->memory->symbols->isExist($node->variable->value)) die("Error: Syntax Error. Variable name '{$node->variable->value}' not exists" . PHP_EOL);
+        $this->memory->symbols->set($node->variable->value, $this->visit($node->value));
+        return new NullType();
+    }
+
+    /**
+     * Declare Function
+     * @param VariableDeclareNode $node
+     * @return NullType
+     */
+    public function visitVariableDeclareNode(VariableDeclareNode $node): NullType
+    {
+        if ($this->memory->symbols->isExist($node->variable->value)) die("Error: Syntax Error. Variable name '{$node->variable->value}' already exists" . PHP_EOL);
         $this->memory->symbols->set($node->variable->value, $this->visit($node->value));
         return new NullType();
     }

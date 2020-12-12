@@ -2,24 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="aaa819aa-593a-41ec-b03c-66f16fedf525" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/samples/function.uit" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Interpreter/DataTypes/FunctionType.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Parser/OperationNode/FunctionCallNode.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Parser/OperationNode/FunctionDeclarationNode.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Parser/OperationNode/VariableDeclareNode.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/samples/condition.uit" beforeDir="false" afterPath="$PROJECT_DIR$/samples/condition.uit" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/samples/loop.uit" beforeDir="false" afterPath="$PROJECT_DIR$/samples/loop.uit" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Core/Uit.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Core/Uit.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Interpreter/DataTypes/BooleanType.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Interpreter/DataTypes/BooleanType.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Interpreter/Interpreter.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Interpreter/Interpreter.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Interpreter/Memory/Memory.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Interpreter/Memory/Memory.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Interpreter/Memory/SymbolTable.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Interpreter/Memory/SymbolTable.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Lexer/Lexer.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Lexer/Lexer.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Lexer/TokenDefinition.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Lexer/TokenDefinition.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Parser/OperationNode/ForOperationNode.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Parser/OperationNode/ForOperationNode.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Parser/OperationNode/IfOperationNode.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Parser/OperationNode/IfOperationNode.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Parser/OperationNode/WhileOperationNode.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Parser/OperationNode/WhileOperationNode.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Parser/Parser.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Parser/Parser.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -54,6 +42,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/Parser/OperationNode" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -64,6 +53,9 @@
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/Parser/OperationNode" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/Interpreter/Memory" />
       <recent name="$PROJECT_DIR$/src/Lexer" />
@@ -82,7 +74,7 @@
       <workItem from="1607655701922" duration="5720000" />
       <workItem from="1607664154903" duration="10126000" />
       <workItem from="1607683839157" duration="13167000" />
-      <workItem from="1607738085755" duration="4323000" />
+      <workItem from="1607738085755" duration="5212000" />
     </task>
     <servers />
   </component>

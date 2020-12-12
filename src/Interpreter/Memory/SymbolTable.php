@@ -52,8 +52,18 @@ class SymbolTable
      * Remove variable from symbol table
      * @param string $name
      */
-    public function remove(string $name)
+    public function remove(string $name): void
     {
         unset($this->symbols[$name]);
+    }
+
+    /**
+     * Check variable exists or not
+     * @param string $name
+     * @return bool
+     */
+    public function isExist(string $name): bool
+    {
+        return isset($this->symbols[$name]);
     }
 }

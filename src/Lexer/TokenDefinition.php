@@ -30,4 +30,4 @@ define('UIT_T_LPARAN', 'UIT_T_LPARAN');
 define('UIT_T_RPARAN', 'UIT_T_RPARAN');
 
 # keywords
-define('UIT_KEYWORDS', ['Num', 'and', 'or', 'not', 'if', 'then', 'elseif', 'else', 'endif', 'for', 'to', 'step', 'do', 'endfor', 'while', 'endwhile', 'func']);
+define('UIT_KEYWORDS', ['Num', 'set', 'and', 'or', 'not', 'if', 'then', 'elseif', 'else', 'endif', 'for', 'to', 'step', 'do', 'endfor', 'while', 'endwhile', 'func']);
