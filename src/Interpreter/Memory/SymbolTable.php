@@ -14,7 +14,7 @@ class SymbolTable
      */
     private array $symbols = [];
 
-    // TODO need to get datatype of parent
+    // todo need to get datatype of parent
     /**
      * Parent of symbol tables
      * @var mixed|null

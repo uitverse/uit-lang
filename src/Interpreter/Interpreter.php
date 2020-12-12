@@ -6,11 +6,14 @@ namespace heinthanth\Uit\Interpreter;
 
 use heinthanth\Uit\Interpreter\DataTypes\BooleanType;
 use heinthanth\Uit\Interpreter\DataTypes\DataTypeInterface;
+use heinthanth\Uit\Interpreter\DataTypes\FunctionType;
 use heinthanth\Uit\Interpreter\DataTypes\NullType;
 use heinthanth\Uit\Interpreter\DataTypes\NumberType;
 use heinthanth\Uit\Interpreter\Memory\Memory;
 use heinthanth\Uit\Parser\OperationNode\BinOperationNode;
 use heinthanth\Uit\Parser\OperationNode\ForOperationNode;
+use heinthanth\Uit\Parser\OperationNode\FunctionCallNode;
+use heinthanth\Uit\Parser\OperationNode\FunctionDeclarationNode;
 use heinthanth\Uit\Parser\OperationNode\IfOperationNode;
 use heinthanth\Uit\Parser\OperationNode\MonoOperationNode;
 use heinthanth\Uit\Parser\OperationNode\NumberNode;
@@ -64,6 +67,10 @@ class Interpreter
             return $this->visitForOperationNode($node);
         } elseif ($node instanceof WhileOperationNode) {
             return $this->visitWhileOperationNode($node);
+        } elseif ($node instanceof FunctionCallNode) {
+            return $this->visitFunctionCallNode($node);
+        } elseif ($node instanceof FunctionDeclarationNode) {
+            return $this->visitFunctionDeclarationNode($node);
         }
         die("Error: Invalid Operation" . PHP_EOL);
     }
@@ -126,28 +133,58 @@ class Interpreter
                 die("Error: cannot calculate exponent of non-numbers" . PHP_EOL);
             }
         } elseif ($node->operator->type === UIT_T_EQ) {
-            return $left->equal($right);
+            if (($left instanceof NumberType || $left instanceof NullType || $left instanceof BooleanType)
+                && ($right instanceof NumberType || $right instanceof NullType || $right instanceof BooleanType)) {
+                return $left->equal($right);
+            } else {
+                die("Error: Syntax error. Cannot use Logical Operator with Functions");
+            }
         } elseif ($node->operator->type === UIT_T_NE) {
-            return $left->notEqual($right);
+            if (($left instanceof NumberType || $left instanceof NullType || $left instanceof BooleanType)
+                && ($right instanceof NumberType || $right instanceof NullType || $right instanceof BooleanType)) {
+                return $left->notEqual($right);
+            } else {
+                die("Error: Syntax error. Cannot use Logical Operator with Functions");
+            }
         } elseif ($node->operator->type === UIT_T_LT) {
-            return $left->lessThan($right);
+            if (($left instanceof NumberType || $left instanceof NullType || $left instanceof BooleanType)
+                && ($right instanceof NumberType || $right instanceof NullType || $right instanceof BooleanType)) {
+                return $left->lessThan($right);
+            } else {
+                die("Error: Syntax error. Cannot use Logical Operator with Functions");
+            }
         } elseif ($node->operator->type === UIT_T_LE) {
-            return $left->lessThanEqual($right);
+            if (($left instanceof NumberType || $left instanceof NullType || $left instanceof BooleanType)
+                && ($right instanceof NumberType || $right instanceof NullType || $right instanceof BooleanType)) {
+                return $left->lessThanEqual($right);
+            } else {
+                die("Error: Syntax error. Cannot use Logical Operator with Functions");
+            }
         } elseif ($node->operator->type === UIT_T_GT) {
-            return $left->greaterThan($right);
+            if (($left instanceof NumberType || $left instanceof NullType || $left instanceof BooleanType)
+                && ($right instanceof NumberType || $right instanceof NullType || $right instanceof BooleanType)) {
+                return $left->greaterThan($right);
+            } else {
+                die("Error: Syntax error. Cannot use Logical Operator with Functions");
+            }
         } elseif ($node->operator->type === UIT_T_GE) {
-            return $left->greaterThanEqual($right);
-        } elseif ($node->operator->type === UIT_T_KEYWORD && $node->operator->value === "AND") {
+            if (($left instanceof NumberType || $left instanceof NullType || $left instanceof BooleanType)
+                && ($right instanceof NumberType || $right instanceof NullType || $right instanceof BooleanType)) {
+                return $left->greaterThanEqual($right);
+            } else {
+                die("Error: Syntax error. Cannot use Logical Operator with Functions");
+            }
+        } elseif ($node->operator->type === UIT_T_KEYWORD && $node->operator->value === "and") {
             if ($left instanceof BooleanType && $right instanceof BooleanType) {
                 return $left->and($right);
             } else {
-                die("Error: cannot use AND with non-boolean" . PHP_EOL);
+                die("Error: cannot use and with non-boolean" . PHP_EOL);
             }
-        } elseif ($node->operator->type === UIT_T_KEYWORD && $node->operator->value === "OR") {
+        } elseif ($node->operator->type === UIT_T_KEYWORD && $node->operator->value === "or") {
             if ($left instanceof BooleanType && $right instanceof BooleanType) {
                 return $left->or($right);
             } else {
-                die("Error: cannot use OR with non-boolean" . PHP_EOL);
+                die("Error: cannot use or with non-boolean" . PHP_EOL);
             }
         }
         die("Error: Something went wrong" . PHP_EOL);
@@ -168,11 +205,11 @@ class Interpreter
             } else {
                 die("Error: cannot negate non-number" . PHP_EOL);
             }
-        } elseif ($node->operator->type === UIT_T_KEYWORD && $node->operator->value === 'NOT') {
+        } elseif ($node->operator->type === UIT_T_KEYWORD && $node->operator->value === 'not') {
             if ($data instanceof BooleanType) {
                 $data = $data->not();
             } else {
-                die("Error: cannot use NOT with non-boolean" . PHP_EOL);
+                die("Error: cannot use not with non-boolean" . PHP_EOL);
             }
         }
         return $data;
@@ -181,9 +218,9 @@ class Interpreter
     /**
      * Get value from variable name
      * @param VariableAccessNode $node
-     * @return DataTypeInterface
+     * @return OperationNodeInterface|DataTypeInterface
      */
-    private function visitVariableAccessNode(VariableAccessNode $node): DataTypeInterface
+    private function visitVariableAccessNode(VariableAccessNode $node): DataTypeInterface|OperationNodeInterface
     {
         return $this->memory->symbols->get($node->variable->value);
     }
@@ -260,5 +297,38 @@ class Interpreter
             $this->visit($node->expression);
         }
         return new NullType();
+    }
+
+    /**
+     * Declare function and add to symbol table
+     * @param FunctionDeclarationNode $node
+     * @return DataTypeInterface
+     */
+    private function visitFunctionDeclarationNode(FunctionDeclarationNode $node): DataTypeInterface
+    {
+        $funcName = $node->functionName->value;
+        $expression = $node->expression;
+        $argsName = [];
+        foreach ($node->arguments as $args) {
+            $argsName[] = $args->value;
+        }
+        $this->memory->symbols->set($funcName, new FunctionType($funcName, $expression, $argsName));
+        return new NullType();
+    }
+
+    /**
+     * Call function
+     * @param FunctionCallNode $node
+     * @return DataTypeInterface
+     */
+    private function visitFunctionCallNode(FunctionCallNode $node): DataTypeInterface
+    {
+        $args = [];
+        $func = $this->visit($node->functionNode);
+        if (!$func instanceof FunctionType) die("Something went wrong [ Interpreter ]" . PHP_EOL);
+        foreach ($node->argumentNode as $argument) {
+            $args[] = $argument;
+        }
+        return $func->invoke($args, $this->memory);
     }
 }

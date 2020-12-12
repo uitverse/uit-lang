@@ -7,6 +7,8 @@ namespace heinthanth\Uit\Parser;
 use heinthanth\Uit\Lexer\Token;
 use heinthanth\Uit\Parser\OperationNode\BinOperationNode;
 use heinthanth\Uit\Parser\OperationNode\ForOperationNode;
+use heinthanth\Uit\Parser\OperationNode\FunctionCallNode;
+use heinthanth\Uit\Parser\OperationNode\FunctionDeclarationNode;
 use heinthanth\Uit\Parser\OperationNode\IfOperationNode;
 use heinthanth\Uit\Parser\OperationNode\MonoOperationNode;
 use heinthanth\Uit\Parser\OperationNode\NumberNode;
@@ -46,7 +48,7 @@ class Parser
     {
         $node = $this->expression();
         if ($this->currentToken->type !== UIT_T_EOF) {
-            //print_r($this->currentToken);
+            print_r($this->currentToken);
             // not reached end of token. Must be error exist.
             die("Error: Invalid Syntax [ PARSER ]" . PHP_EOL);
         }
@@ -89,8 +91,8 @@ class Parser
         }
 
         $leftNode = $this->comparison();
-        while (($this->currentToken->type === UIT_T_KEYWORD && $this->currentToken->value === "AND")
-            || ($this->currentToken->type === UIT_T_KEYWORD && $this->currentToken->value === "OR")) {
+        while (($this->currentToken->type === UIT_T_KEYWORD && $this->currentToken->value === "and")
+            || ($this->currentToken->type === UIT_T_KEYWORD && $this->currentToken->value === "or")) {
             $operator = $this->currentToken;
             $this->goNext();
             $rightNode = $this->comparison();
@@ -105,8 +107,8 @@ class Parser
      */
     private function comparison(): OperationNodeInterface
     {
-        // if start with NOT
-        if ($this->currentToken->type === UIT_T_KEYWORD && $this->currentToken->value === 'NOT') {
+        // if start with not
+        if ($this->currentToken->type === UIT_T_KEYWORD && $this->currentToken->value === 'not') {
             $operator = $this->currentToken;
             $this->goNext();
             $comparisonNode = $this->comparison();
@@ -180,7 +182,7 @@ class Parser
      */
     private function power(): OperationNodeInterface
     {
-        $leftNode = $this->atom();
+        $leftNode = $this->call();
         if ($this->currentToken->type === UIT_T_CARET) {
             $operator = $this->currentToken;
             $this->goNext();
@@ -191,38 +193,64 @@ class Parser
     }
 
     /**
+     * Call function
+     * @return OperationNodeInterface
+     */
+    private function call(): OperationNodeInterface
+    {
+        $atom = $this->atom();
+        if ($this->currentToken->type === UIT_T_LPARAN) {
+            $this->goNext();
+            $argumentNodes = [];
+            if ($this->currentToken->type === UIT_T_RPARAN) {
+                $this->goNext();
+            } else {
+                $argumentNodes[] = $this->expression();
+                while ($this->currentToken->type === UIT_T_COMMA) {
+                    $this->goNext();
+                    $argumentNodes[] = $this->expression();
+                }
+                if ($this->currentToken->type !== UIT_T_RPARAN) die("Error: Syntax Error. Expecting ',' or ')' " . PHP_EOL);
+                $this->goNext();
+            }
+            return new FunctionCallNode($atom, $argumentNodes);
+        }
+        return $atom;
+    }
+
+    /**
      * solve if statement
      * @return OperationNodeInterface
      */
     private function if(): OperationNodeInterface
     {
         $cases = [];
-        // TODO need to find datatype
+        // todo need to find datatype
         $elseExpr = null;
 
         $condition = $this->expression();
-        if ($this->currentToken->type !== UIT_T_KEYWORD && $this->currentToken->value !== 'THEN') {
-            die("Error: Syntax Error. Expecting 'THEN'" . PHP_EOL);
+        if ($this->currentToken->type !== UIT_T_KEYWORD && $this->currentToken->value !== 'then') {
+            die("Error: Syntax Error. Expecting 'then'" . PHP_EOL);
         }
         $this->goNext();
         $expression = $this->expression();
         $cases[] = [$condition, $expression];
-        while ($this->currentToken->type === UIT_T_KEYWORD && $this->currentToken->value === 'ELSEIF') {
+        while ($this->currentToken->type === UIT_T_KEYWORD && $this->currentToken->value === 'elseif') {
             $this->goNext();
             $condition = $this->expression();
-            if (!($this->currentToken->type === UIT_T_KEYWORD && $this->currentToken->value === 'THEN')) {
-                die("Error: Syntax Error. Expecting 'THEN'" . PHP_EOL);
+            if (!($this->currentToken->type === UIT_T_KEYWORD && $this->currentToken->value === 'then')) {
+                die("Error: Syntax Error. Expecting 'then'" . PHP_EOL);
             }
             $this->goNext();
             $expression = $this->expression();
             $cases[] = [$condition, $expression];
         }
-        if ($this->currentToken->type === UIT_T_KEYWORD && $this->currentToken->value === 'ELSE') {
+        if ($this->currentToken->type === UIT_T_KEYWORD && $this->currentToken->value === 'else') {
             $this->goNext();
             $elseExpr = $this->expression();
         }
-        if ($this->currentToken->type !== UIT_T_KEYWORD && $this->currentToken->value !== 'ENDIF') {
-            die("Error: Syntax Error. Expecting 'ENDIF'" . PHP_EOL);
+        if ($this->currentToken->type !== UIT_T_KEYWORD && $this->currentToken->value !== 'endif') {
+            die("Error: Syntax Error. Expecting 'endif'" . PHP_EOL);
         }
         $this->goNext();
         return new IfOperationNode($cases, $elseExpr);
@@ -235,10 +263,10 @@ class Parser
     private function while(): OperationNodeInterface
     {
         $condition = $this->expression();
-        if ($this->currentToken->type !== UIT_T_KEYWORD && $this->currentToken->value !== 'DO') die("Error: Syntax Error. Expecting 'DO'." . PHP_EOL);
+        if ($this->currentToken->type !== UIT_T_KEYWORD && $this->currentToken->value !== 'do') die("Error: Syntax Error. Expecting 'do'." . PHP_EOL);
         $this->goNext();
         $expression = $this->expression();
-        if ($this->currentToken->type !== UIT_T_KEYWORD && $this->currentToken->value !== 'ENDWHILE') die("Error: Syntax Error. Expecting 'ENDWHILE'." . PHP_EOL);
+        if ($this->currentToken->type !== UIT_T_KEYWORD && $this->currentToken->value !== 'endwhile') die("Error: Syntax Error. Expecting 'endwhile'." . PHP_EOL);
         $this->goNext();
         return new WhileOperationNode($condition, $expression);
     }
@@ -249,26 +277,64 @@ class Parser
      */
     private function for(): OperationNodeInterface
     {
-        if ($this->currentToken->type !== UIT_T_IDENTIFIER) die("Error: Syntax Error. Expecting Loop Control variable in FOR loop." . PHP_EOL);
+        if ($this->currentToken->type !== UIT_T_IDENTIFIER) die("Error: Syntax Error. Expecting Loop Control variable in For loop." . PHP_EOL);
         $loopControl = $this->currentToken;
         $this->goNext();
         if ($this->currentToken->type !== UIT_T_EQUAL) die("Error: Syntax Error. Expecting '=' " . PHP_EOL);
         $this->goNext();
         $startNode = $this->expression();
-        if ($this->currentToken->type !== UIT_T_KEYWORD && $this->currentToken->value !== 'TO') die("Error: Syntax Error. Expecting 'TO'." . PHP_EOL);
+        if ($this->currentToken->type !== UIT_T_KEYWORD && $this->currentToken->value !== 'to') die("Error: Syntax Error. Expecting 'to'." . PHP_EOL);
         $this->goNext();
         $endNode = $this->expression();
         $stepNode = new NumberNode(new Token(UIT_T_NUMBER, '1'));
-        if ($this->currentToken->type === UIT_T_KEYWORD && $this->currentToken->value === 'STEP') {
+        if ($this->currentToken->type === UIT_T_KEYWORD && $this->currentToken->value === 'step') {
             $this->goNext();
             $stepNode = $this->expression();
         }
-        if ($this->currentToken->type !== UIT_T_KEYWORD && $this->currentToken->value !== 'DO') die("Error: Syntax Error. Expecting 'DO'." . PHP_EOL);
+        if ($this->currentToken->type !== UIT_T_KEYWORD && $this->currentToken->value !== 'do') die("Error: Syntax Error. Expecting 'do'." . PHP_EOL);
         $this->goNext();
         $expression = $this->expression();
-        if ($this->currentToken->type !== UIT_T_KEYWORD && $this->currentToken->value !== 'ENDFOR') die("Error: Syntax Error. Expecting 'ENDFOR'." . PHP_EOL);
+        if ($this->currentToken->type !== UIT_T_KEYWORD && $this->currentToken->value !== 'endfor') die("Error: Syntax Error. Expecting 'endfor'." . PHP_EOL);
         $this->goNext();
         return new ForOperationNode($loopControl, $startNode, $endNode, $stepNode, $expression);
+    }
+
+    /**
+     * @return OperationNodeInterface
+     */
+    private function declareFunction(): OperationNodeInterface
+    {
+        if ($this->currentToken->type !== UIT_T_IDENTIFIER) die("Error: Syntax Error. Expecting function name IDENTIFIER." . PHP_EOL);
+        $functionName = $this->currentToken;
+        $this->goNext();
+        if ($this->currentToken->type !== UIT_T_LPARAN) die("Error: Syntax Error. Expecting '(' " . PHP_EOL);
+        $this->goNext();
+        $argumentTokens = [];
+        if ($this->currentToken->type !== UIT_T_KEYWORD && $this->currentToken->value !== 'Num') {
+            die("Error: Syntax Error. Expecting Data type for argument." . PHP_EOL);
+        }
+        $this->goNext();
+        if ($this->currentToken->type !== UIT_T_IDENTIFIER) die("Error: Syntax Error. Expecting argument name IDENTIFIER." . PHP_EOL);
+        $argumentTokens[] = $this->currentToken;
+        $this->goNext();
+
+        while ($this->currentToken->type === UIT_T_COMMA) {
+            $this->goNext();
+            if ($this->currentToken->type !== UIT_T_KEYWORD && $this->currentToken->value !== 'Num') {
+                die("Error: Syntax Error. Expecting Data type for argument." . PHP_EOL);
+            }
+            $this->goNext();
+            if ($this->currentToken->type !== UIT_T_IDENTIFIER) die("Error: Syntax Error. Expecting argument name IDENTIFIER." . PHP_EOL);
+            $argumentTokens[] = $this->currentToken;
+            $this->goNext();
+        }
+
+        if ($this->currentToken->type !== UIT_T_RPARAN) die("Error: Syntax Error. Expecting ',' or ')' " . PHP_EOL);
+        $this->goNext();
+        $expr = $this->expression();
+        if ($this->currentToken->type !== UIT_T_KEYWORD && $this->currentToken->value !== 'stop') die("Error: Syntax Error. Expecting 'stop'." . PHP_EOL);
+        $this->goNext();
+        return new FunctionDeclarationNode($functionName, $argumentTokens, $expr);
     }
 
     /**
@@ -293,15 +359,18 @@ class Parser
             }
             // something went wrong here. invalid syntax missing ')'
             die("Error: Invalid Syntax. Expecting ')'" . PHP_EOL);
-        } elseif ($token->type === UIT_T_KEYWORD && $token->value === 'IF') {
+        } elseif ($token->type === UIT_T_KEYWORD && $token->value === 'if') {
             $this->goNext();
             return $this->if();
-        } elseif ($token->type === UIT_T_KEYWORD && $token->value === 'FOR') {
+        } elseif ($token->type === UIT_T_KEYWORD && $token->value === 'for') {
             $this->goNext();
             return $this->for();
-        } elseif ($token->type === UIT_T_KEYWORD && $token->value === 'WHILE') {
+        } elseif ($token->type === UIT_T_KEYWORD && $token->value === 'while') {
             $this->goNext();
             return $this->while();
+        } elseif ($token->type === UIT_T_KEYWORD && $token->value === 'func') {
+            $this->goNext();
+            return $this->declareFunction();
         }
         // something went wrong here. invalid syntax
         die("Error: Invalid Syntax. Expecting Number, Operator or '('" . PHP_EOL);

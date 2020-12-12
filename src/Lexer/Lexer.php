@@ -78,6 +78,9 @@ class Lexer
             } elseif ($this->currentCharacter === ')') {
                 $tokens[] = new Token(UIT_T_RPARAN);
                 $this->goNext();
+            } elseif ($this->currentCharacter === ',') {
+                $tokens[] = new Token(UIT_T_COMMA);
+                $this->goNext();
             } elseif ($this->currentCharacter === '=') {
                 $this->goNext();
                 if ($this->currentCharacter === '=') {

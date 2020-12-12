@@ -15,6 +15,7 @@ define('UIT_T_SLASH', 'UIT_T_SLASH');
 define('UIT_T_PERCENT', 'UIT_T_PERCENT');
 define('UIT_T_CARET', 'UIT_T_CARET');
 define('UIT_T_EQUAL', 'UIT_T_EQUAL');
+define('UIT_T_COMMA', 'UIT_T_COMMA');
 
 # logic operator
 define('UIT_T_EQ', 'UIT_T_EQ');
@@ -29,4 +30,4 @@ define('UIT_T_LPARAN', 'UIT_T_LPARAN');
 define('UIT_T_RPARAN', 'UIT_T_RPARAN');
 
 # keywords
-define('UIT_KEYWORDS', ['Num', 'AND', 'OR', 'NOT', 'IF', 'THEN', 'ELSEIF', 'ELSE', 'ENDIF', 'FOR', 'TO', 'STEP', 'DO', 'ENDFOR', 'WHILE', 'ENDWHILE']);
+define('UIT_KEYWORDS', ['Num', 'and', 'or', 'not', 'if', 'then', 'elseif', 'else', 'endif', 'for', 'to', 'step', 'do', 'endfor', 'while', 'endwhile', 'func']);

@@ -4,6 +4,7 @@ namespace heinthanth\Uit\Core;
 
 use heinthanth\Uit\Interpreter\Interpreter;
 use heinthanth\Uit\Interpreter\Memory\Memory;
+use heinthanth\Uit\Interpreter\Memory\SymbolTable;
 use heinthanth\Uit\Lexer\Lexer;
 use heinthanth\Uit\Parser\Parser;
 use JetBrains\PhpStorm\NoReturn;
@@ -57,7 +58,7 @@ class Uit
     #[NoReturn]
     private function runREPL(): void
     {
-        $memory = new Memory();
+        $memory = new Memory(new SymbolTable());
         while (true) {
             $input = $this->cliMate->input('uit > ')->prompt();
             if ($input === 'exit') exit(0);
@@ -74,7 +75,7 @@ class Uit
         if ($code === '-') {
             $code = file_get_contents("php://stdin");
         }
-        $memory = new Memory();
+        $memory = new Memory(new SymbolTable());
         $lines = explode("\n", $code);
         foreach ($lines as $line) {
             if (trim($line) !== '') $this->runCode($line, $memory);

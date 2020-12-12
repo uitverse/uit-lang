@@ -20,9 +20,10 @@ class BooleanType implements DataTypeInterface
     /**
      * Revert boolean
      */
-    public function not(): void
+    #[Pure] public function not(): BooleanType
     {
-        $this->value = $this->value === 'true' ? 'false' : 'true';
+        $result = $this->value === 'true' ? 'false' : 'true';
+        return new BooleanType($result ? 'true' : 'false');
     }
 
     /**
@@ -92,7 +93,7 @@ class BooleanType implements DataTypeInterface
     }
 
     /**
-     * AND operator
+     * and operator
      * @param DataTypeInterface $next
      * @return BooleanType
      */
@@ -103,7 +104,7 @@ class BooleanType implements DataTypeInterface
     }
 
     /**
-     * OR operator
+     * or operator
      * @param DataTypeInterface $next
      * @return BooleanType
      */

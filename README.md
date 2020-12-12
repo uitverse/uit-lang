@@ -1,7 +1,7 @@
 # UIT
 
 [![MIT license](https://img.shields.io/badge/License-MIT-green.svg)](https://lbesson.mit-license.org/)
-[![Line Count](https://img.shields.io/static/v1.svg?label=Line+of+PHP+code&message=1515&color=blue)](https://shields.io/)
+[![Line Count](https://img.shields.io/static/v1.svg?label=Line+of+PHP+code&message=1728&color=blue)](https://shields.io/)
 
 UIT Interpreter for Techie - a simple interpreter written in PHP for PseudoCode like Programming Language.
 
@@ -27,7 +27,7 @@ php uit.php # to run REPL
 - [x] Logical Operator ( `AND`, `OR`, `==`, `<>`, `<`, `<=`, `>`, `>=` )
 - [x] Condition ( `IF` / `ELSEIF` / `ELSE` )
 - [x] Loop ( `FOR`, `WHILE` )
-- [ ] Function
+- [x] Function ( without RETURN )
 - [ ] String Type
 - [ ] Array Type
 - [ ] Built-in Functions
@@ -87,6 +87,13 @@ loop မှာဆို WHILE နဲ့ FOR ရမယ်။
 FOR i = 1 TO 6 step 3 DO Num result = i ENDFOR
 ```
 
+function ရမယ်။ return ကတော့ လုပ်နေတုန်းပါပဲ။
+
+```text
+func demo(Num a, Num b) a + b stop
+demo(3, 5)
+```
+
 ## FAQ
 
 ### WHY I MADE THIS
@@ -96,7 +103,8 @@ FOR i = 1 TO 6 step 3 DO Num result = i ENDFOR
 ကျောင်းမှာ pseudo-code သင်တဲ့အခါ ကျွန်တော်တော့ programming နဲ့ ရင်းနှီးတဲ့အတွက် နားလည်တယ်ဗျ။ သူတို့ကျတော့ မရင်းနှီးတော့
 မမြင်သာသလိုဖြစ်နေရော။ အဲ့အချိန်ကတည်းက pseudo-code ကိုသာ programming language တစ်ခုလို run လို့ရမယ်ဆိုရင်
 အဆင်ပြေလိမ့်မယ်ဆိုပြီး တွေးမိတယ်။\
-အဲ့ကတည်းက interpreter ရေးဖို့ကြိုးစားခဲ့တာ အခုထိပဲဆိုပါစို့။
+အဲ့ကတည်းက interpreter ရေးဖို့ကြိုးစားခဲ့တာ အခုထိပဲဆိုပါစို့။\
+တကယ်တော့ pseudocode နဲ့ python သိပ်မကွာတော့ python သုံးလည်း ရတာပဲကိုလို့ ပြောကောင်းပြောလိမ့်မယ်။ ဒါပေမယ့် ဒီ interpreter က ကျွန့်တော်ရဲ့ အပျော် project ပါ။ ကျွန်တော် အားကျရတဲ့ ဆရာ သက်ခိုင် လို VM တစ်ခုထိ မရေးနိုင်သေးပေမယ့် ဒီ interpreter project ကပဲ အများကြီးလေ့လာဖြစ်စေခဲ့ပါတယ်။
 
 ### WHY NAMED 'UIT'
 
@@ -107,7 +115,7 @@ FOR i = 1 TO 6 step 3 DO Num result = i ENDFOR
 
 ဟဟ၊ ဘာလို့ တခြား language မသုံးလဲဆိုတော့ ကျွန်တော်က PHP fan ဗျ။ တခြား language တွေထက်စာရင် ကျွန်တော်အကျွမ်းကျင်ဆုံးက PHP
 ပဲ။ ပြီးတော့ လူတစ်ချို့က PHP ကနှိမ်ကြတယ်ဗျ။ PHP လည်း ကောင်းပါသေးတယ်လို့ သက်သေပြချင်တာလည်း ပါတာပေါ့။\
-တခြား language ( C, C++ ) တို့နဲ့ ပြန်ရေးဖို့တော့ ကြိုးစားနေပါတယ်။ skill တော့လိုသေးတာပေါ့။
+တခြား language ( C, C++ ) တို့နဲ့ ပြန်ရေးဖို့တော့ ကြိုးစားနေပါတယ်။ skill တော့လိုသေးတာပေါ့။ ပြီးတော့ ကျွန်တော်ရေးထားတဲ့ပုံစံအရ interface အတုတွေ သုံးထားတော့ dynamic language ဖြစ်ဖို့လိုနေတယ်ဗျ။
 
 ## LICENSE
 

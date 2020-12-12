@@ -7,23 +7,12 @@ use JetBrains\PhpStorm\Pure;
 class Memory
 {
     /**
-     * List of variable
-     * @var SymbolTable
-     */
-    public SymbolTable $symbols;
-
-    /**
-     * parent of variable. For e.g. Local variable in functions
-     * @var string
-     */
-    public string $parent = "\0";
-
-    /**
      * Initialize Symbol Table
      * Memory constructor.
+     * @param SymbolTable $symbols
+     * @param ?Memory $parent
      */
-    #[Pure] public function __construct()
+    #[Pure] public function __construct(public SymbolTable $symbols, public ?Memory $parent = null)
     {
-        $this->symbols = new SymbolTable();
     }
 }
