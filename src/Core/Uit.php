@@ -58,6 +58,7 @@ class Uit
     #[NoReturn]
     private function runREPL(): void
     {
+        $_ENV['UIT_IN_REPL'] = true;
         $memory = new Memory(new SymbolTable());
         while (true) {
             $input = $this->cliMate->input('uit > ')->prompt();
@@ -108,8 +109,7 @@ class Uit
         $ast = (new Parser($tokens))->parse();
         //echo $ast . PHP_EOL;
         //print_r($ast);
-        $dataType = (new Interpreter($memory))->interpret($ast);
-        if ($dataType->value !== "\0") echo $dataType->value . PHP_EOL;
+        (new Interpreter($memory))->interpret($ast);
     }
 
     /**

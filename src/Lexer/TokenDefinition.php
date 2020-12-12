@@ -2,6 +2,7 @@
 
 # data types
 define('UIT_T_NUMBER', 'UIT_T_NUMBER');
+define('UIT_T_STRING', 'UIT_T_STRING');
 
 define('UIT_T_KEYWORD', 'UIT_T_KEYWORD');
 define('UIT_T_IDENTIFIER', 'UIT_T_IDENTIFIER');
@@ -30,4 +31,26 @@ define('UIT_T_LPARAN', 'UIT_T_LPARAN');
 define('UIT_T_RPARAN', 'UIT_T_RPARAN');
 
 # keywords
-define('UIT_KEYWORDS', ['Num', 'set', 'and', 'or', 'not', 'if', 'then', 'elseif', 'else', 'endif', 'for', 'to', 'step', 'do', 'endfor', 'while', 'endwhile', 'func']);
+define('UIT_KEYWORDS', [
+    'Num',
+    'String',
+    'set',
+    'and',
+    'or',
+    'not',
+    'if',
+    'then',
+    'elseif',
+    'else',
+    'endif',
+    'for',
+    'to',
+    'step',
+    'do',
+    'endfor',
+    'while',
+    'endwhile',
+    'func',
+    'output',
+    'input'
+]);

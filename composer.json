@@ -11,7 +11,8 @@
   ],
   "require": {
     "php": "^8.0",
-    "league/climate": "^3.6"
+    "league/climate": "^3.6",
+    "ext-readline": "*"
   },
   "autoload": {
     "psr-4": {

@@ -1,7 +1,7 @@
 # UIT
 
 [![MIT license](https://img.shields.io/badge/License-MIT-green.svg)](https://lbesson.mit-license.org/)
-[![Line Count](https://img.shields.io/static/v1.svg?label=Line+of+PHP+code&message=1781&color=blue)](https://shields.io/)
+[![Line Count](https://img.shields.io/static/v1.svg?label=Line+of+PHP+code&message=2043&color=blue)](https://shields.io/)
 
 UIT Interpreter for Techie - a simple interpreter written in PHP for PseudoCode like Programming Language.
 
@@ -28,9 +28,9 @@ php uit.php # to run REPL
 - [x] Condition ( `IF` / `ELSEIF` / `ELSE` )
 - [x] Loop ( `FOR`, `WHILE` )
 - [x] Function ( without RETURN )
-- [ ] String Type
+- [x] String Type
 - [ ] Array Type
-- [ ] Built-in Functions
+- [x] Built-in Functions
 - [ ] Multiple Line Statements
 - [ ] Comments
 

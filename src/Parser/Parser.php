@@ -4,15 +4,19 @@
 namespace heinthanth\Uit\Parser;
 
 
+use heinthanth\Uit\Interpreter\DataTypes\StringType;
 use heinthanth\Uit\Lexer\Token;
 use heinthanth\Uit\Parser\OperationNode\BinOperationNode;
 use heinthanth\Uit\Parser\OperationNode\ForOperationNode;
 use heinthanth\Uit\Parser\OperationNode\FunctionCallNode;
 use heinthanth\Uit\Parser\OperationNode\FunctionDeclarationNode;
 use heinthanth\Uit\Parser\OperationNode\IfOperationNode;
+use heinthanth\Uit\Parser\OperationNode\InputOperationNode;
 use heinthanth\Uit\Parser\OperationNode\MonoOperationNode;
 use heinthanth\Uit\Parser\OperationNode\NumberNode;
 use heinthanth\Uit\Parser\OperationNode\OperationNodeInterface;
+use heinthanth\Uit\Parser\OperationNode\OutputOperationNode;
+use heinthanth\Uit\Parser\OperationNode\StringNode;
 use heinthanth\Uit\Parser\OperationNode\VariableAccessNode;
 use heinthanth\Uit\Parser\OperationNode\VariableAssignNode;
 use heinthanth\Uit\Parser\OperationNode\VariableDeclareNode;
@@ -83,12 +87,27 @@ class Parser
             }
             $varName = $this->currentToken;
             $this->goNext();
-            if ($this->currentToken->type !== UIT_T_EQUAL) {
-                die("Error: Invalid Syntax. Expecting '='" . PHP_EOL);
+            if ($this->currentToken->type == UIT_T_EQUAL) {
+                $this->goNext();
+                $expression = $this->expression();
+                return new VariableDeclareNode($varName, $expression);
+            } else {
+                return new VariableDeclareNode($varName, new NumberNode(new Token(UIT_T_NUMBER, '0')));
             }
+        } elseif ($this->currentToken->type === UIT_T_KEYWORD && $this->currentToken->value === 'String') {
             $this->goNext();
-            $expression = $this->expression();
-            return new VariableDeclareNode($varName, $expression);
+            if ($this->currentToken->type !== UIT_T_IDENTIFIER) {
+                die("Error: Invalid Syntax. Expecting Identifier" . PHP_EOL);
+            }
+            $varName = $this->currentToken;
+            $this->goNext();
+            if ($this->currentToken->type == UIT_T_EQUAL) {
+                $this->goNext();
+                $expression = $this->expression();
+                return new VariableDeclareNode($varName, $expression);
+            } else {
+                return new VariableDeclareNode($varName, new StringNode(new Token(UIT_T_NUMBER, '')));
+            }
         } elseif ($this->currentToken->type === UIT_T_KEYWORD && $this->currentToken->value === 'set') {
             $this->goNext();
             if ($this->currentToken->type !== UIT_T_IDENTIFIER) {
@@ -102,6 +121,17 @@ class Parser
             $this->goNext();
             $expression = $this->expression();
             return new VariableAssignNode($varName, $expression);
+        } elseif ($this->currentToken->type === UIT_T_KEYWORD && $this->currentToken->value === 'output') {
+            $this->goNext();
+            return new OutputOperationNode($this->expression());
+        } elseif ($this->currentToken->type === UIT_T_KEYWORD && $this->currentToken->value === 'input') {
+            $this->goNext();
+            if ($this->currentToken->type !== UIT_T_IDENTIFIER) {
+                die("Error: Invalid Syntax. Expecting Identifier" . PHP_EOL);
+            }
+            $varName = $this->currentToken;
+            $this->goNext();
+            return new InputOperationNode($varName);
         }
 
         $leftNode = $this->comparison();
@@ -362,6 +392,9 @@ class Parser
         if ($token->type === UIT_T_NUMBER) {
             $this->goNext();
             return new NumberNode($token);
+        } elseif ($token->type === UIT_T_STRING) {
+            $this->goNext();
+            return new StringNode($token);
         } elseif ($token->type === UIT_T_IDENTIFIER) {
             $this->goNext();
             return new VariableAccessNode($token);

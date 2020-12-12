@@ -2,14 +2,20 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="aaa819aa-593a-41ec-b03c-66f16fedf525" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/samples/functionLoop.uit" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Interpreter/DataTypes/StringType.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Parser/OperationNode/InputOperationNode.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Parser/OperationNode/OutputOperationNode.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Parser/OperationNode/StringNode.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/samples/condition.uit" beforeDir="false" afterPath="$PROJECT_DIR$/samples/condition.uit" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/samples/functionLoop.uit" beforeDir="false" afterPath="$PROJECT_DIR$/samples/functionLoop.uit" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/samples/hello.uit" beforeDir="false" afterPath="$PROJECT_DIR$/samples/hello.uit" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Core/Uit.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Core/Uit.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Interpreter/DataTypes/FunctionType.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Interpreter/DataTypes/FunctionType.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Interpreter/Interpreter.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Interpreter/Interpreter.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Interpreter/Memory/Memory.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Interpreter/Memory/Memory.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Interpreter/Memory/SymbolTable.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Interpreter/Memory/SymbolTable.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Lexer/Lexer.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Lexer/Lexer.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Lexer/TokenDefinition.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Lexer/TokenDefinition.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Parser/Parser.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Parser/Parser.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -57,6 +63,7 @@
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/Parser/OperationNode" />
+      <recent name="$PROJECT_DIR$/src/Interpreter/DataTypes" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/Interpreter/Memory" />
@@ -76,7 +83,8 @@
       <workItem from="1607655701922" duration="5720000" />
       <workItem from="1607664154903" duration="10126000" />
       <workItem from="1607683839157" duration="13167000" />
-      <workItem from="1607738085755" duration="9376000" />
+      <workItem from="1607738085755" duration="15401000" />
+      <workItem from="1607769046626" duration="1683000" />
     </task>
     <servers />
   </component>

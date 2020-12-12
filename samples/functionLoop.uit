@@ -1,4 +1,5 @@
 Num sum = 0
-func collect(Num add) set sum = sum + add stop
+func adder(Num a, Num b) a + b stop
+func collect(Num add) set sum = adder(sum, add) stop
 for i = 1 to 4 do collect(i) endif
 sum

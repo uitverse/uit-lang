@@ -81,6 +81,8 @@ class Lexer
             } elseif ($this->currentCharacter === ',') {
                 $tokens[] = new Token(UIT_T_COMMA);
                 $this->goNext();
+            } elseif ($this->currentCharacter === '"') {
+                $tokens[] = $this->makeString();
             } elseif ($this->currentCharacter === '=') {
                 $this->goNext();
                 if ($this->currentCharacter === '=') {
@@ -132,7 +134,7 @@ class Lexer
     {
         $numberString = '';
         $dotCount = 0;
-        while ($this->currentCharacter !== null && str_contains(DIGIUIT_T_STRING . '.', $this->currentCharacter)) {
+        while ($this->currentCharacter !== "\0" && str_contains(DIGIUIT_T_STRING . '.', $this->currentCharacter)) {
             if ($this->currentCharacter === '.') {
                 if ($dotCount === 1) break;
                 $dotCount++;
@@ -145,13 +147,49 @@ class Lexer
         return new Token(UIT_T_NUMBER, $numberString);
     }
 
+    /**
+     * Create Identifier
+     * @return Token
+     */
     private function makeIdentifier(): Token
     {
         $identifierString = '';
-        while ($this->currentCharacter !== null && str_contains(LETTER_W_DIGIUIT_T_STRING . '_', $this->currentCharacter)) {
+        while ($this->currentCharacter !== "\0" && str_contains(LETTER_W_DIGIUIT_T_STRING . '_', $this->currentCharacter)) {
             $identifierString .= $this->currentCharacter;
             $this->goNext();
         }
         return new Token(in_array($identifierString, UIT_KEYWORDS) ? UIT_T_KEYWORD : UIT_T_IDENTIFIER, $identifierString);
+    }
+
+    /**
+     * Parse token
+     * @return Token
+     */
+    private function makeString(): Token
+    {
+        $stringString = '';
+        $escapedCharacter = false;
+        $escapedCharacterList = [
+            'n' => "\n",
+            't' => "\t"
+        ];
+        $this->goNext();
+        while ($this->currentCharacter !== "\0" && ($this->currentCharacter !== '"' || $escapedCharacter)) {
+            if ($escapedCharacter) {
+                $stringString .= $escapedCharacterList[$this->currentCharacter] ?? $this->currentCharacter;
+                $escapedCharacter = false;
+            } else {
+                if ($this->currentCharacter === '\\') {
+                    global $escapedCharacter;
+                    $escapedCharacter = true;
+                } else {
+                    $stringString .= $this->currentCharacter;
+                }
+            }
+            $this->goNext();
+        }
+
+        $this->goNext();
+        return new Token(UIT_T_STRING, $stringString);
     }
 }
