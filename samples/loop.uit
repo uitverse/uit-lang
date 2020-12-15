@@ -1,3 +1,0 @@
-Num result = 120
-
-while result > 0 do Num result = result - 10 endwhile

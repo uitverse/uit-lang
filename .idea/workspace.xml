@@ -1,39 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="aaa819aa-593a-41ec-b03c-66f16fedf525" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/samples/condition.uit" beforeDir="false" afterPath="$PROJECT_DIR$/samples/condition.uit" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/samples/function.uit" beforeDir="false" afterPath="$PROJECT_DIR$/samples/function.uit" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Lexer/Lexer.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Lexer/Lexer.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Lexer/TokenDefinition.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Lexer/TokenDefinition.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Parser/Parser.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Parser/Parser.php" afterDir="false" />
-    </list>
+    <list default="true" id="9c578c0d-e4c4-4332-aefd-039cc48de14a" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ComposerSettings" doNotAsk="true">
-    <pharConfigPath>$PROJECT_DIR$/composer.json</pharConfigPath>
-    <execution />
-  </component>
-  <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-  </component>
-  <component name="PhpWorkspaceProjectConfiguration">
-    <include_path>
-      <path value="$PROJECT_DIR$/vendor/composer" />
-      <path value="$PROJECT_DIR$/vendor/psr/log" />
-      <path value="$PROJECT_DIR$/vendor/seld/cli-prompt" />
-      <path value="$PROJECT_DIR$/vendor/league/climate" />
-    </include_path>
-  </component>
-  <component name="ProjectId" id="1lSm85FE9epSoxeKswGcFXlE2Sp" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
-    <ConfirmationsSetting value="2" id="Add" />
-  </component>
+  <component name="ProjectId" id="1lga3xhvQf8rbAswakSDcRX6f3R" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -42,59 +16,37 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/Parser/OperationNode" />
-    <property name="node.js.detected.package.eslint" value="true" />
-    <property name="node.js.detected.package.tslint" value="true" />
-    <property name="node.js.path.for.package.eslint" value="project" />
-    <property name="node.js.path.for.package.tslint" value="project" />
-    <property name="node.js.selected.package.eslint" value="(autodetect)" />
-    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="dart.analysis.tool.window.visible" value="false" />
     <property name="nodejs_package_manager_path" value="npm" />
-    <property name="vue.rearranger.settings.migration" value="true" />
+    <property name="show.migrate.to.gradle.popup" value="false" />
   </component>
-  <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/src/Parser/OperationNode" />
-      <recent name="$PROJECT_DIR$/src/Interpreter/DataTypes" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/src/Interpreter/Memory" />
-      <recent name="$PROJECT_DIR$/src/Lexer" />
-      <recent name="$PROJECT_DIR$" />
-    </key>
+  <component name="RunManager">
+    <configuration default="true" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
+      <option name="arquillianRunConfiguration">
+        <value>
+          <option name="containerStateName" value="" />
+        </value>
+      </option>
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="aaa819aa-593a-41ec-b03c-66f16fedf525" name="Default Changelist" comment="" />
-      <created>1607598703895</created>
+      <changelist id="9c578c0d-e4c4-4332-aefd-039cc48de14a" name="Default Changelist" comment="" />
+      <created>1608020993185</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1607598703895</updated>
-      <workItem from="1607598705211" duration="12615000" />
-      <workItem from="1607655701922" duration="5720000" />
-      <workItem from="1607664154903" duration="10126000" />
-      <workItem from="1607683839157" duration="13167000" />
-      <workItem from="1607738085755" duration="15401000" />
-      <workItem from="1607769046626" duration="4359000" />
-      <workItem from="1607776242980" duration="1523000" />
-      <workItem from="1607781003092" duration="319000" />
+      <updated>1608020993185</updated>
+      <workItem from="1608020994879" duration="471000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
-  </component>
-  <component name="Vcs.Log.Tabs.Properties">
-    <option name="TAB_STATES">
-      <map>
-        <entry key="MAIN">
-          <value>
-            <State />
-          </value>
-        </entry>
-      </map>
-    </option>
-    <option name="oldMeFiltersMigrated" value="true" />
   </component>
 </project>
