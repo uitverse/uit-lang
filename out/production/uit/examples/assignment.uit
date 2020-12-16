@@ -1,0 +1,11 @@
+Num number = 123
+
+output 123
+
+Boolean foo = false
+output foo
+
+foo = true
+output foo
+
+foo = 123 // should throw error

@@ -1,0 +1,7 @@
+String string = "Hello, World!"
+
+string = "Hi, there!"
+
+output string
+
+string = 1 // will throw error
