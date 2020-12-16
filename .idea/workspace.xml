@@ -2,11 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9c578c0d-e4c4-4332-aefd-039cc48de14a" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/com/heinthanth/uit/parser/Expression.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/com/heinthanth/uit/lexer/TokenType.java" beforeDir="false" afterPath="$PROJECT_DIR$/com/heinthanth/uit/lexer/TokenType.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/uit.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/uit.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uit.iml" beforeDir="false" afterPath="$PROJECT_DIR$/uit.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/com/craftinginterpreters/lox/Parser.java" beforeDir="false" afterPath="$PROJECT_DIR$/com/craftinginterpreters/lox/Parser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/com/craftinginterpreters/lox/Scanner.java" beforeDir="false" afterPath="$PROJECT_DIR$/com/craftinginterpreters/lox/Scanner.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/com/craftinginterpreters/lox/TokenType.java" beforeDir="false" afterPath="$PROJECT_DIR$/com/craftinginterpreters/lox/TokenType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/Parser$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/Parser$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/Parser.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/Parser.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/Scanner.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/Scanner.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/TokenType.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/TokenType.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

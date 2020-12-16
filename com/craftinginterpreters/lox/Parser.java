@@ -138,8 +138,10 @@ class Parser {
       initializer = null;
     } else if (match(VAR)) {
       initializer = varDeclaration();
+      consume(SEMICOLON, "Expect ';' after variable declaration.");
     } else {
       initializer = expressionStatement();
+      consume(SEMICOLON, "Expect ';' after expression.");
     }
 //< for-initializer
 //> for-condition
@@ -159,7 +161,8 @@ class Parser {
     consume(RIGHT_PAREN, "Expect ')' after for clauses.");
 //< for-increment
 //> for-body
-    Stmt body = statement();
+    //Stmt body = statement();
+    Stmt body = new Stmt.Block(forBlock());
 
 //> for-desugar-increment
     if (increment != null) {
@@ -203,7 +206,7 @@ class Parser {
 //> Statements and State parse-print-statement
   private Stmt printStatement() {
     Expr value = expression();
-    consume(SEMICOLON, "Expect ';' after value.");
+    //consume(SEMICOLON, "Expect ';' after value.");
     return new Stmt.Print(value);
   }
 //< Statements and State parse-print-statement
@@ -228,7 +231,7 @@ class Parser {
       initializer = expression();
     }
 
-    consume(SEMICOLON, "Expect ';' after variable declaration.");
+    //consume(SEMICOLON, "Expect ';' after variable declaration.");
     return new Stmt.Var(name, initializer);
   }
 //< Statements and State parse-var-declaration
@@ -245,7 +248,7 @@ class Parser {
 //> Statements and State parse-expression-statement
   private Stmt expressionStatement() {
     Expr expr = expression();
-    consume(SEMICOLON, "Expect ';' after expression.");
+    //consume(SEMICOLON, "Expect ';' after expression.");
     return new Stmt.Expression(expr);
   }
 //< Statements and State parse-expression-statement
@@ -284,6 +287,17 @@ class Parser {
     }
 
     consume(RIGHT_BRACE, "Expect '}' after block.");
+    return statements;
+  }
+
+  private List<Stmt> forBlock() {
+    List<Stmt> statements = new ArrayList<>();
+
+    while (!check(ENDFOR) && !isAtEnd()) {
+      statements.add(declaration());
+    }
+
+    consume(ENDFOR, "Expect 'endfor' after block.");
     return statements;
   }
 //< Statements and State block
