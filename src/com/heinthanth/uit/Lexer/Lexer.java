@@ -128,9 +128,9 @@ public class Lexer {
                 makeString();
                 break;
             default:
-                if(isDigit(c)) {
+                if (isDigit(c)) {
                     makeNumber();
-                } else if(isAlpha(c)) {
+                } else if (isAlpha(c)) {
                     makeIdentifier();
                 } else {
                     Uit.error(line, current, "Unexpect character");
@@ -140,6 +140,7 @@ public class Lexer {
 
     /**
      * check if current character is something
+     *
      * @param expected expected character
      * @return true if match given with expected
      */

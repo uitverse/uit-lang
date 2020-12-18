@@ -1,7 +1,12 @@
 package com.heinthanth.uit;
 
+import com.heinthanth.uit.Interpreter.Interpreter;
+import com.heinthanth.uit.Interpreter.RuntimeError;
 import com.heinthanth.uit.Lexer.Lexer;
 import com.heinthanth.uit.Lexer.Token;
+import com.heinthanth.uit.Lexer.TokenType;
+import com.heinthanth.uit.Node.Expression;
+import com.heinthanth.uit.Parser.Parser;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -18,7 +23,17 @@ public class Uit {
      */
     static boolean hadError = false;
 
+    /**
+     * status for runtime error
+     */
+    static boolean hadRuntimeError = false;
+
     private static String sourceString = "";
+
+    /**
+     * Interpreter instance to interpret
+     */
+    private static final Interpreter interpreter = new Interpreter();
 
     /**
      * Entry point of Interpreter
@@ -58,6 +73,7 @@ public class Uit {
             runFromString(new String(bytes, Charset.defaultCharset()));
             // exit if error occur
             if (hadError) System.exit(65);
+            if (hadRuntimeError) System.exit(70);
         } else {
             System.out.println("Error: file '" + path + "' not exists.");
             System.exit(1);
@@ -77,6 +93,8 @@ public class Uit {
             if (line == null) break;
             runFromString(line);
             // reset error status for next loop
+            hadError = false;
+            hadRuntimeError = false;
         }
     }
 
@@ -87,11 +105,13 @@ public class Uit {
      */
     private static void runFromString(String code) {
         sourceString = code;
-        Lexer lexer = new Lexer(code);
-        List<Token> tokens = lexer.tokenize();
+        List<Token> tokens = new Lexer(code).tokenize();
 //        for (Token token : tokens) {
 //            System.out.print(token);
 //        }
+        Expression expression = new Parser(tokens).parse();
+        if (hadError) return;
+        interpreter.interpret(expression);
     }
 
     /**
@@ -120,6 +140,32 @@ public class Uit {
     }
 
     /**
+     * Overload token error
+     *
+     * @param token   error causing token
+     * @param message error message
+     */
+    public static void error(Token token, String message) {
+        if (token.type == TokenType.EOF) {
+            report(token.line, token.index, " at end", message);
+        } else {
+            report(token.line, token.index, " at '" + token.sourceString + "'", message);
+        }
+    }
+
+    /**
+     * handle runtime error
+     *
+     * @param error runtime error instance
+     */
+    public static void runtimeError(RuntimeError error) {
+//        System.err.println(error.getMessage() +
+//                "\n[line " + error.token.line + "]");
+        report(error.token.line, error.token.index, "", error.getMessage());
+        hadRuntimeError = true;
+    }
+
+    /**
      * show error message to console
      *
      * @param line    Error causing line number
@@ -128,19 +174,19 @@ public class Uit {
      */
     private static void report(int line, int index, String where, String message) {
         String[] sourceLines = sourceString.split("\\r?\\n", -1);
-        if(line > 0) {
-            for(int i = 0; i < line; i++) {
+        if (line > 0) {
+            for (int i = 0; i < line; i++) {
                 index = index - sourceLines[i].length() - 1;
             }
         }
-        if(line == 0) {
+        if (line == 0) {
             System.out.println("  | ");
         } else {
             System.err.println(line + " | " + sourceLines[line - 1]);
         }
         System.err.println((line + 1) + " | " + sourceLines[line]);
         System.err.println("  | " + " ".repeat(index) + "^ " + message);
-        if(line >= sourceLines.length - 1) {
+        if (line >= sourceLines.length - 1) {
             System.out.println("  | ");
         } else {
             System.err.println((line + 2) + " | " + sourceLines[line + 1]);

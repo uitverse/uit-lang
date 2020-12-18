@@ -2,93 +2,28 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9c578c0d-e4c4-4332-aefd-039cc48de14a" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Interpreter/Interpreter$1.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Interpreter/Interpreter.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Interpreter/RuntimeError.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Expression$BinaryExpression.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Expression$GroupingExpression.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Expression$LiteralExpression.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Expression$UnaryExpression.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Expression$Visitor.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Expression.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Parser/Parser$1.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Parser/Parser$ParseError.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Parser/Parser.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/heinthanth/uit/Interpreter/Interpreter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/heinthanth/uit/Interpreter/RuntimeError.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/heinthanth/uit/Node/Expression.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/heinthanth/uit/Parser/Parser.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/com/craftinginterpreters/lox/AstPrinter.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/com/craftinginterpreters/lox/Environment.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/com/craftinginterpreters/lox/Expr.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/com/craftinginterpreters/lox/Interpreter.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/com/craftinginterpreters/lox/Lox.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/com/craftinginterpreters/lox/LoxCallable.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/com/craftinginterpreters/lox/LoxClass.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/com/craftinginterpreters/lox/LoxFunction.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/com/craftinginterpreters/lox/LoxInstance.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/com/craftinginterpreters/lox/Parser.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/com/craftinginterpreters/lox/Resolver.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/com/craftinginterpreters/lox/Return.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/com/craftinginterpreters/lox/RuntimeError.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/com/craftinginterpreters/lox/Scanner.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/com/craftinginterpreters/lox/Stmt.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/com/craftinginterpreters/lox/Token.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/com/craftinginterpreters/lox/TokenType.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/com/craftinginterpreters/tool/GenerateAst.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/assignment.uit" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/hello.uit" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/loop.uit" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/variable.uit" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/AstPrinter.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/Environment.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/Expr$Assign.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/Expr$Binary.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/Expr$Call.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/Expr$Get.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/Expr$Grouping.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/Expr$Literal.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/Expr$Logical.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/Expr$Set.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/Expr$Super.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/Expr$This.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/Expr$Unary.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/Expr$Variable.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/Expr$Visitor.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/Expr.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/Interpreter$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/Interpreter$2.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/Interpreter.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/Lox.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/LoxCallable.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/LoxClass.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/LoxFunction.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/LoxInstance.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/Parser$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/Parser$ParseError.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/Parser.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/Resolver$ClassType.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/Resolver$FunctionType.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/Resolver.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/Return.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/RuntimeError.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/Scanner.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/Stmt$Block.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/Stmt$Class.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/Stmt$Expression.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/Stmt$Function.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/Stmt$If.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/Stmt$Print.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/Stmt$Return.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/Stmt$Var.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/Stmt$Visitor.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/Stmt$While.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/Stmt.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/Token.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/lox/TokenType.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/tool/GenerateAst$Beignet.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/tool/GenerateAst$Cruller.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/tool/GenerateAst$Pastry.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/tool/GenerateAst$PastryVisitor.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/craftinginterpreters/tool/GenerateAst.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/examples/assignment.uit" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/examples/hello.uit" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/examples/loop.uit" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/examples/variable.uit" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/uit.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/uit.iml" beforeDir="false" afterPath="$PROJECT_DIR$/uit.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/dev.uit" beforeDir="false" afterPath="$PROJECT_DIR$/examples/dev.uit" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Lexer/Lexer.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Lexer/Lexer.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Uit.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Uit.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/heinthanth/uit/Lexer/Lexer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/heinthanth/uit/Lexer/Lexer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/heinthanth/uit/Uit.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/heinthanth/uit/Uit.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -129,15 +64,13 @@
     <property name="show.migrate.to.gradle.popup" value="false" />
   </component>
   <component name="RunManager">
-    <configuration default="true" type="ArquillianTestNG" factoryName="" nameIsGenerated="true">
+    <configuration default="true" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
       <option name="arquillianRunConfiguration">
         <value>
           <option name="containerStateName" value="" />
         </value>
       </option>
-      <option name="TEST_OBJECT" value="CLASS" />
-      <properties />
-      <listeners />
+      <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -157,7 +90,8 @@
       <workItem from="1608113668112" duration="2690000" />
       <workItem from="1608187299533" duration="622000" />
       <workItem from="1608188664144" duration="3826000" />
-      <workItem from="1608275247689" duration="4969000" />
+      <workItem from="1608275247689" duration="5765000" />
+      <workItem from="1608286482101" duration="7089000" />
     </task>
     <servers />
   </component>
