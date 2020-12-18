@@ -144,9 +144,14 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
      */
     @Override
     public Void visitVariableAssignStatement(Statement.VariableAssignStatement stmt) {
-
         Object value = evaluate(stmt.initializer);
         environment.assign(stmt.name, value);
+        return null;
+    }
+
+    @Override
+    public Void visitBlockStatement(Statement.BlockStatement statement) {
+        executeBlock(statement.statements, new Environment(environment));
         return null;
     }
 
@@ -177,6 +182,24 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
      */
     private void execute(Statement stmt) {
         stmt.accept(this);
+    }
+
+    /**
+     * Execute list of statements
+     *
+     * @param statements  list of statements to execute
+     * @param environment current environment
+     */
+    void executeBlock(List<Statement> statements, Environment environment) {
+        Environment previous = this.environment;
+        try {
+            this.environment = environment;
+            for (Statement statement : statements) {
+                execute(statement);
+            }
+        } finally {
+            this.environment = previous;
+        }
     }
 
     /**

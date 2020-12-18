@@ -13,6 +13,22 @@ public class Environment {
     private final Map<String, Object> values = new HashMap<>();
 
     /**
+     * nest environment
+     */
+    final Environment enclosing;
+
+    /**
+     * environment constructor
+     */
+    Environment() {
+        enclosing = null;
+    }
+
+    Environment(Environment enclosing) {
+        this.enclosing = enclosing;
+    }
+
+    /**
      * UIT Type mapper to Java Type
      */
     private static final Map<TokenType, Class<?>> Uit2Java;
@@ -57,18 +73,22 @@ public class Environment {
      * define variable
      */
     void assign(Token name, Object value) {
-        if (!values.containsKey(name.sourceString)) {
-            throw new RuntimeError(name,
-                    "variable '" + name.sourceString + "' not defined.");
-        } else {
+        if (values.containsKey(name.sourceString)) {
             Object oldvalue = values.get(name.sourceString);
             if (value.getClass() != oldvalue.getClass()) {
                 throw new RuntimeError(name,
                         "Cannot assign " + Java2Uit.get(value.getClass()) + " to " + Java2Uit.get(oldvalue.getClass()) + " variable '" + name.sourceString + "'.");
             } else {
                 values.put(name.sourceString, value);
+                return;
             }
         }
+        if (enclosing != null) {
+            enclosing.assign(name, value);
+            return;
+        }
+        throw new RuntimeError(name,
+                "variable '" + name.sourceString + "' not defined.");
     }
 
     /**
@@ -82,7 +102,9 @@ public class Environment {
             return values.get(name.sourceString);
         }
 
+        if (enclosing != null) return enclosing.get(name);
+
         throw new RuntimeError(name,
-                "Variable '" + name.sourceString + "' not defined.");
+                "variable '" + name.sourceString + "' not defined.");
     }
 }

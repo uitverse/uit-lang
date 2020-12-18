@@ -31,6 +31,8 @@ public class Lexer {
         keywords.put("or", OR);
         keywords.put("true", TRUE);
         keywords.put("false", FALSE);
+        keywords.put("block", BLOCK);
+        keywords.put("endblock", ENDBLOCK);
         keywords.put("if", IF);
         keywords.put("else", ELSE);
         keywords.put("for", FOR);

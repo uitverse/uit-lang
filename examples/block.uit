@@ -1,0 +1,8 @@
+Num a = 12
+
+block
+    output a // it works
+    String demo = "Who are u?"
+endblock
+
+output demo

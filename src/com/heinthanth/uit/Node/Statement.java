@@ -2,6 +2,8 @@ package com.heinthanth.uit.Node;
 
 import com.heinthanth.uit.Lexer.Token;
 
+import java.util.List;
+
 public abstract class Statement {
     public interface Visitor<R> {
         R visitExpressionStatement(ExpressionStatement statement);
@@ -11,6 +13,8 @@ public abstract class Statement {
         R visitVariableDeclareStatement(VariableDeclareStatement statement);
 
         R visitVariableAssignStatement(VariableAssignStatement statement);
+
+        R visitBlockStatement(BlockStatement statement);
     }
 
     public abstract <R> R accept(Visitor<R> visitor);
@@ -67,6 +71,9 @@ public abstract class Statement {
         public final Expression initializer;
     }
 
+    /**
+     * Assign variable to new value
+     */
     public static class VariableAssignStatement extends Statement {
         public VariableAssignStatement(Token name, Expression initializer) {
             this.name = name;
@@ -80,5 +87,21 @@ public abstract class Statement {
 
         public final Token name;
         public final Expression initializer;
+    }
+
+    /**
+     * block statement like for, function, while
+     */
+    public static class BlockStatement extends Statement {
+        public BlockStatement(List<Statement> statements) {
+            this.statements = statements;
+        }
+
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitBlockStatement(this);
+        }
+
+        public final List<Statement> statements;
     }
 }

@@ -89,6 +89,7 @@ public class Parser {
      */
     private Statement statement() {
         if (match(OUTPUT)) return outputStatement();
+        if (match(BLOCK)) return new Statement.BlockStatement(block());
 
         return expressionStatement();
     }
@@ -113,6 +114,21 @@ public class Parser {
         Expression expr = expression();
         //consume(SEMICOLON, "Expect ';' after expression.");
         return new Statement.ExpressionStatement(expr);
+    }
+
+    /**
+     * block statements
+     *
+     * @return list of statements inside block
+     */
+    private List<Statement> block() {
+        List<Statement> statements = new ArrayList<>();
+
+        while (!check(ENDBLOCK) && !isAtEnd()) {
+            statements.add(declaration());
+        }
+        consume(ENDBLOCK, "Expect 'endblock' after block.");
+        return statements;
     }
 
     /**
