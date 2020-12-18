@@ -247,8 +247,30 @@ public class Lexer {
      * build java String from source string
      */
     private void makeString() {
-        while (getCurrentCharacter() != '"' && !isAtEnd()) {
+        boolean isEscaped = false;
+        StringBuilder stringString = new StringBuilder();
+
+        Map<Character, Character> escapedValue = new HashMap<>();
+        escapedValue.put('n', '\n');
+        escapedValue.put('t', '\t');
+
+        while ((getCurrentCharacter() != '"' || isEscaped) && !isAtEnd()) {
             if (getCurrentCharacter() == '\n') line++;
+            if (isEscaped) {
+                char c = getCurrentCharacter();
+                if (escapedValue.containsKey(c)) {
+                    stringString.append(escapedValue.get(c));
+                    isEscaped = false;
+                } else {
+                    stringString.append(c);
+                }
+            } else {
+                if (getCurrentCharacter() == '\\') {
+                    isEscaped = true;
+                } else {
+                    stringString.append(getCurrentCharacter());
+                }
+            }
             advance();
         }
 
@@ -261,8 +283,8 @@ public class Lexer {
         advance();
 
         // Trim the surrounding quotes.
-        String value = source.substring(start + 1, current - 1);
-        addToken(STRING_LITERAL, value);
+        //String value = source.substring(start + 1, current - 1);
+        addToken(STRING_LITERAL, stringString.toString());
     }
 
     /**

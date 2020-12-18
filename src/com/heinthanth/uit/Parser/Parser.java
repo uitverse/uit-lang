@@ -2,11 +2,13 @@ package com.heinthanth.uit.Parser;
 
 import com.heinthanth.uit.Lexer.Token;
 import com.heinthanth.uit.Lexer.TokenType;
+import com.heinthanth.uit.Node.Statement;
 import com.heinthanth.uit.Uit;
 import com.heinthanth.uit.Node.Expression;
 
 import static com.heinthanth.uit.Lexer.TokenType.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Parser {
@@ -35,16 +37,73 @@ public class Parser {
     /**
      * parse token
      *
-     * @return operation nodes to interpret
+     * @return statements to interpret
      */
-    public Expression parse() {
+    public List<Statement> parse() {
+        List<Statement> statements = new ArrayList<>();
+        while (!isAtEnd()) {
+            statements.add(declaration());
+        }
+        return statements;
+    }
+
+    /**
+     * declaration statement
+     */
+    private Statement declaration() {
         try {
-            return expression();
+            if (match(NUM, STRING, BOOLEAN)) return varDeclaration(previous());
+            return statement();
         } catch (ParseError error) {
-            //System.err.println("Something went wrong. Got parser error.");
             synchronize();
             return null;
         }
+    }
+
+    /**
+     * variable declaration statement
+     */
+    private Statement varDeclaration(Token typeDef) {
+        Token name = consume(IDENTIFIER, "Expect variable name.");
+        Expression initializer = null;
+        if (match(ASSIGN)) {
+            initializer = expression();
+        }
+        //consume(SEMICOLON, "Expect ';' after variable declaration.");
+        return new Statement.VariableDeclareStatement(typeDef, name, initializer);
+    }
+
+    /**
+     * operation statement or expression statement
+     *
+     * @return Statement
+     */
+    private Statement statement() {
+        if (match(OUTPUT)) return outputStatement();
+
+        return expressionStatement();
+    }
+
+    /**
+     * Parse expression to Output statement
+     *
+     * @return output statement
+     */
+    private Statement outputStatement() {
+        Expression value = expression();
+        //consume(SEMICOLON, "Expect ';' after value.");
+        return new Statement.OutputStatement(value);
+    }
+
+    /**
+     * Get expression statement
+     *
+     * @return Expression statement
+     */
+    private Statement expressionStatement() {
+        Expression expr = expression();
+        //consume(SEMICOLON, "Expect ';' after expression.");
+        return new Statement.ExpressionStatement(expr);
     }
 
     /**
@@ -132,6 +191,9 @@ public class Parser {
             Expression expr = expression();
             consume(RIGHT_PAREN, "Expect ')' after expression.");
             return new Expression.GroupingExpression(expr);
+        }
+        if (match(IDENTIFIER)) {
+            return new Expression.VariableExpression(previous());
         }
         throw error(getCurrentToken(), "Expect expression.");
     }

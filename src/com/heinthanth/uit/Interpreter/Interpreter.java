@@ -2,9 +2,12 @@ package com.heinthanth.uit.Interpreter;
 
 import com.heinthanth.uit.Lexer.Token;
 import com.heinthanth.uit.Node.Expression;
+import com.heinthanth.uit.Node.Statement;
 import com.heinthanth.uit.Uit;
 
-public class Interpreter implements Expression.Visitor<Object> {
+import java.util.List;
+
+public class Interpreter implements Expression.Visitor<Object>, Statement.Visitor<Void> {
     /**
      * visit to literal expression -> Java Object (double, string, bool)
      */
@@ -37,6 +40,22 @@ public class Interpreter implements Expression.Visitor<Object> {
         return null;
     }
 
+    /**
+     * Get variable value from identifier
+     * @param expression variable access expression
+     * @return value of variable
+     */
+    @Override
+    public Object visitVariableExpression(Expression.VariableExpression expression) {
+        return environment.get(expression.name);
+    }
+
+    /**
+     * evaluate binary operation
+     *
+     * @param expression binary expression
+     * @return result from expression
+     */
     @Override
     public Object visitBinaryExpression(Expression.BinaryExpression expression) {
         Object left = evaluate(expression.left);
@@ -75,13 +94,73 @@ public class Interpreter implements Expression.Visitor<Object> {
         return null;
     }
 
-    public void interpret(Expression expression) {
+    /**
+     * interpret expression statement
+     *
+     * @param statement expression statement
+     * @return null
+     */
+    @Override
+    public Void visitExpressionStatement(Statement.ExpressionStatement statement) {
+        evaluate(statement.expression);
+        return null;
+    }
+
+    /**
+     * interpret output statement
+     *
+     * @param stmt Output statement
+     * @return null
+     */
+    @Override
+    public Void visitOutputStatement(Statement.OutputStatement stmt) {
+        Object value = evaluate(stmt.expression);
+        System.out.println(stringify(value));
+        return null;
+    }
+
+    /**
+     * Declare variable
+     * @param stmt variable declaration statement
+     * @return null
+     */
+    @Override
+    public Void visitVariableDeclareStatement(Statement.VariableDeclareStatement stmt) {
+        Object value = null;
+        if (stmt.initializer != null) {
+            value = evaluate(stmt.initializer);
+        }
+        environment.define(stmt.typeDef, stmt.name, value);
+        return null;
+    }
+
+    /**
+     * Environment for identifier
+     */
+    private Environment environment = new Environment();
+
+    /**
+     * Interpret parse statements
+     *
+     * @param statements Statements to interpret
+     */
+    public void interpret(List<Statement> statements) {
         try {
-            Object value = evaluate(expression);
-            System.out.println(stringify(value));
+            for (Statement statement : statements) {
+                execute(statement);
+            }
         } catch (RuntimeError error) {
             Uit.runtimeError(error);
         }
+    }
+
+    /**
+     * Execute statements
+     *
+     * @param stmt Statement to execute
+     */
+    private void execute(Statement stmt) {
+        stmt.accept(this);
     }
 
     /**

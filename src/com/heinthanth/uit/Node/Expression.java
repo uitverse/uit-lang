@@ -11,6 +11,8 @@ public abstract class Expression {
         R visitLiteralExpression(LiteralExpression expr);
 
         R visitUnaryExpression(UnaryExpression expr);
+
+        R visitVariableExpression(VariableExpression expr);
     }
 
     public abstract <R> R accept(Visitor<R> visitor);
@@ -83,5 +85,21 @@ public abstract class Expression {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitUnaryExpression(this);
         }
+    }
+
+    /**
+     * variable access expression
+     */
+    public static class VariableExpression extends Expression {
+        public VariableExpression(Token name) {
+            this.name = name;
+        }
+
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitVariableExpression(this);
+        }
+
+        public final Token name;
     }
 }

@@ -6,6 +6,7 @@ import com.heinthanth.uit.Lexer.Lexer;
 import com.heinthanth.uit.Lexer.Token;
 import com.heinthanth.uit.Lexer.TokenType;
 import com.heinthanth.uit.Node.Expression;
+import com.heinthanth.uit.Node.Statement;
 import com.heinthanth.uit.Parser.Parser;
 
 import java.io.BufferedReader;
@@ -109,9 +110,10 @@ public class Uit {
 //        for (Token token : tokens) {
 //            System.out.print(token);
 //        }
-        Expression expression = new Parser(tokens).parse();
         if (hadError) return;
-        interpreter.interpret(expression);
+        List<Statement> statements = new Parser(tokens).parse();
+        if (hadError) return;
+        interpreter.interpret(statements);
     }
 
     /**
