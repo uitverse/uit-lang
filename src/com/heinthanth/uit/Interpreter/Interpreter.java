@@ -42,6 +42,7 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
 
     /**
      * Get variable value from identifier
+     *
      * @param expression variable access expression
      * @return value of variable
      */
@@ -121,6 +122,7 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
 
     /**
      * Declare variable
+     *
      * @param stmt variable declaration statement
      * @return null
      */
@@ -131,6 +133,20 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
             value = evaluate(stmt.initializer);
         }
         environment.define(stmt.typeDef, stmt.name, value);
+        return null;
+    }
+
+    /**
+     * assign variable with new value
+     *
+     * @param stmt variable declaration statement
+     * @return null
+     */
+    @Override
+    public Void visitVariableAssignStatement(Statement.VariableAssignStatement stmt) {
+
+        Object value = evaluate(stmt.initializer);
+        environment.assign(stmt.name, value);
         return null;
     }
 

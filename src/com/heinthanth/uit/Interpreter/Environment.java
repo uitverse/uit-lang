@@ -54,6 +54,24 @@ public class Environment {
     }
 
     /**
+     * define variable
+     */
+    void assign(Token name, Object value) {
+        if (!values.containsKey(name.sourceString)) {
+            throw new RuntimeError(name,
+                    "variable '" + name.sourceString + "' not defined.");
+        } else {
+            Object oldvalue = values.get(name.sourceString);
+            if (value.getClass() != oldvalue.getClass()) {
+                throw new RuntimeError(name,
+                        "Cannot assign " + Java2Uit.get(value.getClass()) + " to " + Java2Uit.get(oldvalue.getClass()) + " variable '" + name.sourceString + "'.");
+            } else {
+                values.put(name.sourceString, value);
+            }
+        }
+    }
+
+    /**
      * Get identifier value
      *
      * @param name identifier

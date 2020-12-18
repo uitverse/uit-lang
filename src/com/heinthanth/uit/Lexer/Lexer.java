@@ -44,6 +44,7 @@ public class Lexer {
         keywords.put("Num", NUM);
         keywords.put("String", STRING);
         keywords.put("Boolean", BOOLEAN);
+        keywords.put("set", SET);
     }
 
     /**

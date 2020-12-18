@@ -53,6 +53,7 @@ public class Parser {
     private Statement declaration() {
         try {
             if (match(NUM, STRING, BOOLEAN)) return varDeclaration(previous());
+            if (match(SET)) return varAssignment();
             return statement();
         } catch (ParseError error) {
             synchronize();
@@ -71,6 +72,14 @@ public class Parser {
         }
         //consume(SEMICOLON, "Expect ';' after variable declaration.");
         return new Statement.VariableDeclareStatement(typeDef, name, initializer);
+    }
+
+    private Statement varAssignment() {
+        Token name = consume(IDENTIFIER, "Expect variable name.");
+        consume(ASSIGN, "Expect '='.");
+        Expression initializer = expression();
+        //consume(SEMICOLON, "Expect ';' after variable declaration.");
+        return new Statement.VariableAssignStatement(name, initializer);
     }
 
     /**

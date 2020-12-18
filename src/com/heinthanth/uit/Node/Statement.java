@@ -9,6 +9,8 @@ public abstract class Statement {
         R visitOutputStatement(OutputStatement statement);
 
         R visitVariableDeclareStatement(VariableDeclareStatement statement);
+
+        R visitVariableAssignStatement(VariableAssignStatement statement);
     }
 
     public abstract <R> R accept(Visitor<R> visitor);
@@ -61,6 +63,21 @@ public abstract class Statement {
         }
 
         public final Token typeDef;
+        public final Token name;
+        public final Expression initializer;
+    }
+
+    public static class VariableAssignStatement extends Statement {
+        public VariableAssignStatement(Token name, Expression initializer) {
+            this.name = name;
+            this.initializer = initializer;
+        }
+
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitVariableAssignStatement(this);
+        }
+
         public final Token name;
         public final Expression initializer;
     }
