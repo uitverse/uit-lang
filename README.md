@@ -7,7 +7,7 @@ UIT Interpreter for Techie - a simple interpreter written in PHP for PseudoCode 
 
 ## ATTENTIONS
 
-Due to incorrect Implementation design, I'm facing with a problem in multiple line statement. And I'm researching more.
+Now, I'm porting this to Java with better parser, interpreter and design pattern. Please visit [Java branch](https://github.com/heinthanth/uit/tree/java).
 
 ## HOW TO RUN
 
