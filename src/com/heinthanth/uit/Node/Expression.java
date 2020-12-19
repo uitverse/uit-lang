@@ -13,6 +13,8 @@ public abstract class Expression {
         R visitUnaryExpression(UnaryExpression expr);
 
         R visitVariableExpression(VariableExpression expr);
+
+        R visitLogicalExpression(LogicalExpression expr);
     }
 
     public abstract <R> R accept(Visitor<R> visitor);
@@ -101,5 +103,25 @@ public abstract class Expression {
         }
 
         public final Token name;
+    }
+
+    /**
+     * Logical expression
+     */
+    public static class LogicalExpression extends Expression {
+        public LogicalExpression(Expression left, Token operator, Expression right) {
+            this.left = left;
+            this.operator = operator;
+            this.right = right;
+        }
+
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitLogicalExpression(this);
+        }
+
+        public final Expression left;
+        public final Token operator;
+        public final Expression right;
     }
 }

@@ -172,10 +172,36 @@ public class Parser {
     }
 
     /**
-     * expression -> equality
+     * expression -> or
      */
     private Expression expression() {
-        return equality();
+        return or();
+    }
+
+    /**
+     * or -> and
+     */
+    private Expression or() {
+        Expression left = and();
+        while (match(OR)) {
+            Token operator = previous();
+            Expression right = and();
+            left = new Expression.LogicalExpression(left, operator, right);
+        }
+        return left;
+    }
+
+    /**
+     * or -> and
+     */
+    private Expression and() {
+        Expression left = equality();
+        while (match(AND)) {
+            Token operator = previous();
+            Expression right = equality();
+            left = new Expression.LogicalExpression(left, operator, right);
+        }
+        return left;
     }
 
     /**

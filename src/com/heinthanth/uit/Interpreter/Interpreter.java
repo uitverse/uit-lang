@@ -1,6 +1,7 @@
 package com.heinthanth.uit.Interpreter;
 
 import com.heinthanth.uit.Lexer.Token;
+import com.heinthanth.uit.Lexer.TokenType;
 import com.heinthanth.uit.Node.Expression;
 import com.heinthanth.uit.Node.Statement;
 import com.heinthanth.uit.Uit;
@@ -94,6 +95,20 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
                 return isEqual(left, right);
         }
         return null;
+    }
+
+    /**
+     * Get true/false from Logical expression
+     */
+    @Override
+    public Object visitLogicalExpression(Expression.LogicalExpression expression) {
+        Object left = evaluate(expression.left);
+        if (expression.operator.type == TokenType.OR) {
+            if (isTrue(left)) return left;
+        } else {
+            if (!isTrue(left)) return left;
+        }
+        return evaluate(expression.right);
     }
 
     /**
