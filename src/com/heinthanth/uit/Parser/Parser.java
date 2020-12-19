@@ -112,6 +112,7 @@ public class Parser {
         if (match(SET)) return varAssignment();
         if (match(IF)) return ifStatement();
         if (match(OUTPUT)) return outputStatement();
+        if (match(RETURN)) return returnStatement();
         if (match(WHILE)) return whileStatement();
         if (match(FOR)) return forStatement();
         if (match(BLOCK)) return new Statement.BlockStatement(block());
@@ -128,6 +129,19 @@ public class Parser {
         Expression value = expression();
         //consume(SEMICOLON, "Expect ';' after value.");
         return new Statement.OutputStatement(value);
+    }
+
+    /**
+     * Parse return Statement
+     */
+    private Statement returnStatement() {
+        Token keyword = previous();
+        Expression value = null;
+        if (!check(SEMICOLON)) {
+            value = expression();
+        }
+        //consume(SEMICOLON, "Expect ';' after return value.");
+        return new Statement.ReturnStatement(keyword, value);
     }
 
     /**

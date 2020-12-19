@@ -2,10 +2,7 @@ package com.heinthanth.uit.Interpreter;
 
 import com.heinthanth.uit.Lexer.Token;
 import com.heinthanth.uit.Lexer.TokenType;
-import com.heinthanth.uit.Node.Expression;
-import com.heinthanth.uit.Node.Statement;
-import com.heinthanth.uit.Node.UitCallable;
-import com.heinthanth.uit.Node.UitFunction;
+import com.heinthanth.uit.Node.*;
 import com.heinthanth.uit.Uit;
 
 import java.time.Instant;
@@ -242,6 +239,16 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
         UitFunction function = new UitFunction(statement);
         environment.define(statement.name.sourceString, function);
         return null;
+    }
+
+    /**
+     * Interpret return statement
+     */
+    @Override
+    public Void visitReturnStatement(Statement.ReturnStatement statement) {
+        Object value = null;
+        if (statement.value != null) value = evaluate(statement.value);
+        throw new FunctionReturn(value);
     }
 
     /**

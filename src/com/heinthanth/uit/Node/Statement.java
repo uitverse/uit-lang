@@ -22,6 +22,8 @@ public abstract class Statement {
         R visitWhileStatement(WhileStatement statement);
 
         R visitFunctionStatement(FunctionStatement statement);
+
+        R visitReturnStatement(ReturnStatement statement);
     }
 
     public abstract <R> R accept(Visitor<R> visitor);
@@ -167,6 +169,24 @@ public abstract class Statement {
         @Override
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitFunctionStatement(this);
+        }
+    }
+
+    /**
+     * Function return statement
+     */
+    public static class ReturnStatement extends Statement {
+        public final Token keyword;
+        public final Expression value;
+
+        public ReturnStatement(Token keyword, Expression value) {
+            this.keyword = keyword;
+            this.value = value;
+        }
+
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitReturnStatement(this);
         }
     }
 }

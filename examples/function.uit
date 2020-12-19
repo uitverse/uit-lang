@@ -1,7 +1,5 @@
-void add(Num a, Num b)
-    output a + b
+Num add(Num a, Num b)
+    return "hello"
 stop
 
-add(1,2) // it works
-
-add("Hello", 2) // should throw error
+output add(1,2)
