@@ -3,6 +3,7 @@ package com.heinthanth.uit.Node;
 import com.heinthanth.uit.Lexer.Token;
 
 import java.util.List;
+import java.util.Map;
 
 public abstract class Statement {
     public interface Visitor<R> {
@@ -15,6 +16,8 @@ public abstract class Statement {
         R visitVariableAssignStatement(VariableAssignStatement statement);
 
         R visitBlockStatement(BlockStatement statement);
+
+        R visitIfStatement(IfStatement statement);
     }
 
     public abstract <R> R accept(Visitor<R> visitor);
@@ -103,5 +106,23 @@ public abstract class Statement {
         }
 
         public final List<Statement> statements;
+    }
+
+    /**
+     * If statement
+     */
+    public static class IfStatement extends Statement {
+        public IfStatement(Map<Expression, Statement> branches, Statement elseBranch) {
+            this.branches = branches;
+            this.elseBranch = elseBranch;
+        }
+
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitIfStatement(this);
+        }
+
+        public final Map<Expression, Statement> branches;
+        public final Statement elseBranch;
     }
 }

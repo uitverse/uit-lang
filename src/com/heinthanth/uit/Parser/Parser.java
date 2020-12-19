@@ -9,7 +9,9 @@ import com.heinthanth.uit.Node.Expression;
 import static com.heinthanth.uit.Lexer.TokenType.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Parser {
     private static class ParseError extends RuntimeException {
@@ -88,6 +90,7 @@ public class Parser {
      * @return Statement
      */
     private Statement statement() {
+        if (match(IF)) return ifStatement();
         if (match(OUTPUT)) return outputStatement();
         if (match(BLOCK)) return new Statement.BlockStatement(block());
 
@@ -103,6 +106,43 @@ public class Parser {
         Expression value = expression();
         //consume(SEMICOLON, "Expect ';' after value.");
         return new Statement.OutputStatement(value);
+    }
+
+    /**
+     * Get If statement
+     *
+     * @return if statement
+     */
+    private Statement ifStatement() {
+        consume(LEFT_PAREN, "Expect '(' after 'if'.");
+        Expression condition = expression();
+        consume(RIGHT_PAREN, "Expect ')' after if condition.");
+        Map<Expression, Statement> branches = new HashMap<>();
+        List<Statement> branch = new ArrayList<>();
+        while (!(check(ENDIF) || check(ELSEIF) || check(ELSE)) && !isAtEnd()) {
+            branch.add(declaration());
+        }
+        branches.put(condition, new Statement.BlockStatement(branch));
+        while (match(ELSEIF)) {
+            consume(LEFT_PAREN, "Expect '(' after 'if'.");
+            condition = expression();
+            consume(RIGHT_PAREN, "Expect ')' after if condition.");
+            branch = new ArrayList<>();
+            while (!(check(ENDIF) || check(ELSE) || check(ELSEIF)) && !isAtEnd()) {
+                branch.add(declaration());
+            }
+            branches.put(condition, new Statement.BlockStatement(branch));
+        }
+        Statement elseBranch = null;
+        if (match(ELSE)) {
+            List<Statement> statements = new ArrayList<>();
+            while (!check(ENDIF) && !isAtEnd()) {
+                statements.add(declaration());
+            }
+            elseBranch = new Statement.BlockStatement(statements);
+        }
+        consume(ENDIF, "Expect 'endif' after if statement");
+        return new Statement.IfStatement(branches, elseBranch);
     }
 
     /**

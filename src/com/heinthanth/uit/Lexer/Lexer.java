@@ -34,7 +34,9 @@ public class Lexer {
         keywords.put("block", BLOCK);
         keywords.put("endblock", ENDBLOCK);
         keywords.put("if", IF);
+        keywords.put("elseif", ELSEIF);
         keywords.put("else", ELSE);
+        keywords.put("endif", ENDIF);
         keywords.put("for", FOR);
         keywords.put("endfor", ENDFOR);
         keywords.put("while", WHILE);
@@ -100,6 +102,12 @@ public class Lexer {
                 } else {
                     addToken(SLASH);
                 }
+                break;
+            case '(':
+                addToken(LEFT_PAREN);
+                break;
+            case ')':
+                addToken(RIGHT_PAREN);
                 break;
             case '!':
                 addToken(NOT);

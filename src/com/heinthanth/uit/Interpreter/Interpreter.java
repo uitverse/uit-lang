@@ -6,6 +6,7 @@ import com.heinthanth.uit.Node.Statement;
 import com.heinthanth.uit.Uit;
 
 import java.util.List;
+import java.util.Map;
 
 public class Interpreter implements Expression.Visitor<Object>, Statement.Visitor<Void> {
     /**
@@ -149,9 +150,29 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
         return null;
     }
 
+    /**
+     * visit block statement
+     *
+     * @param statement block statement
+     * @return null
+     */
     @Override
     public Void visitBlockStatement(Statement.BlockStatement statement) {
         executeBlock(statement.statements, new Environment(environment));
+        return null;
+    }
+
+    @Override
+    public Void visitIfStatement(Statement.IfStatement statement) {
+        for (Map.Entry<Expression, Statement> stmt : statement.branches.entrySet()) {
+            if (isTrue(evaluate(stmt.getKey()))) {
+                execute(stmt.getValue());
+                return null;
+            }
+        }
+        if (statement.elseBranch != null) {
+            execute(statement.elseBranch);
+        }
         return null;
     }
 
