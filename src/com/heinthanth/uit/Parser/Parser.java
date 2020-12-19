@@ -24,6 +24,8 @@ public class Parser {
      */
     private int current = 0;
 
+    private int loopDepth = 0;
+
     /**
      * Parser constructor
      *
@@ -113,6 +115,7 @@ public class Parser {
         if (match(IF)) return ifStatement();
         if (match(OUTPUT)) return outputStatement();
         if (match(RETURN)) return returnStatement();
+        if (match(BREAK)) return breakStatement();
         if (match(WHILE)) return whileStatement();
         if (match(FOR)) return forStatement();
         if (match(BLOCK)) return new Statement.BlockStatement(block());
@@ -142,6 +145,15 @@ public class Parser {
         }
         //consume(SEMICOLON, "Expect ';' after return value.");
         return new Statement.ReturnStatement(keyword, value);
+    }
+
+    private Statement breakStatement() {
+        //consume(SEMICOLON, "Expect ';' after 'break'.");
+        if (loopDepth == 0) {
+            error(previous(), "'break' must be use inside loop.");
+        }
+        //consume(SEMICOLON, "Expect ';' after 'break'.");
+        return new Statement.BreakStatement();
     }
 
     /**
@@ -188,8 +200,13 @@ public class Parser {
         consume(LEFT_PAREN, "Expect '(' after 'while'.");
         Expression condition = expression();
         consume(RIGHT_PAREN, "Expect ')' after condition.");
-        Statement body = new Statement.BlockStatement(whileBlock());
-        return new Statement.WhileStatement(condition, body);
+        try {
+            loopDepth++;
+            Statement body = new Statement.BlockStatement(whileBlock());
+            return new Statement.WhileStatement(condition, body);
+        } finally {
+            loopDepth--;
+        }
     }
 
     /**
@@ -217,20 +234,25 @@ public class Parser {
             increment = statement();
         }
         consume(RIGHT_PAREN, "Expect ')' after for clauses.");
-        Statement body = new Statement.BlockStatement(forBlock());
+        try {
+            loopDepth++;
+            Statement body = new Statement.BlockStatement(forBlock());
 
-        if (increment != null) {
-            body = new Statement.BlockStatement(
-                    Arrays.asList(body, increment)
-            );
-        }
-        if (condition == null) condition = new Expression.LiteralExpression(true);
-        body = new Statement.WhileStatement(condition, body);
+            if (increment != null) {
+                body = new Statement.BlockStatement(
+                        Arrays.asList(body, increment)
+                );
+            }
+            if (condition == null) condition = new Expression.LiteralExpression(true);
+            body = new Statement.WhileStatement(condition, body);
 
-        if (initializer != null) {
-            body = new Statement.BlockStatement(Arrays.asList(initializer, body));
+            if (initializer != null) {
+                body = new Statement.BlockStatement(Arrays.asList(initializer, body));
+            }
+            return body;
+        } finally {
+            loopDepth--;
         }
-        return body;
     }
 
     /**

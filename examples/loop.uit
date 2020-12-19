@@ -1,3 +1,7 @@
 for(Num a = 0; a < 5; set a = a + 1)
-    output "HELLO"
+    output "Looping"
+    if(a == 2)
+        output "Breaking"
+        break
+    endif
 endfor

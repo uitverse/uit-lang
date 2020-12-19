@@ -50,6 +50,7 @@ public class Lexer {
         keywords.put("Boolean", BOOLEAN);
         keywords.put("void", VOID);
         keywords.put("set", SET);
+        keywords.put("break", BREAK);
     }
 
     /**

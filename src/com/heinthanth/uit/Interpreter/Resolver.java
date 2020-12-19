@@ -86,6 +86,11 @@ public class Resolver implements Expression.Visitor<Void>, Statement.Visitor<Voi
     }
 
     @Override
+    public Void visitBreakStatement(Statement.BreakStatement stmt) {
+        return null;
+    }
+
+    @Override
     public Void visitWhileStatement(Statement.WhileStatement stmt) {
         resolve(stmt.condition);
         resolve(stmt.body);

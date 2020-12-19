@@ -22,6 +22,8 @@ public abstract class Statement {
         R visitFunctionStatement(FunctionStatement statement);
 
         R visitReturnStatement(ReturnStatement statement);
+
+        R visitBreakStatement(BreakStatement statement);
     }
 
     public abstract <R> R accept(Visitor<R> visitor);
@@ -167,6 +169,16 @@ public abstract class Statement {
         @Override
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitReturnStatement(this);
+        }
+    }
+
+    /**
+     * Break statement
+     */
+    public static class BreakStatement extends Statement {
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitBreakStatement(this);
         }
     }
 }

@@ -13,6 +13,12 @@ import java.util.Map;
 
 public class Interpreter implements Expression.Visitor<Object>, Statement.Visitor<Void> {
     /**
+     * interrupt to break loop
+     */
+    private static class BreakException extends RuntimeException {
+    }
+
+    /**
      * visit to literal expression -> Java Object (double, string, bool)
      */
     @Override
@@ -240,8 +246,12 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
     @Override
     public Void visitWhileStatement(Statement.WhileStatement statement) {
 
-        while (isTrue(evaluate(statement.condition))) {
-            execute(statement.body);
+        try {
+            while (isTrue(evaluate(statement.condition))) {
+                execute(statement.body);
+            }
+        } catch (BreakException e) {
+            // nothing
         }
         return null;
     }
@@ -264,6 +274,11 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
         Object value = null;
         if (statement.value != null) value = evaluate(statement.value);
         throw new FunctionReturn(value);
+    }
+
+    @Override
+    public Void visitBreakStatement(Statement.BreakStatement stmt) {
+        throw new BreakException();
     }
 
     /**
