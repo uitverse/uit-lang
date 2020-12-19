@@ -24,7 +24,7 @@ public class Environment {
         enclosing = null;
     }
 
-    Environment(Environment enclosing) {
+    public Environment(Environment enclosing) {
         this.enclosing = enclosing;
     }
 
@@ -55,7 +55,7 @@ public class Environment {
     /**
      * define variable
      */
-    void define(Token typeDef, Token name, Object value) {
+    public void define(Token typeDef, Token name, Object value) {
         if (values.containsKey(name.sourceString)) {
             throw new RuntimeError(name,
                     "variable '" + name.sourceString + "' exists.");
@@ -67,6 +67,30 @@ public class Environment {
                 values.put(name.sourceString, value);
             }
         }
+    }
+
+    /**
+     * define variable
+     */
+    public void defineFuncParam(Token typeDef, Token name, Object value) {
+        if (values.containsKey(name.sourceString)) {
+            throw new RuntimeError(name,
+                    "variable '" + name.sourceString + "' exists.");
+        } else {
+            if (value.getClass() != Uit2Java.get(typeDef.type)) {
+                throw new RuntimeError(typeDef,
+                        "Cannot assign " + Java2Uit.get(value.getClass()) + " to " + typeDef.type + " parameter '" + name.sourceString + "'.");
+            } else {
+                values.put(name.sourceString, value);
+            }
+        }
+    }
+
+    /**
+     * define for internal
+     */
+    public void define(String name, Object value) {
+        values.put(name, value);
     }
 
     /**

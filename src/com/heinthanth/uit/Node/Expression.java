@@ -2,6 +2,8 @@ package com.heinthanth.uit.Node;
 
 import com.heinthanth.uit.Lexer.Token;
 
+import java.util.List;
+
 public abstract class Expression {
     public interface Visitor<R> {
         R visitBinaryExpression(BinaryExpression expr);
@@ -15,6 +17,8 @@ public abstract class Expression {
         R visitVariableExpression(VariableExpression expr);
 
         R visitLogicalExpression(LogicalExpression expr);
+
+        R visitCallExpression(CallExpression expr);
     }
 
     public abstract <R> R accept(Visitor<R> visitor);
@@ -123,5 +127,26 @@ public abstract class Expression {
         public final Expression left;
         public final Token operator;
         public final Expression right;
+    }
+
+    /**
+     * function call expression
+     */
+    public static class CallExpression extends Expression
+    {
+        public final Expression callee;
+        public final Token paren;
+        public final List<Expression> arguments;
+
+        public CallExpression(Expression callee, Token paren, List<Expression> arguments) {
+            this.callee = callee;
+            this.paren = paren;
+            this.arguments = arguments;
+        }
+
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitCallExpression(this);
+        }
     }
 }

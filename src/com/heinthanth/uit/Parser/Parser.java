@@ -51,7 +51,7 @@ public class Parser {
      */
     private Statement declaration() {
         try {
-            if (match(NUM, STRING, BOOLEAN)) return varDeclaration(previous());
+            if (match(NUM, STRING, BOOLEAN, VOID)) return varDeclaration(previous());
             return statement();
         } catch (ParseError error) {
             synchronize();
@@ -63,8 +63,31 @@ public class Parser {
      * variable declaration statement
      */
     private Statement varDeclaration(Token typeDef) {
-        Token name = consume(IDENTIFIER, "Expect variable name.");
+        Token name = consume(IDENTIFIER, "Expect identifier.");
         Expression initializer = null;
+        // may be function
+        if (match(LEFT_PAREN)) {
+            List<List<Token>> parameters = new ArrayList<>();
+            if (!check(RIGHT_PAREN)) {
+                do {
+                    if (parameters.size() >= 255) {
+                        error(getCurrentToken(), "Can't have more than 255 parameters.");
+                    }
+                    List<Token> param = new ArrayList<>();
+                    if (!(check(NUM) || check(STRING) || check(BOOLEAN) || check(VOID))) {
+                        throw error(getCurrentToken(), "Expect return type.");
+                    } else {
+                        param.add(advance());
+                    }
+                    param.add(consume(IDENTIFIER, "Expect parameter name."));
+                    parameters.add(param);
+                } while (match(COMMA));
+            }
+            consume(RIGHT_PAREN, "Expect ')' after parameters.");
+            // consume(LEFT_BRACE, "Expect '{' before " + kind + " body.");
+            List<Statement> body = functionBlock();
+            return new Statement.FunctionStatement(typeDef, name, parameters, body);
+        }
         if (match(ASSIGN)) {
             initializer = expression();
         }
@@ -248,7 +271,22 @@ public class Parser {
         while (!check(ENDFOR) && !isAtEnd()) {
             statements.add(declaration());
         }
-        consume(ENDFOR, "Expect 'endfor' after while statement.");
+        consume(ENDFOR, "Expect 'endfor' after for statement.");
+        return statements;
+    }
+
+    /**
+     * for block statements
+     *
+     * @return list of statements inside for block
+     */
+    private List<Statement> functionBlock() {
+        List<Statement> statements = new ArrayList<>();
+
+        while (!check(STOP) && !isAtEnd()) {
+            statements.add(declaration());
+        }
+        consume(STOP, "Expect 'stop' after function statement.");
         return statements;
     }
 
@@ -349,7 +387,36 @@ public class Parser {
             return new Expression.UnaryExpression(operator, right);
         }
 
-        return primary();
+        return call();
+    }
+
+    private Expression finishCall(Expression callee) {
+        List<Expression> arguments = new ArrayList<>();
+        if (!check(RIGHT_PAREN)) {
+            do {
+                if (arguments.size() >= 255) {
+                    error(getCurrentToken(), "Can't have more than 255 arguments.");
+                }
+                arguments.add(expression());
+            } while (match(COMMA));
+        }
+        Token paren = consume(RIGHT_PAREN, "Expect ')' after arguments.");
+        return new Expression.CallExpression(callee, paren, arguments);
+    }
+
+    /**
+     * function call
+     */
+    private Expression call() {
+        Expression expr = primary();
+        while (true) {
+            if (match(LEFT_PAREN)) {
+                expr = finishCall(expr);
+            } else {
+                break;
+            }
+        }
+        return expr;
     }
 
     private Expression primary() {

@@ -20,6 +20,8 @@ public abstract class Statement {
         R visitIfStatement(IfStatement statement);
 
         R visitWhileStatement(WhileStatement statement);
+
+        R visitFunctionStatement(FunctionStatement statement);
     }
 
     public abstract <R> R accept(Visitor<R> visitor);
@@ -144,5 +146,27 @@ public abstract class Statement {
 
         public final Expression condition;
         public final Statement body;
+    }
+
+    /**
+     * function declaration statement
+     */
+    public static class FunctionStatement extends Statement {
+        public final Token typeDef;
+        public final Token name;
+        public final List<List<Token>> params;
+        public final List<Statement> body;
+
+        public FunctionStatement(Token typeDef, Token name, List<List<Token>> params, List<Statement> body) {
+            this.typeDef = typeDef;
+            this.name = name;
+            this.params = params;
+            this.body = body;
+        }
+
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitFunctionStatement(this);
+        }
     }
 }

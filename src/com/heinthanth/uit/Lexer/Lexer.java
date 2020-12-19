@@ -48,6 +48,7 @@ public class Lexer {
         keywords.put("Num", NUM);
         keywords.put("String", STRING);
         keywords.put("Boolean", BOOLEAN);
+        keywords.put("void", VOID);
         keywords.put("set", SET);
     }
 
@@ -129,6 +130,9 @@ public class Lexer {
                 break;
             case ';':
                 addToken(SEMICOLON);
+                break;
+            case ',':
+                addToken(COMMA);
                 break;
             case ' ':
             case '\r':

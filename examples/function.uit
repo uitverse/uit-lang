@@ -1,0 +1,7 @@
+void add(Num a, Num b)
+    output a + b
+stop
+
+add(1,2) // it works
+
+add("Hello", 2) // should throw error

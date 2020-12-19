@@ -4,8 +4,12 @@ import com.heinthanth.uit.Lexer.Token;
 import com.heinthanth.uit.Lexer.TokenType;
 import com.heinthanth.uit.Node.Expression;
 import com.heinthanth.uit.Node.Statement;
+import com.heinthanth.uit.Node.UitCallable;
+import com.heinthanth.uit.Node.UitFunction;
 import com.heinthanth.uit.Uit;
 
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -112,6 +116,33 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
     }
 
     /**
+     * visit function call
+     */
+    @Override
+    public Object visitCallExpression(Expression.CallExpression expression) {
+        Object callee = evaluate(expression.callee);
+
+        List<Object> arguments = new ArrayList<>();
+        for (Expression argument : expression.arguments) {
+            arguments.add(evaluate(argument));
+        }
+
+        if (!(callee instanceof UitCallable)) {
+            throw new RuntimeError(expression.paren,
+                    "Cannot call non-function.");
+        }
+
+        UitCallable function = (UitCallable) callee;
+        if (arguments.size() != function.arity()) {
+            throw new RuntimeError(expression.paren, "Expected " +
+                    function.arity() + " arguments but got " +
+                    arguments.size() + ".");
+        }
+
+        return function.call(this, arguments);
+    }
+
+    /**
      * interpret expression statement
      *
      * @param statement expression statement
@@ -204,9 +235,43 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
     }
 
     /**
+     * Interpret function declaration
+     */
+    @Override
+    public Void visitFunctionStatement(Statement.FunctionStatement statement) {
+        UitFunction function = new UitFunction(statement);
+        environment.define(statement.name.sourceString, function);
+        return null;
+    }
+
+    /**
      * Environment for identifier
      */
-    private Environment environment = new Environment();
+    public final Environment globals = new Environment();
+    private Environment environment = globals;
+
+    /**
+     * Interpreter constructor
+     */
+    public Interpreter() {
+        globals.define("time", new UitCallable() {
+            @Override
+            public int arity() {
+                return 0;
+            }
+
+            @Override
+            public Object call(Interpreter interpreter,
+                               List<Object> arguments) {
+                return Instant.now().getEpochSecond();
+            }
+
+            @Override
+            public String toString() {
+                return "<native func>";
+            }
+        });
+    }
 
     /**
      * Interpret parse statements
@@ -238,7 +303,7 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
      * @param statements  list of statements to execute
      * @param environment current environment
      */
-    void executeBlock(List<Statement> statements, Environment environment) {
+    public void executeBlock(List<Statement> statements, Environment environment) {
         Environment previous = this.environment;
         try {
             this.environment = environment;
