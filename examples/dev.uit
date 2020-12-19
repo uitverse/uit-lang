@@ -1,0 +1,18 @@
+String global = "Change me!"
+
+String fn(String t)
+    output t
+    for(Num i = 0; i < 5; set i = i + 1)
+        String local = "local one"
+        set global = fn2(local)
+    endfor
+stop
+
+String fn2(String t)
+    output t
+    return "World!"
+stop
+
+fn("It works!")
+
+output global
