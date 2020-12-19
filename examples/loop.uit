@@ -1,0 +1,3 @@
+for(Num a = 0; a < 5; set a = a + 1)
+    output "HELLO"
+endfor

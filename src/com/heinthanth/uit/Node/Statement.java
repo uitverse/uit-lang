@@ -18,6 +18,8 @@ public abstract class Statement {
         R visitBlockStatement(BlockStatement statement);
 
         R visitIfStatement(IfStatement statement);
+
+        R visitWhileStatement(WhileStatement statement);
     }
 
     public abstract <R> R accept(Visitor<R> visitor);
@@ -124,5 +126,23 @@ public abstract class Statement {
 
         public final Map<Expression, Statement> branches;
         public final Statement elseBranch;
+    }
+
+    /**
+     * While statement
+     */
+    public static class WhileStatement extends Statement {
+        public WhileStatement(Expression condition, Statement body) {
+            this.condition = condition;
+            this.body = body;
+        }
+
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitWhileStatement(this);
+        }
+
+        public final Expression condition;
+        public final Statement body;
     }
 }

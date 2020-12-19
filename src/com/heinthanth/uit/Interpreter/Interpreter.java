@@ -192,6 +192,18 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
     }
 
     /**
+     * interpret while statement
+     */
+    @Override
+    public Void visitWhileStatement(Statement.WhileStatement statement) {
+
+        while (isTrue(evaluate(statement.condition))) {
+            execute(statement.body);
+        }
+        return null;
+    }
+
+    /**
      * Environment for identifier
      */
     private Environment environment = new Environment();

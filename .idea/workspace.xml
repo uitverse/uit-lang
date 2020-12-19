@@ -3,8 +3,22 @@
   <component name="ChangeListManager">
     <list default="true" id="9c578c0d-e4c4-4332-aefd-039cc48de14a" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Interpreter/Interpreter.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Interpreter/Interpreter.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Lexer/Lexer.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Lexer/Lexer.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement$BlockStatement.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement$BlockStatement.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement$ExpressionStatement.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement$ExpressionStatement.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement$IfStatement.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement$IfStatement.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement$OutputStatement.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement$OutputStatement.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement$VariableAssignStatement.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement$VariableAssignStatement.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement$VariableDeclareStatement.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement$VariableDeclareStatement.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement$Visitor.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement$Visitor.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Parser/Parser$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Parser/Parser$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Parser/Parser$ParseError.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Parser/Parser$ParseError.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Parser/Parser.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Parser/Parser.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/heinthanth/uit/Interpreter/Interpreter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/heinthanth/uit/Interpreter/Interpreter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/heinthanth/uit/Node/Expression.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/heinthanth/uit/Node/Expression.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/heinthanth/uit/Lexer/Lexer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/heinthanth/uit/Lexer/Lexer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/heinthanth/uit/Node/Statement.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/heinthanth/uit/Node/Statement.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/heinthanth/uit/Parser/Parser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/heinthanth/uit/Parser/Parser.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -76,7 +90,7 @@
       <workItem from="1608188664144" duration="3826000" />
       <workItem from="1608275247689" duration="5765000" />
       <workItem from="1608286482101" duration="18119000" />
-      <workItem from="1608343917359" duration="3548000" />
+      <workItem from="1608343917359" duration="5173000" />
     </task>
     <servers />
   </component>

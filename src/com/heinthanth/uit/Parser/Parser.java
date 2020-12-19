@@ -8,10 +8,7 @@ import com.heinthanth.uit.Node.Expression;
 
 import static com.heinthanth.uit.Lexer.TokenType.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Parser {
     private static class ParseError extends RuntimeException {
@@ -55,7 +52,6 @@ public class Parser {
     private Statement declaration() {
         try {
             if (match(NUM, STRING, BOOLEAN)) return varDeclaration(previous());
-            if (match(SET)) return varAssignment();
             return statement();
         } catch (ParseError error) {
             synchronize();
@@ -90,8 +86,11 @@ public class Parser {
      * @return Statement
      */
     private Statement statement() {
+        if (match(SET)) return varAssignment();
         if (match(IF)) return ifStatement();
         if (match(OUTPUT)) return outputStatement();
+        if (match(WHILE)) return whileStatement();
+        if (match(FOR)) return forStatement();
         if (match(BLOCK)) return new Statement.BlockStatement(block());
 
         return expressionStatement();
@@ -146,6 +145,58 @@ public class Parser {
     }
 
     /**
+     * while statement
+     */
+    private Statement whileStatement() {
+        consume(LEFT_PAREN, "Expect '(' after 'while'.");
+        Expression condition = expression();
+        consume(RIGHT_PAREN, "Expect ')' after condition.");
+        Statement body = new Statement.BlockStatement(whileBlock());
+        return new Statement.WhileStatement(condition, body);
+    }
+
+    /**
+     * for statement
+     */
+    private Statement forStatement() {
+        consume(LEFT_PAREN, "Expect '(' after 'for'.");
+        Statement initializer;
+        if (match(SEMICOLON)) {
+            initializer = null;
+        } else if (match(NUM)) {
+            initializer = varDeclaration(previous());
+            consume(SEMICOLON, "Expect ';' after initializer.");
+        } else {
+            initializer = expressionStatement();
+            consume(SEMICOLON, "Expect ';' after initializer expression.");
+        }
+        Expression condition = null;
+        if (!check(SEMICOLON)) {
+            condition = expression();
+        }
+        consume(SEMICOLON, "Expect ';' after loop condition.");
+        Statement increment = null;
+        if (!check(RIGHT_PAREN)) {
+            increment = statement();
+        }
+        consume(RIGHT_PAREN, "Expect ')' after for clauses.");
+        Statement body = new Statement.BlockStatement(forBlock());
+
+        if (increment != null) {
+            body = new Statement.BlockStatement(
+                    Arrays.asList(body, increment)
+            );
+        }
+        if (condition == null) condition = new Expression.LiteralExpression(true);
+        body = new Statement.WhileStatement(condition, body);
+
+        if (initializer != null) {
+            body = new Statement.BlockStatement(Arrays.asList(initializer, body));
+        }
+        return body;
+    }
+
+    /**
      * Get expression statement
      *
      * @return Expression statement
@@ -168,6 +219,36 @@ public class Parser {
             statements.add(declaration());
         }
         consume(ENDBLOCK, "Expect 'endblock' after block.");
+        return statements;
+    }
+
+    /**
+     * while block statements
+     *
+     * @return list of statements inside while block
+     */
+    private List<Statement> whileBlock() {
+        List<Statement> statements = new ArrayList<>();
+
+        while (!check(ENDWHILE) && !isAtEnd()) {
+            statements.add(declaration());
+        }
+        consume(ENDWHILE, "Expect 'endwhile' after while statement.");
+        return statements;
+    }
+
+    /**
+     * for block statements
+     *
+     * @return list of statements inside for block
+     */
+    private List<Statement> forBlock() {
+        List<Statement> statements = new ArrayList<>();
+
+        while (!check(ENDFOR) && !isAtEnd()) {
+            statements.add(declaration());
+        }
+        consume(ENDFOR, "Expect 'endfor' after while statement.");
         return statements;
     }
 

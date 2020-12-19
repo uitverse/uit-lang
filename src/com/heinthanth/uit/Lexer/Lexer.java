@@ -127,6 +127,9 @@ public class Lexer {
             case '>':
                 addToken(match('=') ? GREATER_EQUAL : GREATER);
                 break;
+            case ';':
+                addToken(SEMICOLON);
+                break;
             case ' ':
             case '\r':
             case '\t':
