@@ -19,6 +19,8 @@ public abstract class Expression {
         R visitLogicalExpression(LogicalExpression expr);
 
         R visitCallExpression(CallExpression expr);
+
+        R visitVariableAssignExpression(VariableAssignExpression expr);
     }
 
     public abstract <R> R accept(Visitor<R> visitor);
@@ -130,10 +132,27 @@ public abstract class Expression {
     }
 
     /**
+     * Assign variable to new value
+     */
+    public static class VariableAssignExpression extends Expression {
+        public VariableAssignExpression(Token name, Expression initializer) {
+            this.name = name;
+            this.value = initializer;
+        }
+
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitVariableAssignExpression(this);
+        }
+
+        public final Token name;
+        public final Expression value;
+    }
+
+    /**
      * function call expression
      */
-    public static class CallExpression extends Expression
-    {
+    public static class CallExpression extends Expression {
         public final Expression callee;
         public final Token paren;
         public final List<Expression> arguments;

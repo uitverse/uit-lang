@@ -13,8 +13,6 @@ public abstract class Statement {
 
         R visitVariableDeclareStatement(VariableDeclareStatement statement);
 
-        R visitVariableAssignStatement(VariableAssignStatement statement);
-
         R visitBlockStatement(BlockStatement statement);
 
         R visitIfStatement(IfStatement statement);
@@ -76,24 +74,6 @@ public abstract class Statement {
         }
 
         public final Token typeDef;
-        public final Token name;
-        public final Expression initializer;
-    }
-
-    /**
-     * Assign variable to new value
-     */
-    public static class VariableAssignStatement extends Statement {
-        public VariableAssignStatement(Token name, Expression initializer) {
-            this.name = name;
-            this.initializer = initializer;
-        }
-
-        @Override
-        public <R> R accept(Visitor<R> visitor) {
-            return visitor.visitVariableAssignStatement(this);
-        }
-
         public final Token name;
         public final Expression initializer;
     }

@@ -5,9 +5,9 @@ import com.heinthanth.uit.Interpreter.RuntimeError;
 import com.heinthanth.uit.Lexer.Lexer;
 import com.heinthanth.uit.Lexer.Token;
 import com.heinthanth.uit.Lexer.TokenType;
-import com.heinthanth.uit.Node.Expression;
 import com.heinthanth.uit.Node.Statement;
 import com.heinthanth.uit.Parser.Parser;
+import com.heinthanth.uit.Interpreter.Resolver;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -113,6 +113,9 @@ public class Uit {
         if (hadError) return;
         List<Statement> statements = new Parser(tokens).parse();
         if (hadError) return;
+        Resolver resolver = new Resolver(interpreter);
+        resolver.resolve(statements);
+        if (hadError) return;
         interpreter.interpret(statements);
     }
 
@@ -175,6 +178,16 @@ public class Uit {
      * @param message Error message.
      */
     private static void report(int line, int index, String where, String message) {
+        sourceError(line, index, message);
+//        System.err.println(
+//                "[line " + line + "] Error" + where + ": " + message);
+        hadError = true;
+    }
+
+    /**
+     * show source code error snippet
+     */
+    private static void sourceError(int line, int index, String message) {
         String[] sourceLines = sourceString.split("\\r?\\n", -1);
         if (line > 0) {
             for (int i = 0; i < line; i++) {
@@ -193,8 +206,5 @@ public class Uit {
         } else {
             System.err.println((line + 2) + " | " + sourceLines[line + 1]);
         }
-//        System.err.println(
-//                "[line " + line + "] Error" + where + ": " + message);
-        hadError = true;
     }
 }

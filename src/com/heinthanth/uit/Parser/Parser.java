@@ -95,12 +95,12 @@ public class Parser {
         return new Statement.VariableDeclareStatement(typeDef, name, initializer);
     }
 
-    private Statement varAssignment() {
+    private Expression varAssignment() {
         Token name = consume(IDENTIFIER, "Expect variable name.");
         consume(ASSIGN, "Expect '='.");
         Expression initializer = expression();
         //consume(SEMICOLON, "Expect ';' after variable declaration.");
-        return new Statement.VariableAssignStatement(name, initializer);
+        return new Expression.VariableAssignExpression(name, initializer);
     }
 
     /**
@@ -109,7 +109,7 @@ public class Parser {
      * @return Statement
      */
     private Statement statement() {
-        if (match(SET)) return varAssignment();
+        if (match(SET)) return new Statement.ExpressionStatement(varAssignment());
         if (match(IF)) return ifStatement();
         if (match(OUTPUT)) return outputStatement();
         if (match(RETURN)) return returnStatement();

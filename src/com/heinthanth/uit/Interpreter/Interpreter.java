@@ -7,6 +7,7 @@ import com.heinthanth.uit.Uit;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -51,7 +52,16 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
      */
     @Override
     public Object visitVariableExpression(Expression.VariableExpression expression) {
-        return environment.get(expression.name);
+        return lookUpVariable(expression.name, expression);
+    }
+
+    private Object lookUpVariable(Token name, Expression expr) {
+        Integer distance = locals.get(expr);
+        if (distance != null) {
+            return environment.getAt(distance, name.sourceString);
+        } else {
+            return globals.get(name);
+        }
     }
 
     /**
@@ -183,13 +193,18 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
     /**
      * assign variable with new value
      *
-     * @param stmt variable declaration statement
+     * @param expr variable declaration statement
      * @return null
      */
     @Override
-    public Void visitVariableAssignStatement(Statement.VariableAssignStatement stmt) {
-        Object value = evaluate(stmt.initializer);
-        environment.assign(stmt.name, value);
+    public Void visitVariableAssignExpression(Expression.VariableAssignExpression expr) {
+        Object value = evaluate(expr.value);
+        Integer distance = locals.get(expr);
+        if (distance != null) {
+            environment.assignAt(distance, expr.name, value);
+        } else {
+            globals.assign(expr.name, value);
+        }
         return null;
     }
 
@@ -236,7 +251,7 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
      */
     @Override
     public Void visitFunctionStatement(Statement.FunctionStatement statement) {
-        UitFunction function = new UitFunction(statement);
+        UitFunction function = new UitFunction(statement, environment);
         environment.define(statement.name.sourceString, function);
         return null;
     }
@@ -256,6 +271,7 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
      */
     public final Environment globals = new Environment();
     private Environment environment = globals;
+    private final Map<Expression, Integer> locals = new HashMap<>();
 
     /**
      * Interpreter constructor
@@ -293,6 +309,10 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
         } catch (RuntimeError error) {
             Uit.runtimeError(error);
         }
+    }
+
+    void resolve(Expression expr, int depth) {
+        locals.put(expr, depth);
     }
 
     /**

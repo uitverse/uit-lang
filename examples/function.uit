@@ -1,4 +1,5 @@
 Num add(Num a, Num b)
+    Num a = 12
     return "hello"
 stop
 
