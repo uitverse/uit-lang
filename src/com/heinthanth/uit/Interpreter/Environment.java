@@ -113,7 +113,16 @@ public class Environment {
     }
 
     void assignAt(int distance, Token name, Object value) {
-        ancestor(distance).values.put(name.sourceString, value);
+        if (ancestor(distance).values.containsKey(name.sourceString)) {
+            Object oldvalue = ancestor(distance).values.get(name.sourceString);
+            if (value.getClass() != oldvalue.getClass()) {
+                throw new RuntimeError(name,
+                        "Cannot assign " + Converter.Java2Uit.get(value.getClass()) + " to " + Converter.Java2Uit.get(oldvalue.getClass()) + " variable '" + name.sourceString + "'.");
+            } else {
+                ancestor(distance).values.put(name.sourceString, value);
+                return;
+            }
+        }
     }
 
     Environment ancestor(int distance) {

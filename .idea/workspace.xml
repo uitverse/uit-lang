@@ -3,32 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="9c578c0d-e4c4-4332-aefd-039cc48de14a" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Interpreter/Interpreter$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Interpreter/Interpreter$2.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Interpreter/Interpreter.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Interpreter/Resolver$FunctionType.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Interpreter/Resolver.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Lexer/Lexer.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Lexer/Lexer.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Lexer/TokenType.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Lexer/TokenType.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement$BlockStatement.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement$BlockStatement.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement$ExpressionStatement.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement$ExpressionStatement.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement$FunctionStatement.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement$FunctionStatement.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement$IfStatement.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement$IfStatement.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement$OutputStatement.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement$OutputStatement.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement$ReturnStatement.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement$ReturnStatement.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement$VariableDeclareStatement.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement$VariableDeclareStatement.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement$Visitor.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement$Visitor.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement$WhileStatement.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement$WhileStatement.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Parser/Parser$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Parser/Parser$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Parser/Parser.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Parser/Parser.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Uit.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/block.uit" beforeDir="false" afterPath="$PROJECT_DIR$/examples/block.uit" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/heinthanth/uit/Interpreter/Environment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/heinthanth/uit/Interpreter/Environment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/heinthanth/uit/Interpreter/Interpreter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/heinthanth/uit/Interpreter/Interpreter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/heinthanth/uit/Interpreter/Resolver.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/heinthanth/uit/Interpreter/Resolver.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/heinthanth/uit/Lexer/Lexer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/heinthanth/uit/Lexer/Lexer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/heinthanth/uit/Lexer/TokenType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/heinthanth/uit/Lexer/TokenType.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/heinthanth/uit/Node/Statement.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/heinthanth/uit/Node/Statement.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/heinthanth/uit/Parser/Parser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/heinthanth/uit/Parser/Parser.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -68,21 +45,6 @@
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="show.migrate.to.gradle.popup" value="false" />
   </component>
-  <component name="RunManager">
-    <configuration default="true" type="ArquillianTestNG" factoryName="" nameIsGenerated="true">
-      <option name="arquillianRunConfiguration">
-        <value>
-          <option name="containerStateName" value="" />
-        </value>
-      </option>
-      <option name="TEST_OBJECT" value="CLASS" />
-      <properties />
-      <listeners />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -102,6 +64,7 @@
       <workItem from="1608343917359" duration="15458000" />
       <workItem from="1608366973251" duration="1617000" />
       <workItem from="1608383339862" duration="2349000" />
+      <workItem from="1608432934782" duration="1417000" />
     </task>
     <servers />
   </component>

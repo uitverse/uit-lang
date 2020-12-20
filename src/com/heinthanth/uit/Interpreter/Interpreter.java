@@ -83,8 +83,9 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
 
         switch (expression.operator.type) {
             case PLUS:
-                checkNumberOperands(expression.operator, left, right);
-                return (double) left + (double) right;
+                return concatOrPlus(left, expression.operator, right);
+//                checkNumberOperands(expression.operator, left, right);
+//                return (double) left + (double) right;
             case MINUS:
                 checkNumberOperands(expression.operator, left, right);
                 return (double) left - (double) right;
@@ -112,6 +113,37 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
                 return isEqual(left, right);
         }
         return null;
+    }
+
+    private Object concatOrPlus(Object left, Token operator, Object right) {
+        if (left instanceof Double && right instanceof Double) {
+            return (double) left + (double) right;
+        }
+        if (left instanceof String && right instanceof String) {
+            return (String) left + (String) right;
+        }
+        if (left instanceof String && right instanceof Double) {
+            if (
+                    ((double) right == Math.floor((double) right))
+                            && !Double.isInfinite((double) right)
+            ) {
+                double r = (double) right;
+                return (String) left + (int) r;
+            }
+            return (String) left + (Double) right;
+        }
+        if (left instanceof Double && right instanceof String) {
+            if (
+                    ((double) left == Math.floor((double) left))
+                            && !Double.isInfinite((double) left)
+            ) {
+                double l = (double) left;
+                return (int) l + (String) right;
+            }
+            return (Double) left + (String) right;
+        }
+        throw new RuntimeError(operator,
+                "Cannot call non-function.");
     }
 
     /**
