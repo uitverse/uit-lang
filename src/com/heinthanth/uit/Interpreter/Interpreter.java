@@ -130,7 +130,7 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
                 double r = (double) right;
                 return (String) left + (int) r;
             }
-            return (String) left + (Double) right;
+            return (String) left + (double) right;
         }
         if (left instanceof Double && right instanceof String) {
             if (
@@ -140,10 +140,10 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
                 double l = (double) left;
                 return (int) l + (String) right;
             }
-            return (Double) left + (String) right;
+            return (double) left + (String) right;
         }
         throw new RuntimeError(operator,
-                "Cannot call non-function.");
+                "Cannot concat non-strings or non-numbers");
     }
 
     /**
