@@ -36,7 +36,7 @@ public class Environment {
             throw new RuntimeError(name,
                     "variable '" + name.sourceString + "' exists.");
         } else {
-            if (value.getClass() != Converter.Uit2Java.get(typeDef.type)) {
+            if (value.getClass() != Long.class && value.getClass() != Converter.Uit2Java.get(typeDef.type)) {
                 throw new RuntimeError(typeDef,
                         "Cannot assign " + Converter.Java2Uit.get(value.getClass()) + " to " + typeDef.type + " variable '" + name.sourceString + "'.");
             } else {

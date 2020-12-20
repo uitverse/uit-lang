@@ -88,25 +88,25 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
 //                return (double) left + (double) right;
             case MINUS:
                 checkNumberOperands(expression.operator, left, right);
-                return (double) left - (double) right;
+                return ((Number) left).doubleValue() - ((Number) right).doubleValue();
             case SLASH:
                 checkNumberOperands(expression.operator, left, right);
-                return (double) left / (double) right;
+                return ((Number) left).doubleValue() / ((Number) right).doubleValue();
             case STAR:
                 checkNumberOperands(expression.operator, left, right);
-                return (double) left * (double) right;
+                return ((Number) left).doubleValue() * ((Number) right).doubleValue();
             case GREATER:
                 checkNumberOperands(expression.operator, left, right);
-                return (double) left > (double) right;
+                return ((Number) left).doubleValue() > ((Number) right).doubleValue();
             case GREATER_EQUAL:
                 checkNumberOperands(expression.operator, left, right);
-                return (double) left >= (double) right;
+                return ((Number) left).doubleValue() >= ((Number) right).doubleValue();
             case LESS:
                 checkNumberOperands(expression.operator, left, right);
-                return (double) left < (double) right;
+                return ((Number) left).doubleValue() < ((Number) right).doubleValue();
             case LESS_EQUAL:
                 checkNumberOperands(expression.operator, left, right);
-                return (double) left <= (double) right;
+                return ((Number) left).doubleValue() <= ((Number) right).doubleValue();
             case NOT_EQUAL:
                 return !isEqual(left, right);
             case EQUAL:
@@ -116,31 +116,31 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
     }
 
     private Object concatOrPlus(Object left, Token operator, Object right) {
-        if (left instanceof Double && right instanceof Double) {
-            return (double) left + (double) right;
+        if (left instanceof Number && right instanceof Number) {
+            return ((Number) left).doubleValue() + ((Number) right).doubleValue();
         }
         if (left instanceof String && right instanceof String) {
-            return (String) left + (String) right;
+            return left + (String) right;
         }
-        if (left instanceof String && right instanceof Double) {
+        if (left instanceof String && right instanceof Number) {
             if (
-                    ((double) right == Math.floor((double) right))
-                            && !Double.isInfinite((double) right)
+                    (((Number) right).doubleValue() == Math.floor(((Number) right).doubleValue()))
+                            && !Double.isInfinite(((Number) right).doubleValue())
             ) {
-                double r = (double) right;
+                double r = ((Number) right).doubleValue();
                 return (String) left + (int) r;
             }
-            return (String) left + (double) right;
+            return (String) left + ((Number) right).doubleValue();
         }
-        if (left instanceof Double && right instanceof String) {
+        if (left instanceof Number && right instanceof String) {
             if (
-                    ((double) left == Math.floor((double) left))
-                            && !Double.isInfinite((double) left)
+                    (((Number) left).doubleValue() == Math.floor(((Number) left).doubleValue()))
+                            && !Double.isInfinite(((Number) left).doubleValue())
             ) {
-                double l = (double) left;
+                double l = ((Number) left).doubleValue();
                 return (int) l + (String) right;
             }
-            return (double) left + (String) right;
+            return ((Number) left).doubleValue() + (String) right;
         }
         throw new RuntimeError(operator,
                 "Cannot concat non-strings or non-numbers");
@@ -442,7 +442,7 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
      * @param right    right object
      */
     private void checkNumberOperands(Token operator, Object left, Object right) {
-        if (left instanceof Double && right instanceof Double) return;
+        if (left instanceof Number && right instanceof Number) return;
 
         throw new RuntimeError(operator, "Operands must be numbers.");
     }

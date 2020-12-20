@@ -8,5 +8,8 @@ Num fib(Num n)
 	endif
 stop
 
+Num start = time()
+
 output fib(a)
 
+output time() - start
