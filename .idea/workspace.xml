@@ -1,9 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="ArtifactsWorkspaceSettings">
+    <artifacts-to-build>
+      <artifact name="uit:jar" />
+    </artifacts-to-build>
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="9c578c0d-e4c4-4332-aefd-039cc48de14a" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/artifacts/uit_jar.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/heinthanth/uit/Interpreter/Interpreter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/heinthanth/uit/Interpreter/Interpreter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Interpreter/Environment.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Interpreter/Interpreter$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Interpreter/Interpreter$2.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Interpreter/Interpreter$BreakException.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Interpreter/Interpreter.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Interpreter/Resolver$FunctionType.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Interpreter/Resolver.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Interpreter/RuntimeError.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Lexer/Lexer.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Lexer/Token.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Lexer/TokenType.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Expression$BinaryExpression.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Expression$CallExpression.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Expression$GroupingExpression.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Expression$LiteralExpression.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Expression$LogicalExpression.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Expression$UnaryExpression.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Expression$VariableAssignExpression.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Expression$VariableExpression.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Expression$Visitor.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Expression.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/FunctionReturn.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement$BlockStatement.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement$BreakStatement.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement$ExpressionStatement.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement$FunctionStatement.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement$IfStatement.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement$OutputStatement.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement$ReturnStatement.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement$VariableDeclareStatement.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement$Visitor.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement$WhileStatement.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/Statement.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/UitCallable.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Node/UitFunction.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Parser/Parser$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Parser/Parser$ParseError.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Parser/Parser.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Uit.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Utils/Converter$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Utils/Converter$2.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Utils/Converter.class" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,6 +88,9 @@
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_package_manager_path" value="npm" />
+    <property name="project.structure.last.edited" value="Artifacts" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.2" />
     <property name="show.migrate.to.gradle.popup" value="false" />
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
@@ -62,7 +112,9 @@
       <workItem from="1608343917359" duration="15458000" />
       <workItem from="1608366973251" duration="1617000" />
       <workItem from="1608383339862" duration="2349000" />
-      <workItem from="1608432934782" duration="1586000" />
+      <workItem from="1608432934782" duration="1683000" />
+      <workItem from="1608434784505" duration="12000" />
+      <workItem from="1608439820841" duration="424000" />
     </task>
     <servers />
   </component>
