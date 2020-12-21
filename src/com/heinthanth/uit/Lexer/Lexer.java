@@ -51,6 +51,7 @@ public class Lexer {
         keywords.put("void", VOID);
         keywords.put("set", SET);
         keywords.put("break", BREAK);
+        keywords.put("start", START);
     }
 
     /**

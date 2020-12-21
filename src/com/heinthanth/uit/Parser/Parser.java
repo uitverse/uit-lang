@@ -45,6 +45,16 @@ public class Parser {
         while (!isAtEnd()) {
             statements.add(declaration());
         }
+        // auto call "__uit_internal_main_"
+        statements.add(new Statement.ExpressionStatement(
+                new Expression.CallExpression(
+                        new Expression.VariableExpression(
+                                new Token(IDENTIFIER, "__uit_internal_main_", null, 0, 0)
+                        ),
+                        new Token(RIGHT_PAREN, ")", null, 0, 0),
+                        new ArrayList<>()
+                )
+        ));
         return statements;
     }
 
@@ -54,6 +64,7 @@ public class Parser {
     private Statement declaration() {
         try {
             if (match(NUM, STRING, BOOLEAN, VOID)) return varDeclaration(previous());
+            if (match(START)) return mainFunctionDeclaration(previous());
             return statement();
         } catch (ParseError error) {
             synchronize();
@@ -95,6 +106,12 @@ public class Parser {
         }
         //consume(SEMICOLON, "Expect ';' after variable declaration.");
         return new Statement.VariableDeclareStatement(typeDef, name, initializer);
+    }
+
+    private Statement mainFunctionDeclaration(Token token) {
+        Token name = new Token(IDENTIFIER, "__uit_internal_main_", token.value, token.line, token.index);
+        List<Statement> body = functionBlock();
+        return new Statement.FunctionStatement(null, name, new ArrayList<>(), body);
     }
 
     private Expression varAssignment() {
@@ -495,7 +512,7 @@ public class Parser {
      * force check next token and warn error if not match
      *
      * @param type    Type of token
-     * @param message Eror message
+     * @param message Error message
      * @return next character
      */
     private Token consume(TokenType type, String message) {

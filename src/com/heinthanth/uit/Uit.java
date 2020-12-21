@@ -107,9 +107,17 @@ public class Uit {
     private static void runFromString(String code) {
         sourceString = code;
         List<Token> tokens = new Lexer(code).tokenize();
-//        for (Token token : tokens) {
-//            System.out.print(token);
-//        }
+        boolean foundStart = false;
+        for (Token token : tokens) {
+            if(token.type == TokenType.START) {
+                foundStart = true;
+                break;
+            }
+        }
+        if(!foundStart) {
+            System.out.println("Expect 'start' but not found in script");
+            hadError = true;
+        }
         if (hadError) return;
         List<Statement> statements = new Parser(tokens).parse();
         if (hadError) return;

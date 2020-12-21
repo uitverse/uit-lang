@@ -8,8 +8,15 @@
   <component name="ChangeListManager">
     <list default="true" id="9c578c0d-e4c4-4332-aefd-039cc48de14a" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/fib.uit" beforeDir="false" afterPath="$PROJECT_DIR$/examples/fib.uit" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/heinthanth/uit/Interpreter/Interpreter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/heinthanth/uit/Interpreter/Interpreter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/loop.uit" beforeDir="false" afterPath="$PROJECT_DIR$/examples/loop.uit" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Lexer/Lexer.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Lexer/Lexer.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Lexer/TokenType.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Lexer/TokenType.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Parser/Parser$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Parser/Parser$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Parser/Parser.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/uit/com/heinthanth/uit/Parser/Parser.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/heinthanth/uit/Lexer/Lexer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/heinthanth/uit/Lexer/Lexer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/heinthanth/uit/Lexer/TokenType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/heinthanth/uit/Lexer/TokenType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/heinthanth/uit/Parser/Parser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/heinthanth/uit/Parser/Parser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/heinthanth/uit/Uit.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/heinthanth/uit/Uit.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -75,7 +82,8 @@
       <workItem from="1608434784505" duration="12000" />
       <workItem from="1608439820841" duration="424000" />
       <workItem from="1608468410942" duration="2841000" />
-      <workItem from="1608519101722" duration="75000" />
+      <workItem from="1608519101722" duration="2354000" />
+      <workItem from="1608527780688" duration="377000" />
     </task>
     <servers />
   </component>
