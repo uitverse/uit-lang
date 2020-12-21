@@ -10,6 +10,6 @@ stop
 
 Num start = time()
 
-output fib(a)
+output fib(a) == 9227465
 
 output time() - start

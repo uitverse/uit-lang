@@ -91,6 +91,9 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
                 return ((Number) left).doubleValue() - ((Number) right).doubleValue();
             case SLASH:
                 checkNumberOperands(expression.operator, left, right);
+                if(((Number) right).doubleValue() == 0) {
+                    throw new RuntimeError(expression.operator, "cannot divide number with zero");
+                }
                 return ((Number) left).doubleValue() / ((Number) right).doubleValue();
             case STAR:
                 checkNumberOperands(expression.operator, left, right);

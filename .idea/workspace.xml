@@ -9,8 +9,6 @@
     <list default="true" id="9c578c0d-e4c4-4332-aefd-039cc48de14a" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/examples/fib.uit" beforeDir="false" afterPath="$PROJECT_DIR$/examples/fib.uit" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/artifacts/jarFile/uit.jar" beforeDir="false" afterPath="$PROJECT_DIR$/out/artifacts/jarFile/uit.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/heinthanth/uit/Interpreter/Environment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/heinthanth/uit/Interpreter/Environment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/heinthanth/uit/Interpreter/Interpreter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/heinthanth/uit/Interpreter/Interpreter.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -76,7 +74,8 @@
       <workItem from="1608432934782" duration="1683000" />
       <workItem from="1608434784505" duration="12000" />
       <workItem from="1608439820841" duration="424000" />
-      <workItem from="1608468410942" duration="2114000" />
+      <workItem from="1608468410942" duration="2841000" />
+      <workItem from="1608519101722" duration="75000" />
     </task>
     <servers />
   </component>
