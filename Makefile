@@ -1,6 +1,6 @@
 default: all
 
-all: jar script man
+all: jar script man docker
 
 script: class
 	echo '#!/bin/bash\n\njava -cp build com.heinthanth.uit.Main "$$@"' > build/bin/uit.sh
@@ -17,6 +17,9 @@ man:
 	mkdir -p build/man/
 	pandoc man/uit.1.md -s -t man -o build/man/uit.1
 	gzip build/man/uit.1
+
+docker:
+	sudo docker build -t uit .
 
 clean:
 	rm -rf build
