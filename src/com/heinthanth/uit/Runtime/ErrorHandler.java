@@ -70,8 +70,19 @@ public class ErrorHandler {
      * @param col     error တက်တဲ့ column
      */
     private void showSource(String level, String message, int line, int col) {
+        // source line ကို array ဖြစ်အောင် ခွဲမယ်။
+        String[] sourceLines = source.split("\\r?\\n", -1);
+
+        // line က တစ်လိုင်းထက်များရင် arrow အတွက် padding ပြန်တွက်မယ်။
+        if (line > 0) {
+            for (int i = 0; i < line; i++) {
+                col = col - sourceLines[i].length() - 1;
+            }
+        }
+
         System.err.printf("\n%s: %s\n\n", level, message);
         System.err.println(filename + ":");
-        System.err.printf("    %d | %s\n\n", line + 1, source.split("\n")[line]);
+        System.err.printf("    %d | %s\n", line + 1, sourceLines[line]);
+        System.err.printf("        %s%s\n\n", " ".repeat(col), "^");
     }
 }

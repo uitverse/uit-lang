@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.heinthanth.uit.Runtime.ErrorHandler;
+import com.heinthanth.uit.Lexer.Lexer;
+import com.heinthanth.uit.Lexer.Token;
 
 /**
  * interpreter အတွက် အဓိက class ပေါ့။ သူ့ကနေမှ command line argument
@@ -24,10 +26,11 @@ public class Main {
     static final String version = "v1.0.0-aplha";
 
     public static void main(String[] args) throws IOException {
-        // argument ဘာမှ မပါဘူးဆိုတာက REPL run ဖို့များတယ်။ အဲ့တော့ runREPL()
+        // argument ဘာမှ မပါဘူးဆိုတာက stdin run ဖို့များတယ်။ အဲ့တော့
+        // runFromStandardInput()
         // ကိုခေါ်လိုက်မယ်။
         if (args.length == 0) {
-            runREPL();
+            runFromStandardInput();
             // ဒီမှာဆို argument တစ်ခုပါလာပြီး
         } else if (args.length == 1) {
             // သူ help တောင်းတာလား ? အာ့ဆို usage information ပြမယ်။
@@ -36,6 +39,9 @@ public class Main {
                 // သူ version ကြည့်ချင်တာလား ? အာ့ဆို version info ပြမယ်။
             } else if (args[0].equals("-v") || args[0].equals("--version")) {
                 showInterpreterInfo(true);
+                // သူက interactive mode run ချင်တာလား? အာ့ဆို REPL run မယ်။
+            } else if (args[0].equals("-i") || args[0].equals("--interactive")) {
+                runREPL();
                 // အရင်ဆုံး file လား stdin လားလို့ အရင်စစ်မယ်။ (stdin == "-")
             } else if (args[0].equals("-")) {
                 runFromStandardInput();
@@ -162,21 +168,35 @@ public class Main {
      *                 error တက်လည်း script exit မဖြစ်အောင်ပေါ့။
      */
     private static void runFromString(String code, boolean fromREPL, String filename) {
+        // error handler ကို initialize လုပ်မယ်။
         ErrorHandler errorHandler = new ErrorHandler(code, filename);
+
+        // code string ကို token ပြောင်းမယ်။
+        Lexer lexer = new Lexer(code, errorHandler);
+        List<Token> tokens = lexer.tokenize();
+        if (!handleError(errorHandler, fromREPL))
+            return;
+        for (Token token : tokens) {
+            System.out.println(token);
+        }
+    }
+
+    private static boolean handleError(ErrorHandler errorHandler, boolean fromREPL) {
         if (errorHandler.hadError) {
             if (fromREPL) {
-                return;
+                return false;
             } else {
                 System.exit(65);
             }
         }
         if (errorHandler.hadRuntimeError) {
             if (fromREPL) {
-                return;
+                return false;
             } else {
                 System.exit(70);
             }
         }
+        return true;
     }
 
     /**

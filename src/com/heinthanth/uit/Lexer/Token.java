@@ -15,7 +15,7 @@ public class Token {
     public final String v_string;
     public final double v_number;
     public final boolean v_boolean;
-    public final Object v_object;
+    // public final Object v_object;
 
     // source code မှာရှိတဲ့ position (line, col)
     public final int line;
@@ -33,7 +33,7 @@ public class Token {
 
         this.v_number = 0.0;
         this.v_boolean = false;
-        this.v_object = null;
+        // this.v_object = null;
     }
 
     // number token အတွက် constructor
@@ -48,7 +48,7 @@ public class Token {
 
         this.v_string = "";
         this.v_boolean = false;
-        this.v_object = null;
+        // this.v_object = null;
     }
 
     // boolean token အတွက် constructor
@@ -63,23 +63,23 @@ public class Token {
 
         this.v_string = "";
         this.v_number = 0.0;
-        this.v_object = null;
+        // this.v_object = null;
     }
 
-    // general object token အတွက် constructor
-    Token(token_t type, String lexeme, Object value, int line, int col) {
-        this.type = type;
-        this.lexeme = lexeme;
-        this.line = line;
-        this.col = col;
+    // // general object token အတွက် constructor
+    // Token(token_t type, String lexeme, Object value, int line, int col) {
+    // this.type = type;
+    // this.lexeme = lexeme;
+    // this.line = line;
+    // this.col = col;
 
-        this.v_type = VT_OBJECT;
-        this.v_object = value;
+    // this.v_type = VT_OBJECT;
+    // this.v_object = value;
 
-        this.v_string = "";
-        this.v_number = 0.0;
-        this.v_boolean = false;
-    }
+    // this.v_string = "";
+    // this.v_number = 0.0;
+    // this.v_boolean = false;
+    // }
 
     // value မရှိတဲ့ token (eg. PLUS, MINUS, etc) အတွက် constructor
     Token(token_t type, String lexeme, int line, int col) {
@@ -93,7 +93,7 @@ public class Token {
         this.v_string = "";
         this.v_number = 0.0;
         this.v_boolean = false;
-        this.v_object = null;
+        // this.v_object = null;
     }
 
     // ဒါက token ကို string အနေနဲ့ ေဖာ်ပြဖို့အတွက်
@@ -106,8 +106,9 @@ public class Token {
                 return "[" + type + ":" + lexeme + "|" + v_string + "(" + line + "," + col + ")]";
             case VT_BOOLEAN:
                 return "[" + type + ":" + lexeme + "|" + v_boolean + "(" + line + "," + col + ")]";
-            case VT_OBJECT:
-                return "[" + type + ":" + lexeme + "|" + v_object + "(" + line + "," + col + ")]";
+            // case VT_OBJECT:
+            // return "[" + type + ":" + lexeme + "|" + v_object + "(" + line + "," + col +
+            // ")]";
             default:
                 return "[" + type + ":" + lexeme + "(" + line + "," + col + ")]";
         }

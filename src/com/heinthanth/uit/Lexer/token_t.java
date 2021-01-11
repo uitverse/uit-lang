@@ -8,11 +8,9 @@ public enum token_t {
     // grouping expression
     LEFT_PAREN, RIGHT_PAREN,
     // literal တွေ
-    STRING_LITERAL, NUMBER_LITERAL, BOOLEAN_LITERAL,
+    STRING_LITERAL, NUMBER_LITERAL, BOOLEAN_LITERAL, IDENTIFIER,
     // variable declaration အတွက် type (eg. String demo = "HELLO")
-    VT_STRING, VT_NUMBER, VT_BOOLEAN,
-    // function return type
-    FRT_NUMBER, FRT_STRING, FRT_BOOL, FRT_VOID,
+    VT_STRING, VT_NUMBER, VT_BOOLEAN, FRT_VOID,
     // program main function start & stop
     START, STOP,
     // and or
@@ -29,6 +27,8 @@ public enum token_t {
     BREAK, CONTINUE,
     // function
     FUNC, ENDFUNC, RETURN,
-    // other operators
-    SET, INPUT, ASSIGN, DOT, SEMICOLON, EOF
+    // other keywords
+    SET, INPUT,
+    // other operator
+    ASSIGN, COMMA, DOT, SEMICOLON, EOF
 }
