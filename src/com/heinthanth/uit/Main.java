@@ -151,7 +151,7 @@ public class Main {
             // error မို့လို့ standard error ထဲကို write မယ်။
             System.err.println("\nError: cannot READ '" + script.getName() + "'. Possible error: ENOENT, EACCES.\n");
             // ref: https://man7.org/linux/man-pages/man3/errno.3.html
-            System.exit(1);
+            System.exit(2);
         } else {
             // file content ကို ဖတ်ပြီး run မယ်။
             byte[] bytes = Files.readAllBytes(Paths.get(path));
@@ -231,7 +231,7 @@ public class Main {
      *                   နဲ့ဆုံးဖြတ်မယ်။
      */
     private static void showInterpreterInfo(boolean shouldExit) {
-        System.out.println("\nUIT Lang - " + version);
+        System.out.println("\nuit-lang - " + version);
         System.out.println("(c) Hein Thant Maung Maung. MIT Licensed.\n");
         if (shouldExit)
             System.exit(0);
