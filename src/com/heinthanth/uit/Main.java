@@ -10,6 +10,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.heinthanth.uit.Runtime.ErrorHandler;
+
 /**
  * interpreter အတွက် အဓိက class ပေါ့။ သူ့ကနေမှ command line argument
  * ပေါ်မူတည်ပြီး ဘာလုပ်မယ် ညာလုပ်မယ်။ အဲ့လို ဆက်စဥ်းစားသွားမယ်။
@@ -85,13 +87,13 @@ public class Main {
             System.out.flush();
             // သူက editor လိုချင်တာလား ?
         } else if (input.equals(".editor")) {
-            runFromString(getStringFromStandardInput(), true);
+            runFromString(getStringFromStandardInput(), true, "repl");
             // exit မှာလား
         } else if (input.equals(".exit") || input.equals(".quit")) {
             System.exit(0);
         } else {
             // ဘာမှန်းမသိလို့ ဒီအတိုင်း run လိုက်မယ်။
-            runFromString(input, true);
+            runFromString(input, true, "repl");
         }
     }
 
@@ -126,7 +128,7 @@ public class Main {
      */
     private static void runFromStandardInput() throws IOException {
         // ထုံးစံအတိုင်း code string ရပြီးဆိုတော့ interpret မယ်။
-        runFromString(getStringFromStandardInput(), false);
+        runFromString(getStringFromStandardInput(), false, "stdin");
     }
 
     /**
@@ -147,7 +149,7 @@ public class Main {
         } else {
             // file content ကို ဖတ်ပြီး run မယ်။
             byte[] bytes = Files.readAllBytes(Paths.get(path));
-            runFromString(new String(bytes, Charset.defaultCharset()), false);
+            runFromString(new String(bytes, Charset.defaultCharset()), false, script.getName());
         }
     }
 
@@ -159,8 +161,22 @@ public class Main {
      * @param fromREPL ဒါက REPL ကလာတာလား file က လာတာလား ခွဲချင်လို့ပါ။ REPL ကဆိုရင်
      *                 error တက်လည်း script exit မဖြစ်အောင်ပေါ့။
      */
-    private static void runFromString(String code, boolean fromREPL) {
-        System.out.println(code);
+    private static void runFromString(String code, boolean fromREPL, String filename) {
+        ErrorHandler errorHandler = new ErrorHandler(code, filename);
+        if (errorHandler.hadError) {
+            if (fromREPL) {
+                return;
+            } else {
+                System.exit(65);
+            }
+        }
+        if (errorHandler.hadRuntimeError) {
+            if (fromREPL) {
+                return;
+            } else {
+                System.exit(70);
+            }
+        }
     }
 
     /**
@@ -169,13 +185,22 @@ public class Main {
      * @param exitStatus info ပြပြီးရင် ဘာ code နဲ့ exit မလဲ
      */
     private static void showUsage(int exitStatus) {
-        showInterpreterInfo(false);
-        System.out.println("usage:\tuit [script?]");
-        System.out.println("\tscript: path to .uit script to interpret.\n");
-        System.out.println("examples:");
-        System.out.println("\tuit hello.uit\t[ run 'hello.uit' script' ]");
-        System.out.println("\tuit\t\t[ run REPL ]");
-        System.out.println("\tuit -\t\t[ run from STDIN ]\n");
+        if (exitStatus == 0) {
+            showInterpreterInfo(false);
+            System.out.println("usage:\tuit [script?]");
+            System.out.println("\tscript: path to .uit script to interpret.\n");
+            System.out.println("examples:");
+            System.out.println("\tuit hello.uit\t[ run 'hello.uit' script' ]");
+            System.out.println("\tuit\t\t[ run REPL ]");
+            System.out.println("\tuit -\t\t[ run from STDIN ]\n");
+        } else {
+            System.err.println("\nusage:\tuit [script?]");
+            System.err.println("\tscript: path to .uit script to interpret.\n");
+            System.err.println("examples:");
+            System.err.println("\tuit hello.uit\t[ run 'hello.uit' script' ]");
+            System.err.println("\tuit\t\t[ run REPL ]");
+            System.err.println("\tuit -\t\t[ run from STDIN ]\n");
+        }
         System.exit(exitStatus);
     }
 

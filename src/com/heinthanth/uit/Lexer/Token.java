@@ -10,7 +10,7 @@ public class Token {
     public final String lexeme;
 
     // value type ထည့်ထားတဲ့ value ရဲ့ type
-    public final value_t vtype;
+    public final value_t v_type;
     // value က value ပေါ့။ string value, number value, boolean value စသည်ဖြင့်။
     public final String v_string;
     public final double v_number;
@@ -28,7 +28,7 @@ public class Token {
         this.line = line;
         this.col = col;
 
-        this.vtype = VT_STRING;
+        this.v_type = VT_STRING;
         this.v_string = value;
 
         this.v_number = 0.0;
@@ -43,7 +43,7 @@ public class Token {
         this.line = line;
         this.col = col;
 
-        this.vtype = VT_NUMBER;
+        this.v_type = VT_NUMBER;
         this.v_number = value;
 
         this.v_string = "";
@@ -58,7 +58,7 @@ public class Token {
         this.line = line;
         this.col = col;
 
-        this.vtype = VT_BOOLEAN;
+        this.v_type = VT_BOOLEAN;
         this.v_boolean = value;
 
         this.v_string = "";
@@ -73,7 +73,7 @@ public class Token {
         this.line = line;
         this.col = col;
 
-        this.vtype = VT_OBJECT;
+        this.v_type = VT_OBJECT;
         this.v_object = value;
 
         this.v_string = "";
@@ -88,7 +88,7 @@ public class Token {
         this.line = line;
         this.col = col;
 
-        this.vtype = VT_VOID;
+        this.v_type = VT_VOID;
 
         this.v_string = "";
         this.v_number = 0.0;
@@ -99,7 +99,7 @@ public class Token {
     // ဒါက token ကို string အနေနဲ့ ေဖာ်ပြဖို့အတွက်
     @Override
     public String toString() {
-        switch (vtype) {
+        switch (v_type) {
             case VT_NUMBER:
                 return "[" + type + ":" + lexeme + "|" + v_number + "(" + line + "," + col + ")]";
             case VT_STRING:

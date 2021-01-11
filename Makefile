@@ -1,8 +1,14 @@
-default: build
-	echo '#!/bin/bash\n\njava -cp build com.heinthanth.uit.Main "$$@"' > uit.sh && chmod +x uit.sh
+default: all
+
+all: jar
+	echo '#!/bin/bash\n\njava -cp build com.heinthanth.uit.Main "$$@"' > build/bin/uit.sh && chmod +x build/bin/uit.sh
 
 build: clean
-	javac -d build -cp build src/com/heinthanth/uit/Main.java
+	javac -g:none -Werror -d build -cp src src/com/heinthanth/uit/Main.java
+	mkdir build/bin
+
+jar: build
+	jar cmvf META-INF/MANIFEST.MF build/bin/uit.jar -C build .
 
 clean:
 	rm -rf build uit.sh
