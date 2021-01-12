@@ -1,15 +1,23 @@
-expression      ->  equal
-equal           ->  comparison ( ( "!=" | "==" ) comparison )*
-comparison      ->  term ( ( ">" | ">=" | "<" | "<=" ) term )*
-term            ->  factor ( ( "+" | "-" ) factor )*
-factor          ->  power ( ( "*" | "/" | "%" ) power )*
-power           ->  unary ( "^" unary )*
-unary           ->  ( "!" | "-" ) unary
-                |   primary
-primary         ->  literal | grouping
+program             ->  statement* EOF
 
-grouping        ->  "(" expression ")" | literal
-literal         ->  NUMBER | STRING | BOOLEAN
+statement           ->  expressionStatement
+                    |   outputStatement
 
-operator        ->  "==" | "!=" | ">" | ">=" | "<" | "<="
-                |   "+" | "-" | "*" | "/" | "%" | "^"
+expressionStatement ->  expression ";"
+outputStatement     ->  "output"
+
+expression          ->  equal
+equal               ->  comparison ( ( "!=" | "==" ) comparison )*
+comparison          ->  term ( ( ">" | ">=" | "<" | "<=" ) term )*
+term                ->  factor ( ( "+" | "-" ) factor )*
+factor              ->  power ( ( "*" | "/" | "%" ) power )*
+power               ->  unary ( "^" unary )*
+unary               ->  ( "!" | "-" ) unary
+                    |   primary
+primary             ->  literal | grouping
+
+grouping            ->  "(" expression ")" | literal
+literal             ->  NUMBER | STRING | BOOLEAN
+
+operator            ->  "==" | "!=" | ">" | ">=" | "<" | "<="
+                    |   "+" | "-" | "*" | "/" | "%" | "^"

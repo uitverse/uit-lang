@@ -13,11 +13,22 @@ public class GenerateNode {
         }
         String output = args[0];
 
-        generateExpression(output, "Expression",
-                Arrays.asList("BinaryExpression   : Expression left, Token operator, Expression right",
-                        "GroupingExpression : Expression expression", "LiteralExpression  : Token value",
-                        "UnaryExpression    : Token operator, Expression right"),
-                Arrays.asList("com.heinthanth.uit.Lexer.Token"));
+        generateAst(output, "Expression",
+            Arrays.asList(
+                "BinaryExpression   : Expression left, Token operator, Expression right",
+                "GroupingExpression : Expression expression",
+                "LiteralExpression  : Token value",
+                "UnaryExpression    : Token operator, Expression right"
+            ),
+            Arrays.asList("com.heinthanth.uit.Lexer.Token")
+        );
+        generateAst(output, "Statement",
+            Arrays.asList(
+                "ExpressionStatement: Expression expression",
+                "OutputStatement     : Expression expression"
+            ),
+            Arrays.asList()
+        );
     }
 
     /**
@@ -28,8 +39,8 @@ public class GenerateNode {
      * @param properties
      * @throws IOException
      */
-    private static void generateExpression(String output, String baseName, List<String> properties,
-            List<String> imports) throws IOException {
+    private static void generateAst(String output, String baseName, List<String> properties, List<String> imports)
+            throws IOException {
         String path = output + "/" + baseName + ".java";
         PrintWriter writer = new PrintWriter(path, "UTF-8");
 

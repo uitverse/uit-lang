@@ -1,28 +1,53 @@
 package com.heinthanth.uit.Interpreter;
 
+import java.util.List;
+
 import com.heinthanth.uit.Lexer.Token;
 import com.heinthanth.uit.Runtime.Expression;
+import com.heinthanth.uit.Runtime.Statement;
 import com.heinthanth.uit.Runtime.RuntimeError;
 import com.heinthanth.uit.Runtime.Expression.BinaryExpression;
 import com.heinthanth.uit.Runtime.Expression.GroupingExpression;
 import com.heinthanth.uit.Runtime.Expression.LiteralExpression;
 import com.heinthanth.uit.Runtime.Expression.UnaryExpression;
+import com.heinthanth.uit.Runtime.Statement.ExpressionStatement;
+import com.heinthanth.uit.Runtime.Statement.OutputStatement;
 import com.heinthanth.uit.Utils.ErrorHandler;
 
-public class Interpreter implements Expression.Visitor<Object> {
+public class Interpreter implements Expression.Visitor<Object>, Statement.Visitor<Void> {
     /**
      * parser ကရလာတဲ့ expression ကို evaluate လုပ်မယ်။
      *
      * @param expression
      * @param errorHandler
      */
-    public void interpret(Expression expression, ErrorHandler errorHandler) {
+    public void interpret(List<Statement> statements, ErrorHandler errorHandler) {
         try {
-            Object value = evaluate(expression);
-            System.out.println(stringify(value));
+            for(Statement statement: statements) {
+                execute(statement);
+            }
         } catch (RuntimeError error) {
             errorHandler.reportRuntimeError(error.getMessage(), error.token.line, error.token.col);
         }
+    }
+
+    /**
+     * output statement ကို interpret မယ်။
+     */
+    @Override
+    public Void visitOutputStatement(OutputStatement statement) {
+        Object value = evaluate(statement.expression);
+        System.out.println(stringify(value));
+        return null;
+    }
+
+    /**
+     * expression statement ကို interpret မယ်။
+     */
+    @Override
+    public Void visitExpressionStatement(ExpressionStatement statement) {
+        evaluate(statement.expression);
+        return null;
     }
 
     /**
@@ -111,6 +136,15 @@ public class Interpreter implements Expression.Visitor<Object> {
     }
 
     /**
+     * statement တွေကို interpret မယ်။
+     * @param statement
+     * @return
+     */
+    private void execute(Statement statement) {
+        statement.accept(this);
+    }
+
+    /**
      * Expression ကနေ value ရအောင်ပြောင်းမယ်။
      *
      * @param expression
@@ -187,7 +221,7 @@ public class Interpreter implements Expression.Visitor<Object> {
      * @param right
      */
     private void checkZeroOprand(Token operator, Object right) {
-        if ((double)right != 0)
+        if ((double) right != 0)
             return;
         throw new RuntimeError(operator, "Divider must not be zero.");
     }

@@ -1,10 +1,12 @@
 package com.heinthanth.uit.Parser;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.heinthanth.uit.Lexer.Token;
 import com.heinthanth.uit.Lexer.token_t;
 import com.heinthanth.uit.Runtime.Expression;
+import com.heinthanth.uit.Runtime.Statement;
 import com.heinthanth.uit.Utils.ErrorHandler;
 import static com.heinthanth.uit.Lexer.token_t.*;
 
@@ -32,16 +34,42 @@ public class Parser {
     }
 
     // token တွေကို parse မယ်။
-    public Expression parse() {
-        try {
-            return expression();
-        } catch (ParseError error) {
-            return null;
+    public List<Statement> parse() {
+        List<Statement> statements = new ArrayList<>();
+        while (!isEOF()) {
+            try {
+                statements.add(statement());
+            } catch (ParseError error) {
+                return null;
+            }
         }
+        return statements;
     }
 
     // grammar.txt မှာရေးထားတဲ့အတိုင်း precedence တွေနဲ့ parse သွားမယ်။
-    // အရင်ဆုံး expression
+    // အရင်ဆုံး statement
+
+    // statement တွေစစ်မယ်။ မဟုတ်ရင် expression statement ပေါ့။
+    private Statement statement() {
+        if (match(OUTPUT))
+            return outputStatement();
+        // ကျန်တာကတော့ expression ပေါ့။
+        return expressionStatement();
+    }
+
+    // output statement parse မယ်
+    private Statement outputStatement() {
+        Expression value = expression();
+        expect(SEMICOLON, "Missing ';' after statement");
+        return new Statement.OutputStatement(value);
+    }
+
+    // expression statement
+    private Statement expressionStatement() {
+        Expression expression = expression();
+        expect(SEMICOLON, "Missing ';' after statement");
+        return new Statement.ExpressionStatement(expression);
+    }
 
     // expression ထက် precedence ပုိမြင့်တာက equal (==, !=)
     private Expression expression() {
@@ -154,33 +182,33 @@ public class Parser {
     }
 
     // private void synchronize() {
-    //     advance();
+    // advance();
 
-    //     while (!isEOF()) {
-    //         if (previous().type == SEMICOLON)
-    //             return;
-    //         // new line ဖြစ်တဲ့ token အားလုံး
-    //         switch (getCurrentToken().type) {
-    //             case VT_STRING:
-    //             case VT_NUMBER:
-    //             case VT_BOOLEAN:
-    //             case FRT_VOID:
-    //             case BLOCK:
-    //             case IF:
-    //             case FOR:
-    //             case WHILE:
-    //             case BREAK:
-    //             case CONTINUE:
-    //             case FUNC:
-    //             case RETURN:
-    //             case SET:
-    //             case INPUT:
-    //                 return;
-    //             default:
-    //                 advance();
-    //                 break;
-    //         }
-    //     }
+    // while (!isEOF()) {
+    // if (previous().type == SEMICOLON)
+    // return;
+    // // new line ဖြစ်တဲ့ token အားလုံး
+    // switch (getCurrentToken().type) {
+    // case VT_STRING:
+    // case VT_NUMBER:
+    // case VT_BOOLEAN:
+    // case FRT_VOID:
+    // case BLOCK:
+    // case IF:
+    // case FOR:
+    // case WHILE:
+    // case BREAK:
+    // case CONTINUE:
+    // case FUNC:
+    // case RETURN:
+    // case SET:
+    // case INPUT:
+    // return;
+    // default:
+    // advance();
+    // break;
+    // }
+    // }
     // }
 
     // လက်ရှိ token type ကို စစ်ဖို့

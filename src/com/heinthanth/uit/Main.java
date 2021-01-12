@@ -14,7 +14,7 @@ import com.heinthanth.uit.Interpreter.Interpreter;
 import com.heinthanth.uit.Lexer.Lexer;
 import com.heinthanth.uit.Parser.Parser;
 import com.heinthanth.uit.Lexer.Token;
-import com.heinthanth.uit.Runtime.Expression;
+import com.heinthanth.uit.Runtime.Statement;
 import com.heinthanth.uit.Utils.ErrorHandler;
 
 /**
@@ -188,13 +188,13 @@ public class Main {
 
         // parser နဲ့ parse မယ်။
         Parser parser = new Parser(tokens, errorHandler);
-        Expression expression = parser.parse();
+        List<Statement> statements = parser.parse();
         if (!handleError(errorHandler, fromREPL))
             return;
 
         // AstPrinter printer = new AstPrinter();
         // System.out.println(printer.print(expression));
-        interpreter.interpret(expression, errorHandler);
+        interpreter.interpret(statements, errorHandler);
     }
 
     private static boolean handleError(ErrorHandler errorHandler, boolean fromREPL) {

@@ -46,6 +46,7 @@ public class Lexer {
         reserved.put("return", RETURN);
         reserved.put("set", SET);
         reserved.put("input", INPUT);
+        reserved.put("output", OUTPUT);
         reserved.put("true", BOOLEAN_LITERAL);
         reserved.put("false", BOOLEAN_LITERAL);
     }

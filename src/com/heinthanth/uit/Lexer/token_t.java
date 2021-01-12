@@ -28,7 +28,7 @@ public enum token_t {
     // function
     FUNC, ENDFUNC, RETURN,
     // other keywords
-    SET, INPUT,
+    SET, INPUT, OUTPUT,
     // other operator
     ASSIGN, COMMA, DOT, SEMICOLON, EOF
 }
