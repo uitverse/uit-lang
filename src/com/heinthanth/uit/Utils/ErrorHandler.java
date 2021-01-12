@@ -72,11 +72,12 @@ public class ErrorHandler {
     private void showSource(String level, String message, int line, int col) {
         // source line ကို array ဖြစ်အောင် ခွဲမယ်။
         String[] sourceLines = source.split("\\r?\\n", -1);
+        int padding = col;
 
         // line က တစ်လိုင်းထက်များရင် arrow အတွက် padding ပြန်တွက်မယ်။
         if (line > 0) {
             for (int i = 0; i < line; i++) {
-                col = col - sourceLines[i].length() - 1;
+                padding = padding - sourceLines[i].length() - 1;
             }
         }
 

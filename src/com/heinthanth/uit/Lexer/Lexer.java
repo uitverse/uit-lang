@@ -377,7 +377,7 @@ public class Lexer {
         token_t type = reserved.get(text);
 
         if (type == BOOLEAN_LITERAL) {
-            addToken(BOOLEAN_LITERAL, text.equals("true") ? true : false);
+            addToken(BOOLEAN_LITERAL, "true".equals(text) ? true : false);
         } else {
             if (type == null)
                 type = IDENTIFIER;

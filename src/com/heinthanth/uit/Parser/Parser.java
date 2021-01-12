@@ -10,13 +10,14 @@ import com.heinthanth.uit.Runtime.Statement;
 import com.heinthanth.uit.Utils.ErrorHandler;
 import static com.heinthanth.uit.Lexer.token_t.*;
 
+class ParseError extends RuntimeException {
+    /**
+     *
+     */
+    private static final long serialVersionUID = -9119994735797982514L;
+};
+
 public class Parser {
-    private static class ParseError extends RuntimeException {
-        /**
-         *
-         */
-        private static final long serialVersionUID = -9119994735797982514L;
-    };
 
     // tokenizer ကနေ ရလာတဲ့ token array
     private final List<Token> tokens;
@@ -37,17 +38,38 @@ public class Parser {
     public List<Statement> parse() {
         List<Statement> statements = new ArrayList<>();
         while (!isEOF()) {
-            try {
-                statements.add(statement());
-            } catch (ParseError error) {
-                return null;
-            }
+            statements.add(declaration());
         }
         return statements;
     }
 
     // grammar.txt မှာရေးထားတဲ့အတိုင်း precedence တွေနဲ့ parse သွားမယ်။
-    // အရင်ဆုံး statement
+    // အရင်ဆုံး declaration
+
+    // var declaration ဘာညာစစ်မယ်။
+    private Statement declaration() {
+        try {
+            if (match(VT_NUMBER, VT_STRING, VT_BOOLEAN))
+                return variableDeclaration();
+            return statement();
+        } catch (ParseError error) {
+            synchronize();
+            return null;
+        }
+    }
+
+    private Statement variableDeclaration() {
+        Token type = previous();
+        Token identifier = expect(IDENTIFIER, "Expect variable identifier.");
+
+        Expression initializer = null;
+        if (match(ASSIGN)) {
+            initializer = expression();
+        }
+        expect(SEMICOLON, "Expect ';' after statement.");
+
+        return new Statement.VariableDeclarationStatement(type, identifier, initializer);
+    }
 
     // statement တွေစစ်မယ်။ မဟုတ်ရင် expression statement ပေါ့။
     private Statement statement() {
@@ -155,9 +177,11 @@ public class Parser {
 
     // ဒါက ထပ်ခွဲမရတော့တဲ့ basic element တွေ literal ဘာညာ
     private Expression primary() {
-        if (match(NUMBER_LITERAL, STRING_LITERAL, BOOLEAN_LITERAL)) {
+        if (match(NUMBER_LITERAL, STRING_LITERAL, BOOLEAN_LITERAL))
             return new Expression.LiteralExpression(previous());
-        }
+
+        if (match(IDENTIFIER))
+            return new Expression.VariableAccessExpression(previous());
 
         if (match(LEFT_PAREN)) {
             Expression expr = expression();
@@ -181,35 +205,36 @@ public class Parser {
         return new ParseError();
     }
 
-    // private void synchronize() {
-    // advance();
+    private void synchronize() {
+        advance();
 
-    // while (!isEOF()) {
-    // if (previous().type == SEMICOLON)
-    // return;
-    // // new line ဖြစ်တဲ့ token အားလုံး
-    // switch (getCurrentToken().type) {
-    // case VT_STRING:
-    // case VT_NUMBER:
-    // case VT_BOOLEAN:
-    // case FRT_VOID:
-    // case BLOCK:
-    // case IF:
-    // case FOR:
-    // case WHILE:
-    // case BREAK:
-    // case CONTINUE:
-    // case FUNC:
-    // case RETURN:
-    // case SET:
-    // case INPUT:
-    // return;
-    // default:
-    // advance();
-    // break;
-    // }
-    // }
-    // }
+        while (!isEOF()) {
+            if (previous().type == SEMICOLON)
+                return;
+            // new line ဖြစ်တဲ့ token အားလုံး
+            switch (getCurrentToken().type) {
+                case VT_STRING:
+                case VT_NUMBER:
+                case VT_BOOLEAN:
+                case FRT_VOID:
+                case BLOCK:
+                case IF:
+                case FOR:
+                case WHILE:
+                case BREAK:
+                case CONTINUE:
+                case FUNC:
+                case RETURN:
+                case SET:
+                case INPUT:
+                case OUTPUT:
+                    return;
+                default:
+                    advance();
+                    break;
+            }
+        }
+    }
 
     // လက်ရှိ token type ကို စစ်ဖို့
     private boolean match(token_t... types) {

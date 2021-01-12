@@ -18,16 +18,18 @@ public class GenerateNode {
                 "BinaryExpression   : Expression left, Token operator, Expression right",
                 "GroupingExpression : Expression expression",
                 "LiteralExpression  : Token value",
-                "UnaryExpression    : Token operator, Expression right"
+                "UnaryExpression    : Token operator, Expression right",
+                "VariableAccessExpression : Token identifier"
             ),
             Arrays.asList("com.heinthanth.uit.Lexer.Token")
         );
         generateAst(output, "Statement",
             Arrays.asList(
                 "ExpressionStatement: Expression expression",
-                "OutputStatement     : Expression expression"
+                "OutputStatement    : Expression expression",
+                "VariableDeclarationStatement : Token type, Token identifier, Expression initializer"
             ),
-            Arrays.asList()
+            Arrays.asList("com.heinthanth.uit.Lexer.Token")
         );
     }
 

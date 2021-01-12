@@ -1,3 +1,1 @@
-start
-    output "HELLO"
-stop
+Num a = "HELLO";

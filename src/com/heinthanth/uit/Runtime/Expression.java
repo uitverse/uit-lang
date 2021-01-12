@@ -9,6 +9,7 @@ public abstract class Expression {
         R visitGroupingExpression(GroupingExpression expression);
         R visitLiteralExpression(LiteralExpression expression);
         R visitUnaryExpression(UnaryExpression expression);
+        R visitVariableAccessExpression(VariableAccessExpression expression);
     }
 
     public abstract <R> R accept(Visitor<R> visitor);
@@ -72,6 +73,20 @@ public abstract class Expression {
         @Override
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitUnaryExpression(this);
+        }
+    }
+
+    public static class VariableAccessExpression extends Expression {
+
+        public final Token identifier;
+
+        public VariableAccessExpression(Token identifier) {
+            this.identifier = identifier;
+        }
+
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitVariableAccessExpression(this);
         }
     }
 

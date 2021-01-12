@@ -10,11 +10,16 @@ import com.heinthanth.uit.Runtime.Expression.BinaryExpression;
 import com.heinthanth.uit.Runtime.Expression.GroupingExpression;
 import com.heinthanth.uit.Runtime.Expression.LiteralExpression;
 import com.heinthanth.uit.Runtime.Expression.UnaryExpression;
+import com.heinthanth.uit.Runtime.Expression.VariableAccessExpression;
 import com.heinthanth.uit.Runtime.Statement.ExpressionStatement;
 import com.heinthanth.uit.Runtime.Statement.OutputStatement;
+import com.heinthanth.uit.Runtime.Statement.VariableDeclarationStatement;
 import com.heinthanth.uit.Utils.ErrorHandler;
 
 public class Interpreter implements Expression.Visitor<Object>, Statement.Visitor<Void> {
+    // global variable တွေ သိမ်းဖို့
+    private Environment environment = new Environment();
+
     /**
      * parser ကရလာတဲ့ expression ကို evaluate လုပ်မယ်။
      *
@@ -23,12 +28,38 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
      */
     public void interpret(List<Statement> statements, ErrorHandler errorHandler) {
         try {
-            for(Statement statement: statements) {
+            for (Statement statement : statements) {
                 execute(statement);
             }
         } catch (RuntimeError error) {
             errorHandler.reportRuntimeError(error.getMessage(), error.token.line, error.token.col);
         }
+    }
+
+    /**
+     * variable declare မယ်။
+     */
+    @Override
+    public Void visitVariableDeclarationStatement(VariableDeclarationStatement statement) {
+        Object value = null;
+        switch (statement.type.type) {
+            case VT_STRING:
+                value = "";
+                break;
+            case VT_BOOLEAN:
+                value = false;
+                break;
+            case VT_NUMBER:
+                value = 0.0;
+                break;
+            default:
+                break;
+        }
+        if (statement.initializer != null) {
+            value = evaluate(statement.initializer);
+        }
+        environment.define(statement.type, statement.identifier, value);
+        return null;
     }
 
     /**
@@ -136,7 +167,16 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
     }
 
     /**
+     * variable ကနေ တန်ဖိုးကိုယူမယ်။
+     */
+    @Override
+    public Object visitVariableAccessExpression(VariableAccessExpression expression) {
+        return environment.get(expression.identifier);
+    }
+
+    /**
      * statement တွေကို interpret မယ်။
+     *
      * @param statement
      * @return
      */

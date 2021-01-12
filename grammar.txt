@@ -1,5 +1,9 @@
-program             ->  statement* EOF
+program             ->  declaration* EOF
 
+declaration         ->  variableDeclaration
+                    |   statement
+
+variableDeclaration ->  ( "Num" | "String" | "Boolean" ) IDENTIFIER ( "=" expression )? ";"
 statement           ->  expressionStatement
                     |   outputStatement
 
@@ -14,10 +18,11 @@ factor              ->  power ( ( "*" | "/" | "%" ) power )*
 power               ->  unary ( "^" unary )*
 unary               ->  ( "!" | "-" ) unary
                     |   primary
-primary             ->  literal | grouping
+primary             ->  literal | grouping | IDENTIFIER
 
-grouping            ->  "(" expression ")" | literal
+grouping            ->  "(" expression ")"
 literal             ->  NUMBER | STRING | BOOLEAN
 
 operator            ->  "==" | "!=" | ">" | ">=" | "<" | "<="
                     |   "+" | "-" | "*" | "/" | "%" | "^"
+                    |   "."

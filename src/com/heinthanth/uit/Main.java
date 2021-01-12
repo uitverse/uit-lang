@@ -40,16 +40,16 @@ public class Main {
             // ဒီမှာဆို argument တစ်ခုပါလာပြီး
         } else if (args.length == 1) {
             // သူ help တောင်းတာလား ? အာ့ဆို usage information ပြမယ်။
-            if (args[0].equals("-h") || args[0].equals("--help")) {
+            if ("-h".equals(args[0]) || "--help".equals(args[0])) {
                 showUsage(0);
                 // သူ version ကြည့်ချင်တာလား ? အာ့ဆို version info ပြမယ်။
-            } else if (args[0].equals("-v") || args[0].equals("--version")) {
+            } else if ("-v".equals(args[0]) || "--version".equals(args[0])) {
                 showInterpreterInfo(true);
                 // သူက interactive mode run ချင်တာလား? အာ့ဆို REPL run မယ်။
-            } else if (args[0].equals("-i") || args[0].equals("--interactive")) {
+            } else if ("-i".equals(args[0]) || "--interactive".equals(args[0])) {
                 runREPL();
                 // အရင်ဆုံး file လား stdin လားလို့ အရင်စစ်မယ်။ (stdin == "-")
-            } else if (args[0].equals("-")) {
+            } else if ("-".equals(args[0])) {
                 runFromStandardInput();
                 // အပေါ်သုံးခုမဟုတ်ဘူးဆိုရင် သေချာတာက file ကို argument အနေနဲ့ပေးတာပဲ။
             } else {
@@ -76,7 +76,6 @@ public class Main {
     private static void runREPL() throws IOException {
         InputStreamReader input = new InputStreamReader(System.in);
         BufferedReader reader = new BufferedReader(input);
-
         // loop နဲ့ evaluate လုပ်မယ်။
         while (true) {
             System.out.print("uit > ");
@@ -85,6 +84,8 @@ public class Main {
                 break;
             interpretREPL(line);
         }
+        reader.close();
+        input.close();
     }
 
     /**
@@ -94,14 +95,14 @@ public class Main {
      * @param input REPL ကနေလာတဲ့ string input ပေါ့။
      */
     private static void interpretREPL(String input) throws IOException {
-        if (input.equals(".clear")) {
+        if (".clear".equals(input)) {
             System.out.print("\033[H\033[2J");
             System.out.flush();
             // သူက editor လိုချင်တာလား ?
-        } else if (input.equals(".editor")) {
+        } else if (".editor".equals(input)) {
             runFromString(getStringFromStandardInput(), true, "repl");
             // exit မှာလား
-        } else if (input.equals(".exit") || input.equals(".quit")) {
+        } else if (".exit".equals(input) || ".quit".equals(input)) {
             System.exit(0);
         } else {
             // ဘာမှန်းမသိလို့ ဒီအတိုင်း run လိုက်မယ်။
@@ -130,6 +131,9 @@ public class Main {
             lines.add(line);
         }
 
+        reader.close();
+        input.close();
+
         return String.join("\n", lines.toArray(code));
     }
 
@@ -152,16 +156,16 @@ public class Main {
     private static void runFile(String path) throws IOException {
         // file class တစ်ခု create တယ်။
         File script = new File(path);
-        // အဲ့တော့ file content ကို ဖတ်လို့မရရင် error ပြမယ်။
-        if (!script.canRead()) {
+        if (script.canRead()) {
+            // file content ကို ဖတ်ပြီး run မယ်။
+            byte[] bytes = Files.readAllBytes(Paths.get(path));
+            runFromString(new String(bytes, Charset.defaultCharset()), false, script.getName());
+            // အဲ့တော့ file content ကို ဖတ်လို့မရရင် error ပြမယ်။
+        } else {
             // error မို့လို့ standard error ထဲကို write မယ်။
             System.err.println("\nError: cannot READ '" + script.getName() + "'. Possible error: ENOENT, EACCES.\n");
             // ref: https://man7.org/linux/man-pages/man3/errno.3.html
             System.exit(2);
-        } else {
-            // file content ကို ဖတ်ပြီး run မယ်။
-            byte[] bytes = Files.readAllBytes(Paths.get(path));
-            runFromString(new String(bytes, Charset.defaultCharset()), false, script.getName());
         }
     }
 
