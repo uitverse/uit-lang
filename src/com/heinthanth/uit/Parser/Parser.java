@@ -78,9 +78,9 @@ public class Parser {
     // term ထက်မြင့်တာ factor
     private Expression term() {
         Expression left = factor();
-        // >, <, >=, <= ရှိမရှိ ... ရှိရင် binary operation ေပါ့ မဟုတ်ရင် ကျန် node
+        // +, -, . ရှိမရှိ ... ရှိရင် binary operation ေပါ့ မဟုတ်ရင် ကျန် node
         // အတိုင်းပေါ့။
-        while (match(MINUS, PLUS)) {
+        while (match(MINUS, PLUS, DOT)) {
             Token operator = previous();
             Expression right = factor();
             left = new Expression.BinaryExpression(left, operator, right);
@@ -91,9 +91,9 @@ public class Parser {
     // factor ထက်မြင့်တာ power
     private Expression factor() {
         Expression left = power();
-        // -, * ရှိမရှိ ... ရှိရင် binary operation ေပါ့ မဟုတ်ရင် ကျန် node
+        // / * ရှိမရှိ ... ရှိရင် binary operation ေပါ့ မဟုတ်ရင် ကျန် node
         // အတိုင်းပေါ့။
-        while (match(STAR, SLASH)) {
+        while (match(PERCENT, SLASH, STAR)) {
             Token operator = previous();
             Expression right = power();
             left = new Expression.BinaryExpression(left, operator, right);

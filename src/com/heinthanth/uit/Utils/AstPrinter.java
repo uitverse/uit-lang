@@ -30,16 +30,7 @@ public class AstPrinter implements Expression.Visitor<String> {
      */
     @Override
     public String visitLiteralExpression(LiteralExpression expression) {
-        switch (expression.value.v_type) {
-            case VT_STRING:
-                return expression.value.v_string;
-            case VT_NUMBER:
-                return String.valueOf(expression.value.v_number);
-            case VT_BOOLEAN:
-                return String.valueOf(expression.value.v_boolean);
-            default:
-                return "null";
-        }
+        return expression.value.getValue().toString();
     }
 
     /**

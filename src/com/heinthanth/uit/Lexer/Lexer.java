@@ -166,6 +166,8 @@ public class Lexer {
             default:
                 if (isDigit(c)) {
                     makeNumber();
+                } else if (isMmDigit(c)) {
+                    makeMmNumber();
                 } else if (isAlpha(c)) {
                     makeIdentifier();
                 } else {
@@ -336,6 +338,27 @@ public class Lexer {
         addToken(NUMBER_LITERAL, Double.parseDouble(source.substring(start, current)));
     }
 
+    // source string တွေကနေ number token တစ်ခု ဆောက်မယ်။
+    private void makeMmNumber() {
+        while (isMmDigit(getCurrentCharacter()))
+            advance();
+        // Look for a fractional part.
+        if (getCurrentCharacter() == '.' && isMmDigit(peekNext())) {
+            // Consume the "."
+            advance();
+
+            while (isMmDigit(getCurrentCharacter()))
+                advance();
+        }
+
+        // I Don't know whether efficient or not?
+        String number = source.substring(start, current).replace("၀", "0").replace("၁", "1").replace("၂", "2")
+                .replace("၃", "3").replace("၄", "4").replace("၅", "5").replace("၆", "6").replace("၇", "7")
+                .replace("၈", "8").replace("၉", "9");
+
+        addToken(NUMBER_LITERAL, Double.parseDouble(number));
+    }
+
     // source string ကနေ identifier တစ်ခုဆောက်မယ်။
     private void makeIdentifier() {
         while (isAlphaNumeric(getCurrentCharacter()))
@@ -345,7 +368,7 @@ public class Lexer {
         token_t type = reserved.get(text);
 
         if (type == BOOLEAN_LITERAL) {
-            addToken(BOOLEAN_LITERAL, text == "true" ? true : false);
+            addToken(BOOLEAN_LITERAL, text.equals("true") ? true : false);
         } else {
             if (type == null)
                 type = IDENTIFIER;
@@ -381,5 +404,10 @@ public class Lexer {
      */
     private boolean isDigit(char c) {
         return c >= '0' && c <= '9';
+    }
+
+    // same as isDigit but in Myanmar
+    private boolean isMmDigit(char c) {
+        return "၀၁၂၃၄၅၆၇၈၉".contains(String.valueOf(c));
     }
 }

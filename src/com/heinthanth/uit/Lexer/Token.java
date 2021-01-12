@@ -96,6 +96,20 @@ public class Token {
         // this.v_object = null;
     }
 
+    // token ရဲ့ value ကိုယူဖို့
+    public Object getValue() {
+        switch (v_type) {
+            case VT_STRING:
+                return v_string;
+            case VT_NUMBER:
+                return v_number;
+            case VT_BOOLEAN:
+                return v_boolean;
+            default:
+                return "null";
+        }
+    }
+
     // ဒါက token ကို string အနေနဲ့ ေဖာ်ပြဖို့အတွက်
     @Override
     public String toString() {

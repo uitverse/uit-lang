@@ -12,7 +12,7 @@ jar: class
 	jar cmvf META-INF/MANIFEST.MF build/bin/uit.jar -C build .
 
 class: clean node
-	javac -g:none -Werror -d build -cp src src/com/heinthanth/uit/Main.java
+	JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8 javac -g:none -Werror -d build -cp src src/com/heinthanth/uit/Main.java
 
 man:
 	mkdir -p build/man/

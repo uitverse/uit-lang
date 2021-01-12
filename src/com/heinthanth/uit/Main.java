@@ -10,11 +10,11 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.heinthanth.uit.Interpreter.Interpreter;
 import com.heinthanth.uit.Lexer.Lexer;
 import com.heinthanth.uit.Parser.Parser;
 import com.heinthanth.uit.Lexer.Token;
 import com.heinthanth.uit.Runtime.Expression;
-import com.heinthanth.uit.Utils.AstPrinter;
 import com.heinthanth.uit.Utils.ErrorHandler;
 
 /**
@@ -27,6 +27,9 @@ import com.heinthanth.uit.Utils.ErrorHandler;
 public class Main {
     // ဒါက interpreter version const
     static final String version = "v1.0.0-aplha";
+
+    // interpreter instance
+    private static final Interpreter interpreter = new Interpreter();
 
     public static void main(String[] args) throws IOException {
         // argument ဘာမှ မပါဘူးဆိုတာက stdin run ဖို့များတယ်။ အဲ့တော့
@@ -186,16 +189,12 @@ public class Main {
         // parser နဲ့ parse မယ်။
         Parser parser = new Parser(tokens, errorHandler);
         Expression expression = parser.parse();
+        if (!handleError(errorHandler, fromREPL))
+            return;
 
-        AstPrinter printer = new AstPrinter();
-        // Expression expression = new Expression.BinaryExpression(
-        // new Expression.UnaryExpression(new Token(token_t.MINUS, "-", null, 1, 0),
-        // new Expression.LiteralExpression(new Token(token_t.NUMBER_LITERAL, "123",
-        // 123, 1, 0))),
-        // new Token(token_t.STAR, "*", null, 1, 0), new Expression.GroupingExpression(
-        // new Expression.LiteralExpression(new Token(token_t.NUMBER_LITERAL, "45.67",
-        // 45.67, 1, 0))));
-        System.out.println(printer.print(expression));
+        // AstPrinter printer = new AstPrinter();
+        // System.out.println(printer.print(expression));
+        interpreter.interpret(expression, errorHandler);
     }
 
     private static boolean handleError(ErrorHandler errorHandler, boolean fromREPL) {
