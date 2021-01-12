@@ -1,12 +1,15 @@
-expression      ->  literal
-                |   unary
-                |   binary
-                |   grouping ;
+expression      ->  equal
+equal           ->  comparison ( ( "!=" | "==" ) comparison )*
+comparison      ->  term ( ( ">" | ">=" | "<" | "<=" ) term )*
+term            ->  factor ( ( "+" | "-" ) factor )*
+factor          ->  power ( ( "*" | "/" | "%" ) power )*
+power           ->  unary ( "^" unary )*
+unary           ->  ( "!" | "-" ) unary
+                |   primary
+primary         ->  literal | grouping
 
-literal         ->  NUMBER | STRING | BOOLEAN ;
-grouping        ->  "(" expression ")" ;
-unary           ->  ( "-" | "!" ) expression ;
-binary          ->  expression operator expression;
+grouping        ->  "(" expression ")" | literal
+literal         ->  NUMBER | STRING | BOOLEAN
 
 operator        ->  "==" | "!=" | ">" | ">=" | "<" | "<="
-                |   "+" | "-" | "*" | "/" | "%" | "^" ;
+                |   "+" | "-" | "*" | "/" | "%" | "^"

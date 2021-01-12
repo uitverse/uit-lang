@@ -3,15 +3,16 @@ default: all
 all: jar script man docker
 
 script: class
+	mkdir -p build/bin
 	echo '#!/bin/bash\n\njava -cp build com.heinthanth.uit.Main "$$@"' > build/bin/uit.sh
 	chmod +x build/bin/uit.sh
 
 jar: class
+	mkdir -p build/bin
 	jar cmvf META-INF/MANIFEST.MF build/bin/uit.jar -C build .
 
 class: clean node
 	javac -g:none -Werror -d build -cp src src/com/heinthanth/uit/Main.java
-	mkdir build/bin
 
 man:
 	mkdir -p build/man/

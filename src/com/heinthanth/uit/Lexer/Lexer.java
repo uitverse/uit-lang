@@ -77,6 +77,7 @@ public class Lexer {
             start = current;
             scanToken();
         }
+        tokens.add(new Token(EOF, "", line, current));
         return tokens;
     }
 

@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.heinthanth.uit.Lexer.Lexer;
-import com.heinthanth.uit.Lexer.token_t;
+import com.heinthanth.uit.Parser.Parser;
 import com.heinthanth.uit.Lexer.Token;
 import com.heinthanth.uit.Runtime.Expression;
 import com.heinthanth.uit.Utils.AstPrinter;
@@ -175,19 +175,26 @@ public class Main {
         ErrorHandler errorHandler = new ErrorHandler(code, filename);
 
         // code string ကို token ပြောင်းမယ်။
-        //Lexer lexer = new Lexer(code, errorHandler);
-        //List<Token> tokens = lexer.tokenize();
+        Lexer lexer = new Lexer(code, errorHandler);
+        List<Token> tokens = lexer.tokenize();
         if (!handleError(errorHandler, fromREPL))
             return;
         // for (Token token : tokens) {
         // System.out.println(token);
         // }
+
+        // parser နဲ့ parse မယ်။
+        Parser parser = new Parser(tokens, errorHandler);
+        Expression expression = parser.parse();
+
         AstPrinter printer = new AstPrinter();
-        Expression expression = new Expression.BinaryExpression(
-                new Expression.UnaryExpression(new Token(token_t.MINUS, "-", null, 1, 0),
-                        new Expression.LiteralExpression(new Token(token_t.NUMBER_LITERAL, "123", 123, 1, 0))),
-                new Token(token_t.STAR, "*", null, 1, 0), new Expression.GroupingExpression(
-                        new Expression.LiteralExpression(new Token(token_t.NUMBER_LITERAL, "45.67", 45.67, 1, 0))));
+        // Expression expression = new Expression.BinaryExpression(
+        // new Expression.UnaryExpression(new Token(token_t.MINUS, "-", null, 1, 0),
+        // new Expression.LiteralExpression(new Token(token_t.NUMBER_LITERAL, "123",
+        // 123, 1, 0))),
+        // new Token(token_t.STAR, "*", null, 1, 0), new Expression.GroupingExpression(
+        // new Expression.LiteralExpression(new Token(token_t.NUMBER_LITERAL, "45.67",
+        // 45.67, 1, 0))));
         System.out.println(printer.print(expression));
     }
 
