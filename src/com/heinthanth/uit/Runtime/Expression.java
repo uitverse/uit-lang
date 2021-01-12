@@ -14,6 +14,11 @@ public abstract class Expression {
     public abstract <R> R accept(Visitor<R> visitor);
 
     public static class BinaryExpression extends Expression {
+
+        public final Expression left;
+        public final Token operator;
+        public final Expression right;
+
         public BinaryExpression(Expression left, Token operator, Expression right) {
             this.left = left;
             this.operator = operator;
@@ -24,13 +29,12 @@ public abstract class Expression {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitBinaryExpression(this);
         }
-
-        public final Expression left;
-        public final Token operator;
-        public final Expression right;
     }
 
     public static class GroupingExpression extends Expression {
+
+        public final Expression expression;
+
         public GroupingExpression(Expression expression) {
             this.expression = expression;
         }
@@ -39,11 +43,12 @@ public abstract class Expression {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitGroupingExpression(this);
         }
-
-        public final Expression expression;
     }
 
     public static class LiteralExpression extends Expression {
+
+        public final Token value;
+
         public LiteralExpression(Token value) {
             this.value = value;
         }
@@ -52,11 +57,13 @@ public abstract class Expression {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitLiteralExpression(this);
         }
-
-        public final Token value;
     }
 
     public static class UnaryExpression extends Expression {
+
+        public final Token operator;
+        public final Expression right;
+
         public UnaryExpression(Token operator, Expression right) {
             this.operator = operator;
             this.right = right;
@@ -66,9 +73,6 @@ public abstract class Expression {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitUnaryExpression(this);
         }
-
-        public final Token operator;
-        public final Expression right;
     }
 
 }

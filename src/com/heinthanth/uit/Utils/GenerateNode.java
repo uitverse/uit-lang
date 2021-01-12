@@ -14,16 +14,10 @@ public class GenerateNode {
         String output = args[0];
 
         generateExpression(output, "Expression",
-            Arrays.asList(
-                "BinaryExpression   : Expression left, Token operator, Expression right",
-                "GroupingExpression : Expression expression",
-                "LiteralExpression  : Token value",
-                "UnaryExpression    : Token operator, Expression right"
-            ),
-            Arrays.asList(
-                "com.heinthanth.uit.Lexer.Token"
-            )
-        );
+                Arrays.asList("BinaryExpression   : Expression left, Token operator, Expression right",
+                        "GroupingExpression : Expression expression", "LiteralExpression  : Token value",
+                        "UnaryExpression    : Token operator, Expression right"),
+                Arrays.asList("com.heinthanth.uit.Lexer.Token"));
     }
 
     /**
@@ -34,13 +28,14 @@ public class GenerateNode {
      * @param properties
      * @throws IOException
      */
-    private static void generateExpression(String output, String baseName, List<String> properties, List<String> imports) throws IOException {
+    private static void generateExpression(String output, String baseName, List<String> properties,
+            List<String> imports) throws IOException {
         String path = output + "/" + baseName + ".java";
         PrintWriter writer = new PrintWriter(path, "UTF-8");
 
         writer.println("package com.heinthanth.uit.Runtime;\n");
 
-        for(String imp : imports) {
+        for (String imp : imports) {
             writer.println("import " + imp + ";");
         }
         writer.println();
@@ -75,10 +70,21 @@ public class GenerateNode {
     private static void writeProps(PrintWriter writer, String baseName, String className, String fieldList) {
         // static class $name extends $baseName {
         writer.println("    public static class " + className + " extends " + baseName + " {");
+
+        // property တွေကို define မယ်။
+        writer.println();
+
+        String[] fields = fieldList.split(", ");
+
+        for (String field : fields) {
+            writer.println("        public final " + field + ";");
+        }
+
+        writer.println();
+
         // constructor ရေးမယ်။
         writer.println("        public " + className + "(" + fieldList + ") {");
 
-        String[] fields = fieldList.split(", ");
         for (String field : fields) {
             String name = field.split(" ")[1];
             writer.println("            this." + name + " = " + name + ";");
@@ -92,13 +98,6 @@ public class GenerateNode {
         writer.println("        public <R> R accept(Visitor<R> visitor) {");
         writer.println("            return visitor.visit" + className + "(this);");
         writer.println("        }");
-
-        // property တွေကို define မယ်။
-        writer.println();
-
-        for (String field : fields) {
-            writer.println("        public final " + field + ";");
-        }
 
         // }
         writer.println("    }");
