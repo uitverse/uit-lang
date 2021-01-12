@@ -7,7 +7,10 @@ RUN apt update \
 WORKDIR /opt/heinthanth/uit
 COPY src ./
 
-RUN JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8 javac -g:none -Werror -d build -cp . com/heinthanth/uit/Main.java
+ENV JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8
+RUN javac -d build com/heinthanth/uit/Utils/GenerateNode.java \
+	&& java -cp build com.heinthanth.uit.Utils.GenerateNode com/heinthanth/uit/Runtime \
+    && javac -g:none -Werror -d build -cp . com/heinthanth/uit/Main.java
 
 
 FROM debian:buster

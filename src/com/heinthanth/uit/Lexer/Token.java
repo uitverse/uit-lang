@@ -22,7 +22,7 @@ public class Token {
     public final int col;
 
     // string token အတွက် constructor
-    Token(token_t type, String lexeme, String value, int line, int col) {
+    public Token(token_t type, String lexeme, String value, int line, int col) {
         this.type = type;
         this.lexeme = lexeme;
         this.line = line;
@@ -37,7 +37,7 @@ public class Token {
     }
 
     // number token အတွက် constructor
-    Token(token_t type, String lexeme, double value, int line, int col) {
+    public Token(token_t type, String lexeme, double value, int line, int col) {
         this.type = type;
         this.lexeme = lexeme;
         this.line = line;
@@ -52,7 +52,7 @@ public class Token {
     }
 
     // boolean token အတွက် constructor
-    Token(token_t type, String lexeme, boolean value, int line, int col) {
+    public Token(token_t type, String lexeme, boolean value, int line, int col) {
         this.type = type;
         this.lexeme = lexeme;
         this.line = line;
@@ -67,7 +67,7 @@ public class Token {
     }
 
     // // general object token အတွက် constructor
-    // Token(token_t type, String lexeme, Object value, int line, int col) {
+    // public Token(token_t type, String lexeme, Object value, int line, int col) {
     // this.type = type;
     // this.lexeme = lexeme;
     // this.line = line;
@@ -82,7 +82,7 @@ public class Token {
     // }
 
     // value မရှိတဲ့ token (eg. PLUS, MINUS, etc) အတွက် constructor
-    Token(token_t type, String lexeme, int line, int col) {
+    public Token(token_t type, String lexeme, int line, int col) {
         this.type = type;
         this.lexeme = lexeme;
         this.line = line;

@@ -1,4 +1,4 @@
-package com.heinthanth.uit.Runtime;
+package com.heinthanth.uit.Utils;
 
 import com.heinthanth.uit.Lexer.Token;
 

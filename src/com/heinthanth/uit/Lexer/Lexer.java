@@ -5,7 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.heinthanth.uit.Runtime.ErrorHandler;
+import com.heinthanth.uit.Utils.ErrorHandler;
+
 import static com.heinthanth.uit.Lexer.token_t.*;
 
 public class Lexer {

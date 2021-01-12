@@ -1,0 +1,73 @@
+package com.heinthanth.uit.Utils;
+
+import com.heinthanth.uit.Runtime.Expression;
+import com.heinthanth.uit.Runtime.Expression.BinaryExpression;
+import com.heinthanth.uit.Runtime.Expression.GroupingExpression;
+import com.heinthanth.uit.Runtime.Expression.LiteralExpression;
+import com.heinthanth.uit.Runtime.Expression.UnaryExpression;
+
+public class AstPrinter implements Expression.Visitor<String> {
+    /**
+     * parser ကရလာတဲ့ expression ကို print လုပ်မယ်။
+     *
+     * @param expression
+     * @return
+     */
+    public String print(Expression expression) {
+        return expression.accept(this);
+    }
+
+    /**
+     * binary expression ကို string အနေနဲ့ represent လုပ်မယ်။ ( + 1, 3 )
+     */
+    @Override
+    public String visitBinaryExpression(BinaryExpression expression) {
+        return parenthesize(expression.operator.lexeme, expression.left, expression.right);
+    }
+
+    /**
+     * literal expression ကို string အနေနဲ့ represent လုပ်မယ်။ (1, 2, true, false)
+     */
+    @Override
+    public String visitLiteralExpression(LiteralExpression expression) {
+        switch (expression.value.v_type) {
+            case VT_STRING:
+                return expression.value.v_string;
+            case VT_NUMBER:
+                return String.valueOf(expression.value.v_number);
+            case VT_BOOLEAN:
+                return String.valueOf(expression.value.v_boolean);
+            default:
+                return "null";
+        }
+    }
+
+    /**
+     * unary expression ကို string အနေနဲ့ represent လုပ်မယ်။ ( - 3 )
+     */
+    @Override
+    public String visitUnaryExpression(UnaryExpression expression) {
+        return parenthesize(expression.operator.lexeme, expression.right);
+    }
+
+    /**
+     * grouping expression ကို print မယ်
+     */
+    @Override
+    public String visitGroupingExpression(GroupingExpression expression) {
+        return parenthesize("group", expression.expression);
+    }
+
+    private String parenthesize(String name, Expression... exprs) {
+        StringBuilder builder = new StringBuilder();
+
+        builder.append("(").append(name);
+        for (Expression expr : exprs) {
+            builder.append(" ");
+            builder.append(expr.accept(this));
+        }
+        builder.append(")");
+
+        return builder.toString();
+    }
+}

@@ -9,7 +9,7 @@ script: class
 jar: class
 	jar cmvf META-INF/MANIFEST.MF build/bin/uit.jar -C build .
 
-class: clean
+class: clean node
 	javac -g:none -Werror -d build -cp src src/com/heinthanth/uit/Main.java
 	mkdir build/bin
 
@@ -20,6 +20,10 @@ man:
 
 docker:
 	sudo docker build -t uit .
+
+node:
+	javac -d build src/com/heinthanth/uit/Utils/GenerateNode.java
+	java -cp build com.heinthanth.uit.Utils.GenerateNode src/com/heinthanth/uit/Runtime
 
 clean:
 	rm -rf build
