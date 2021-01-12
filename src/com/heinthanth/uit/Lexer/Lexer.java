@@ -152,6 +152,9 @@ public class Lexer {
             case ',':
                 addToken(COMMA);
                 break;
+            case '.':
+                addToken(DOT);
+                break;
             case ' ':
             case '\r':
             case '\t':
@@ -161,7 +164,10 @@ public class Lexer {
                 line++;
                 break;
             case '"':
-                makeString();
+                makeString('"');
+                break;
+            case '\'':
+                makeString('\'');
                 break;
             default:
                 if (isDigit(c)) {
@@ -278,7 +284,7 @@ public class Lexer {
     }
 
     // source string တွေကနေ string token တစ်ခု ဆောက်မယ်။
-    private void makeString() {
+    private void makeString(char wrappingChar) {
         boolean isEscaped = false;
         StringBuilder stringString = new StringBuilder();
 
@@ -286,8 +292,10 @@ public class Lexer {
         escapedValue.put('n', '\n');
         escapedValue.put('t', '\t');
         escapedValue.put('"', '"');
+        escapedValue.put('\'', '\'');
+        escapedValue.put('\\', '\\');
 
-        while ((getCurrentCharacter() != '"' || isEscaped) && !isEOF()) {
+        while ((getCurrentCharacter() != wrappingChar || isEscaped) && !isEOF()) {
             if (getCurrentCharacter() == '\n')
                 line++;
             if (isEscaped) {
