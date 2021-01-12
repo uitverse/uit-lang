@@ -2,6 +2,7 @@
 
 [![MIT license](https://img.shields.io/badge/License-MIT-green.svg)](https://lbesson.mit-license.org/)
 ![Lines of code](https://img.shields.io/tokei/lines/github/heinthanth/uit-lang?label=Lines%20of%20Code&style=flat)
+[![Code Quality Score](https://www.code-inspector.com/project/17719/score/svg)](https://www.code-inspector.com/project/17719/score/svg)
 
 `uit` is interpreter for `uit-lang`, a pseudo-code like programming language, designed for beginners in programming. Not too slow with JVM, and with must-have programming language features.
 
@@ -21,7 +22,7 @@ git clone -b main https://github.com/heinthanth/uit-lang && cd uit-lang
 
 ### Prebuilt Package
 
-Not available yet. After development, Interpreter will be released with Java Launchers.
+Well, you can download prebuilt `jar` file [here](build/uit.jar). Then, run it through JRE.
 
 ### Building with JDK
 

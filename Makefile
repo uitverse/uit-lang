@@ -8,8 +8,7 @@ script: class
 	chmod +x build/bin/uit.sh
 
 jar: class
-	mkdir -p build/bin
-	jar cmvf META-INF/MANIFEST.MF build/bin/uit.jar -C build .
+	jar cmvf META-INF/MANIFEST.MF build/uit.jar -C build .
 
 class: clean node
 	JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8 javac -g:none -Werror -d build -cp src src/com/heinthanth/uit/Main.java
