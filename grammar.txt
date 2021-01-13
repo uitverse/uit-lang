@@ -48,7 +48,9 @@ power               ->  unary ( "^" unary )*
 unary               ->  ( "!" | "-" ) unary
                     |   prefix
 prefix              ->  ( "++" | "--" ) prefix
-                    |   primary
+                    |   postfix
+postfix             ->  primary
+                    |   postfix ( "++" | "--" )
 primary             ->  literal | grouping | IDENTIFIER
 
 grouping            ->  "(" expression ")"

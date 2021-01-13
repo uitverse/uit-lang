@@ -1,3 +1,4 @@
-for(Num a = 10; a > 0; --a)
-    output a;
-endfor
+Num a = 3;
+
+output a--;
+output a;

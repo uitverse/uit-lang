@@ -395,7 +395,20 @@ public class Parser {
                 return new Expression.DecrementExpression(right, operator, "prefix");
             }
         }
-        return primary();
+        return postfix();
+    }
+
+    private Expression postfix() {
+        Expression expr = primary();
+        if (match(INCREMENT, DECREMENT)) {
+            Token operator = previous();
+            if (operator.type.toString() == "INCREMENT") {
+                expr = new Expression.IncrementExpression(expr, operator, "postfix");
+            } else {
+                expr = new Expression.DecrementExpression(expr, operator, "postfix");
+            }
+        }
+        return expr;
     }
 
     // ဒါက ထပ်ခွဲမရတော့တဲ့ basic element တွေ literal ဘာညာ
