@@ -1,5 +1,7 @@
 package com.heinthanth.uit.Interpreter;
 
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -7,8 +9,10 @@ import com.heinthanth.uit.Lexer.Token;
 import com.heinthanth.uit.Lexer.token_t;
 import com.heinthanth.uit.Runtime.Expression;
 import com.heinthanth.uit.Runtime.Statement;
+import com.heinthanth.uit.Runtime.UitCallable;
 import com.heinthanth.uit.Runtime.RuntimeError;
 import com.heinthanth.uit.Runtime.Expression.BinaryExpression;
+import com.heinthanth.uit.Runtime.Expression.CallExpression;
 import com.heinthanth.uit.Runtime.Expression.DecrementExpression;
 import com.heinthanth.uit.Runtime.Expression.GroupingExpression;
 import com.heinthanth.uit.Runtime.Expression.IncrementExpression;
@@ -45,7 +49,30 @@ class ContinueSignal extends RuntimeException {
 
 public class Interpreter implements Expression.Visitor<Object>, Statement.Visitor<Void> {
     // global variable တွေ သိမ်းဖို့
-    private Environment environment = new Environment();
+    private final Environment globals = new Environment();
+    private Environment environment = globals;
+
+    // builtin function တွေကို define ဖို့ constructor
+    public Interpreter() {
+        // native time function -> return Unix Epoch
+        globals._define("time", new UitCallable() {
+            @Override
+            public int argsCount() {
+                return 0;
+            }
+
+            @Override
+            public Object invoke(Interpreter interpreter, List<Object> arguments) {
+                return (double) Instant.now().getEpochSecond();
+            }
+
+            @Override
+            public String toString() {
+                return "[ builtin fn - time ]";
+            }
+        });
+        ;
+    }
 
     /**
      * parser ကရလာတဲ့ expression ကို evaluate လုပ်မယ်။
@@ -190,6 +217,26 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
     public Void visitExpressionStatement(ExpressionStatement statement) {
         evaluate(statement.expression);
         return null;
+    }
+
+    /**
+     * function call တွေကို interpret မယ်။
+     */
+    @Override
+    public Object visitCallExpression(CallExpression expression) {
+        Object callee = evaluate(expression.callee);
+
+        List<Object> arguments = new ArrayList<>();
+        for (Expression argument : expression.arguments) {
+            arguments.add(evaluate(argument));
+        }
+
+        if (!(callee instanceof UitCallable)) {
+            throw new RuntimeError(expression.paren, "Cannot invoke non-functions.");
+        }
+
+        UitCallable function = (UitCallable) callee;
+        return function.invoke(this, arguments);
     }
 
     /**
@@ -391,11 +438,16 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
         if (object == null)
             return "null";
         if (object instanceof Double) {
-            String text = object.toString();
-            if (text.endsWith(".0")) {
-                text = text.substring(0, text.length() - 2);
+            double value = (double) object;
+            if ((value == Math.floor(value)) && !Double.isInfinite(value)) {
+                return String.valueOf((long) value);
+            } else {
+                String text = object.toString();
+                if (text.endsWith(".0")) {
+                    text = text.substring(0, text.length() - 2);
+                }
+                return text;
             }
-            return text;
         }
         return object.toString();
     }

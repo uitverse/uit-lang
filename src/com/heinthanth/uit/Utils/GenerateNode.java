@@ -23,9 +23,13 @@ public class GenerateNode {
                 "VariableAssignExpression : Token identifier, Expression value",
                 "LogicalExpression  : Expression left, Token operator, Expression right",
                 "IncrementExpression   : Expression identifier, Token operator, String mode",
-                "DecrementExpression   : Expression identifier, Token operator, String mode"
+                "DecrementExpression   : Expression identifier, Token operator, String mode",
+                "CallExpression     : Expression callee, Token paren, List<Expression> arguments"
             ),
-            Arrays.asList("com.heinthanth.uit.Lexer.Token")
+            Arrays.asList(
+                "java.util.List",
+                "com.heinthanth.uit.Lexer.Token"
+            )
         );
         generateAst(output, "Statement",
             Arrays.asList(

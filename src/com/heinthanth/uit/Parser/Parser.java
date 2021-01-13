@@ -385,6 +385,7 @@ public class Parser {
         return prefix();
     }
 
+    // prefix (++a, --a)
     private Expression prefix() {
         if (match(INCREMENT, DECREMENT)) {
             Token operator = previous();
@@ -398,8 +399,9 @@ public class Parser {
         return postfix();
     }
 
+    // postfix ( a++, a-- )
     private Expression postfix() {
-        Expression expr = primary();
+        Expression expr = call();
         if (match(INCREMENT, DECREMENT)) {
             Token operator = previous();
             if (operator.type.toString() == "INCREMENT") {
@@ -409,6 +411,34 @@ public class Parser {
             }
         }
         return expr;
+    }
+
+    // call expression
+    private Expression call() {
+        Expression expr = primary();
+        while (true) {
+            if (match(LEFT_PAREN)) {
+                expr = finishCall(expr);
+            } else {
+                break;
+            }
+        }
+        return expr;
+    }
+
+    // finish call
+    private Expression finishCall(Expression callee) {
+        List<Expression> arguments = new ArrayList<>();
+        if (!check(RIGHT_PAREN)) {
+            do {
+                if (arguments.size() >= 255) {
+                    error(getCurrentToken(), "Callable can't have more than 255 arguments.");
+                }
+                arguments.add(expression());
+            } while (match(COMMA));
+        }
+        Token paren = expect(RIGHT_PAREN, "Expect ')' after arguments.");
+        return new Expression.CallExpression(callee, paren, arguments);
     }
 
     // ဒါက ထပ်ခွဲမရတော့တဲ့ basic element တွေ literal ဘာညာ

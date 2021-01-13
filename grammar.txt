@@ -49,8 +49,8 @@ unary               ->  ( "!" | "-" ) unary
                     |   prefix
 prefix              ->  ( "++" | "--" ) prefix
                     |   postfix
-postfix             ->  primary
-                    |   postfix ( "++" | "--" )
+postfix             ->  call ( "++" | "--" )*
+call                ->  primary ( "(" arguments ")" )*
 primary             ->  literal | grouping | IDENTIFIER
 
 grouping            ->  "(" expression ")"

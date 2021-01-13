@@ -62,6 +62,13 @@ public class Environment {
     }
 
     /**
+     * internal interpreter ကနေ built in function တွေ define ဖို့
+     */
+    public void _define(String identifier, Object value) {
+        values.put(identifier, value);
+    }
+
+    /**
      * ရှိပြီးသား variable ကို value အသစ်ထည့်မယ်။ variable မရှိရင် error တက်မယ်။
      *
      * @param identifer

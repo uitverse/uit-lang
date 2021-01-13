@@ -1,5 +1,6 @@
 package com.heinthanth.uit.Runtime;
 
+import java.util.List;
 import com.heinthanth.uit.Lexer.Token;
 
 public abstract class Expression {
@@ -14,6 +15,7 @@ public abstract class Expression {
         R visitLogicalExpression(LogicalExpression expression);
         R visitIncrementExpression(IncrementExpression expression);
         R visitDecrementExpression(DecrementExpression expression);
+        R visitCallExpression(CallExpression expression);
     }
 
     public abstract <R> R accept(Visitor<R> visitor);
@@ -161,6 +163,24 @@ public abstract class Expression {
         @Override
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitDecrementExpression(this);
+        }
+    }
+
+    public static class CallExpression extends Expression {
+
+        public final Expression callee;
+        public final Token paren;
+        public final List<Expression> arguments;
+
+        public CallExpression(Expression callee, Token paren, List<Expression> arguments) {
+            this.callee = callee;
+            this.paren = paren;
+            this.arguments = arguments;
+        }
+
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitCallExpression(this);
         }
     }
 
