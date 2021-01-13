@@ -40,7 +40,9 @@ public class GenerateNode {
                 "IfStatement        : Map<Expression,Statement> branches, Statement elseBranch",
                 "WhileStatement     : Expression condition, Statement instructions",
                 "BreakStatement     : ",
-                "ContinueStatement  : "
+                "ContinueStatement  : ",
+                "FunctionStatement  : Token type, Token identifier, List<List<Token>> parameters, List<Statement> instructions",
+                "ReturnStatement    : Token ret, Expression value"
             ),
             Arrays.asList(
                 "java.util.List",

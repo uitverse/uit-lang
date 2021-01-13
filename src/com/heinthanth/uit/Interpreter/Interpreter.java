@@ -10,6 +10,7 @@ import com.heinthanth.uit.Lexer.token_t;
 import com.heinthanth.uit.Runtime.Expression;
 import com.heinthanth.uit.Runtime.Statement;
 import com.heinthanth.uit.Runtime.UitCallable;
+import com.heinthanth.uit.Runtime.UitFunction;
 import com.heinthanth.uit.Runtime.RuntimeError;
 import com.heinthanth.uit.Runtime.Expression.BinaryExpression;
 import com.heinthanth.uit.Runtime.Expression.CallExpression;
@@ -25,8 +26,10 @@ import com.heinthanth.uit.Runtime.Statement.BlockStatement;
 import com.heinthanth.uit.Runtime.Statement.BreakStatement;
 import com.heinthanth.uit.Runtime.Statement.ContinueStatement;
 import com.heinthanth.uit.Runtime.Statement.ExpressionStatement;
+import com.heinthanth.uit.Runtime.Statement.FunctionStatement;
 import com.heinthanth.uit.Runtime.Statement.IfStatement;
 import com.heinthanth.uit.Runtime.Statement.OutputStatement;
+import com.heinthanth.uit.Runtime.Statement.ReturnStatement;
 import com.heinthanth.uit.Runtime.Statement.VariableDeclarationStatement;
 import com.heinthanth.uit.Runtime.Statement.WhileStatement;
 import com.heinthanth.uit.Utils.ErrorHandler;
@@ -49,7 +52,7 @@ class ContinueSignal extends RuntimeException {
 
 public class Interpreter implements Expression.Visitor<Object>, Statement.Visitor<Void> {
     // global variable တွေ သိမ်းဖို့
-    private final Environment globals = new Environment();
+    public final Environment globals = new Environment();
     private Environment environment = globals;
 
     // builtin function တွေကို define ဖို့ constructor
@@ -98,6 +101,24 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
         } catch (RuntimeError error) {
             errorHandler.reportRuntimeError(error.getMessage(), error.token.line, error.token.col);
         }
+    }
+
+    /**
+     * function call တွေကို interpret မယ်။
+     */
+    @Override
+    public Void visitFunctionStatement(FunctionStatement statement) {
+        UitFunction function = new UitFunction(statement);
+        environment.define(statement.identifier, function);
+        return null;
+    }
+
+    @Override
+    public Void visitReturnStatement(ReturnStatement statement) {
+        Object value = null;
+        if (statement.value != null)
+            value = evaluate(statement.value);
+        throw new UitFunction.ReturnSignal(value);
     }
 
     /**
@@ -406,7 +427,7 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
      * @param statements
      * @param environment
      */
-    private void executeBlock(List<Statement> statements, Environment environment) {
+    public void executeBlock(List<Statement> statements, Environment environment) {
         Environment previous = this.environment;
         try {
             this.environment = environment;

@@ -15,6 +15,8 @@ public abstract class Statement {
         R visitWhileStatement(WhileStatement statement);
         R visitBreakStatement(BreakStatement statement);
         R visitContinueStatement(ContinueStatement statement);
+        R visitFunctionStatement(FunctionStatement statement);
+        R visitReturnStatement(ReturnStatement statement);
     }
 
     public abstract <R> R accept(Visitor<R> visitor);
@@ -132,6 +134,42 @@ public abstract class Statement {
         @Override
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitContinueStatement(this);
+        }
+    }
+
+    public static class FunctionStatement extends Statement {
+
+        public final Token type;
+        public final Token identifier;
+        public final List<List<Token>> parameters;
+        public final List<Statement> instructions;
+
+        public FunctionStatement(Token type, Token identifier, List<List<Token>> parameters, List<Statement> instructions) {
+            this.type = type;
+            this.identifier = identifier;
+            this.parameters = parameters;
+            this.instructions = instructions;
+        }
+
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitFunctionStatement(this);
+        }
+    }
+
+    public static class ReturnStatement extends Statement {
+
+        public final Token ret;
+        public final Expression value;
+
+        public ReturnStatement(Token ret, Expression value) {
+            this.ret = ret;
+            this.value = value;
+        }
+
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitReturnStatement(this);
         }
     }
 

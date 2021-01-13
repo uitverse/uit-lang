@@ -1,4 +1,6 @@
-Num a = 3;
+Num fib(Num n)
+    if (n <= 1) => return n;
+    return fib(n - 2) + fib(n - 1);
+endfunc
 
-output a--;
-output a;
+for (Num i = 0; i < 20; i++) => output fib(i);

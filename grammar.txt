@@ -1,9 +1,14 @@
 program             ->  declaration* EOF
 
 declaration         ->  variableDeclaration
+                    |   functionDeclaration
                     |   statement
 
 variableDeclaration ->  ( "Num" | "String" | "Boolean" ) IDENTIFIER ( "=" expression )? ";"
+functionDeclaration ->  ( "void" | "Num" | "String" | "Boolean" ) IDENTIFIER
+                        "("parameters? ")" "=>" statement
+                    |   ( "void" | "Num" | "String" | "Boolean" ) IDENTIFIER
+                        "("parameters? ")" declaration* "endfunc"
 
 statement           ->  expressionStatement
                     |   outputStatement
@@ -13,7 +18,7 @@ statement           ->  expressionStatement
                     |   whileStatement
                     |   forStatement
 simpleBlock         ->  "block" declaration* "endblock"
-curlBlock           ->   "{" declaration* "}"
+curlBlock           ->  "{" declaration* "}"
 ifStatement         ->  "if" "(" expression ")" "=>" statement
                     |   "if" "(" expression ")"
                             declaration*

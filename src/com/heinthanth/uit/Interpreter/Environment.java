@@ -30,7 +30,7 @@ public class Environment {
      *
      * @param parent
      */
-    Environment(Environment parent) {
+    public Environment(Environment parent) {
         this.parent = parent;
     }
 
@@ -58,6 +58,14 @@ public class Environment {
                 msg.append("'.");
                 throw new RuntimeError(type, msg.toString());
             }
+        }
+    }
+
+    public void define(Token identifier, Object value) {
+        if (values.containsKey(identifier.lexeme)) {
+            throw new RuntimeError(identifier, "variable '" + identifier.lexeme + "' exists.");
+        } else {
+            values.put(identifier.lexeme, value);
         }
     }
 

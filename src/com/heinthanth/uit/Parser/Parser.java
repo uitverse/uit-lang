@@ -54,6 +54,8 @@ public class Parser {
     // var declaration ဘာညာစစ်မယ်။
     private Statement declaration() {
         try {
+            if (match(FRT_VOID))
+                return functionDeclaration();
             if (match(VT_NUMBER, VT_STRING, VT_BOOLEAN))
                 return variableDeclaration();
             return statement();
@@ -68,6 +70,12 @@ public class Parser {
      */
     private Statement variableDeclaration() {
         Token type = previous();
+
+        Token next = peekNext();
+        if (next != null && next.type == LEFT_PAREN) {
+            return functionDeclaration();
+        }
+
         Token identifier = expect(IDENTIFIER, "Expect variable identifier.");
 
         Expression initializer = null;
@@ -77,6 +85,38 @@ public class Parser {
         expect(SEMICOLON, "Expect ';' after statement.");
 
         return new Statement.VariableDeclarationStatement(type, identifier, initializer);
+    }
+
+    private Statement functionDeclaration() {
+        Token type = previous();
+        Token identifier = expect(IDENTIFIER, "Expect function identifier.");
+
+        match(LEFT_PAREN);
+
+        List<List<Token>> parameters = new ArrayList<>();
+        if (!check(RIGHT_PAREN)) {
+            do {
+                if (parameters.size() >= 255) {
+                    error(getCurrentToken(), "Can't have more than 255 parameters.");
+                }
+                List<Token> param = new ArrayList<>();
+                if (check(FRT_VOID))
+                    throw error(getCurrentToken(), "Invalid data type for variable.");
+                if (!(check(VT_NUMBER) || check(VT_STRING) || check(VT_BOOLEAN))) {
+                    throw error(getCurrentToken(), "Expect parameter data type.");
+                } else {
+                    param.add(advance());
+                }
+                param.add(expect(IDENTIFIER, "Expect parameter name."));
+                parameters.add(param);
+            } while (match(COMMA));
+        }
+        expect(RIGHT_PAREN, "Expect ')' after function parameters.");
+        if (match(THEN)) {
+            return new Statement.FunctionStatement(type, identifier, parameters, Arrays.asList(statement()));
+        }
+        List<Statement> instructions = block(ENDFUNC, "endfunc");
+        return new Statement.FunctionStatement(type, identifier, parameters, instructions);
     }
 
     // statement တွေစစ်မယ်။ မဟုတ်ရင် expression statement ပေါ့။
@@ -91,6 +131,8 @@ public class Parser {
             return breakStatement();
         if (match(CONTINUE))
             return continueStatement();
+        if (match(RETURN))
+            return returnStatement();
         if (match(OUTPUT))
             return outputStatement();
         if (match(BLOCK))
@@ -151,7 +193,12 @@ public class Parser {
 
         try {
             loopDepth++;
-            Statement instructions = new Statement.BlockStatement(block(ENDFOR, "endfor"));
+            Statement instructions;
+            if (match(THEN)) {
+                instructions = statement();
+            } else {
+                instructions = new Statement.BlockStatement(block(ENDFOR, "endfor"));
+            }
 
             if (increment != null) {
                 instructions = new Statement.BlockStatement(
@@ -185,6 +232,16 @@ public class Parser {
             error(previous(), "'continue' must be use inside loop.");
         }
         return new Statement.ContinueStatement();
+    }
+
+    private Statement returnStatement() {
+        Token ret = previous();
+        Expression value = null;
+        if (!check(SEMICOLON)) {
+            value = expression();
+        }
+        expect(SEMICOLON, "Expect ';' after return");
+        return new Statement.ReturnStatement(ret, value);
     }
 
     /**
@@ -524,6 +581,13 @@ public class Parser {
         if (!isEOF())
             current++;
         return previous();
+    }
+
+    // index တို့ 1 မတိုးဘဲ ကြည့်ကြည့်မယ်။
+    private Token peekNext() {
+        if (current + 1 >= tokens.size())
+            return null;
+        return tokens.get(current + 1);
     }
 
     // အဆုံး token ဟုတ် မဟုတ် စစ်ဖို့
