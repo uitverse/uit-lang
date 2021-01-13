@@ -93,8 +93,27 @@ public class Parser {
             return outputStatement();
         if (match(SET))
             return variableAssignment();
+        if (match(BLOCK))
+            return new Statement.BlockStatement(block(ENDBLOCK, "endblock"));
+        if (match(LEFT_CURLY))
+            return new Statement.BlockStatement(block(RIGHT_CURLY, "}"));
         // ကျန်တာကတော့ expression ပေါ့။
         return expressionStatement();
+    }
+
+    /**
+     * block level statement တွေကို parse ဖို့
+     * @param end
+     * @param stringForm
+     * @return
+     */
+    private List<Statement> block(token_t end, String stringForm) {
+        List<Statement> statements = new ArrayList<>();
+        while (!check(end) && !isEOF()) {
+            statements.add(declaration());
+        }
+        expect(end, "Expect '" + stringForm + "' after block statement");
+        return statements;
     }
 
     // output statement parse မယ်

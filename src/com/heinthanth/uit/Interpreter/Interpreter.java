@@ -11,6 +11,7 @@ import com.heinthanth.uit.Runtime.Expression.GroupingExpression;
 import com.heinthanth.uit.Runtime.Expression.LiteralExpression;
 import com.heinthanth.uit.Runtime.Expression.UnaryExpression;
 import com.heinthanth.uit.Runtime.Expression.VariableAccessExpression;
+import com.heinthanth.uit.Runtime.Statement.BlockStatement;
 import com.heinthanth.uit.Runtime.Statement.ExpressionStatement;
 import com.heinthanth.uit.Runtime.Statement.OutputStatement;
 import com.heinthanth.uit.Runtime.Statement.VariableAssignStatement;
@@ -26,11 +27,21 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
      *
      * @param expression
      * @param errorHandler
+     * @param fromREPL
      */
-    public void interpret(List<Statement> statements, ErrorHandler errorHandler) {
+    public void interpret(List<Statement> statements, ErrorHandler errorHandler, boolean fromREPL) {
         try {
-            for (Statement statement : statements) {
-                execute(statement);
+            if (fromREPL && statements.size() == 1 && statements.get(0) instanceof ExpressionStatement) {
+                // REPL မှာ expression statement run ခဲ့ရင် auto output ထုတ်ပေးမယ်။
+                ExpressionStatement statement = (ExpressionStatement) statements.get(0);
+                Object value = evaluate(statement.expression);
+                if (value != null)
+                    System.out.println(stringify(value));
+                return;
+            } else {
+                for (Statement statement : statements) {
+                    execute(statement);
+                }
             }
         } catch (RuntimeError error) {
             errorHandler.reportRuntimeError(error.getMessage(), error.token.line, error.token.col);
@@ -70,6 +81,15 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
     public Void visitVariableAssignStatement(VariableAssignStatement statement) {
         Object value = evaluate(statement.value);
         environment.assign(statement.identifier, value);
+        return null;
+    }
+
+    /**
+     * block statement တွေကို interpret လုပ်မယ်။
+     */
+    @Override
+    public Void visitBlockStatement(BlockStatement statement) {
+        executeBlock(statement.statements, new Environment(this.environment));
         return null;
     }
 
@@ -193,6 +213,24 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
      */
     private void execute(Statement statement) {
         statement.accept(this);
+    }
+
+    /**
+     * block statement တွေကို scope အသစ်နဲ့ interpret လုပ်ဖို့။
+     *
+     * @param statements
+     * @param environment
+     */
+    private void executeBlock(List<Statement> statements, Environment environment) {
+        Environment previous = this.environment;
+        try {
+            this.environment = environment;
+            for (Statement statement : statements) {
+                execute(statement);
+            }
+        } finally {
+            this.environment = previous;
+        }
     }
 
     /**

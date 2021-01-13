@@ -198,7 +198,7 @@ public class Main {
 
         // AstPrinter printer = new AstPrinter();
         // System.out.println(printer.print(expression));
-        interpreter.interpret(statements, errorHandler);
+        interpreter.interpret(statements, errorHandler, fromREPL);
     }
 
     private static boolean handleError(ErrorHandler errorHandler, boolean fromREPL) {

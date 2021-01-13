@@ -1,1 +1,6 @@
-Num a = "HELLO";
+Num a = 1;
+
+block
+    Num a = 23;
+    output a;
+endblock

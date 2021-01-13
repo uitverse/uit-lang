@@ -33,6 +33,7 @@ public class Lexer {
         reserved.put("and", AND);
         reserved.put("or", OR);
         reserved.put("block", BLOCK);
+        reserved.put("endblock", ENDBLOCK);
         reserved.put("if", IF);
         reserved.put("elseif", ELSEIF);
         reserved.put("else", ELSE);
@@ -114,6 +115,12 @@ public class Lexer {
                 break;
             case ')':
                 addToken(RIGHT_PAREN);
+                break;
+            case '{':
+                addToken(LEFT_CURLY);
+                break;
+            case '}':
+                addToken(RIGHT_CURLY);
                 break;
             case '&':
                 if (match('&')) {

@@ -6,7 +6,7 @@ public enum token_t {
     // logical operators
     NOT, EQUAL, NOT_EQUAL, LESS, GREATER, LESS_EQUAL, GREATER_EQUAL,
     // grouping expression
-    LEFT_PAREN, RIGHT_PAREN,
+    LEFT_PAREN, RIGHT_PAREN, LEFT_CURLY, RIGHT_CURLY,
     // literal တွေ
     STRING_LITERAL, NUMBER_LITERAL, BOOLEAN_LITERAL, IDENTIFIER,
     // variable declaration အတွက် type (eg. String demo = "HELLO")

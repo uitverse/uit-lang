@@ -14,6 +14,27 @@ public class Environment {
     private final Map<String, Object> values = new HashMap<>();
 
     /**
+     * nested loop တွေအတွက် child variable
+     */
+    private final Environment child;
+
+    /**
+     * assign child environment
+     */
+    Environment() {
+        child = null;
+    }
+
+    /**
+     * assign child environemtn
+     *
+     * @param child
+     */
+    Environment(Environment child) {
+        this.child = child;
+    }
+
+    /**
      * variable အသစ် define လုပ်ဖို့။ type မတူရင် error တက်မယ်။
      *
      * @param type
@@ -51,6 +72,8 @@ public class Environment {
             Object old = values.get(identifier.lexeme);
             if (value.getClass() == old.getClass()) {
                 values.put(identifier.lexeme, value);
+            } else if (child != null) {
+                child.assign(identifier, value);
             } else {
                 StringBuilder msg = new StringBuilder();
                 msg.append("Cannot assign ");
@@ -77,6 +100,8 @@ public class Environment {
         if (values.containsKey(identifier.lexeme)) {
             return values.get(identifier.lexeme);
         }
+        if (child != null)
+            return child.get(identifier);
         throw new RuntimeError(identifier, "variable '" + identifier.lexeme + "'.");
     }
 }

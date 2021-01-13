@@ -1,5 +1,6 @@
 package com.heinthanth.uit.Runtime;
 
+import java.util.List;
 import com.heinthanth.uit.Lexer.Token;
 
 public abstract class Statement {
@@ -9,6 +10,7 @@ public abstract class Statement {
         R visitOutputStatement(OutputStatement statement);
         R visitVariableDeclarationStatement(VariableDeclarationStatement statement);
         R visitVariableAssignStatement(VariableAssignStatement statement);
+        R visitBlockStatement(BlockStatement statement);
     }
 
     public abstract <R> R accept(Visitor<R> visitor);
@@ -72,6 +74,20 @@ public abstract class Statement {
         @Override
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitVariableAssignStatement(this);
+        }
+    }
+
+    public static class BlockStatement extends Statement {
+
+        public final List<Statement> statements;
+
+        public BlockStatement(List<Statement> statements) {
+            this.statements = statements;
+        }
+
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitBlockStatement(this);
         }
     }
 

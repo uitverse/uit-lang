@@ -6,6 +6,11 @@ declaration         ->  variableDeclaration
 variableDeclaration ->  ( "Num" | "String" | "Boolean" ) IDENTIFIER ( "=" expression )? ";"
 statement           ->  expressionStatement
                     |   outputStatement
+                    |   simpleBlock
+                    |   curlBlock
+
+simpleBlock      ->  "block" declaration* "endblock"
+curlBlock       ->   "{" declaration* "}"
 
 expressionStatement ->  expression ";"
 outputStatement     ->  "output"
