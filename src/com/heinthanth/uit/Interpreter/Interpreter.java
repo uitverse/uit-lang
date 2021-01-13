@@ -14,13 +14,13 @@ import com.heinthanth.uit.Runtime.Expression.LiteralExpression;
 import com.heinthanth.uit.Runtime.Expression.LogicalExpression;
 import com.heinthanth.uit.Runtime.Expression.UnaryExpression;
 import com.heinthanth.uit.Runtime.Expression.VariableAccessExpression;
+import com.heinthanth.uit.Runtime.Expression.VariableAssignExpression;
 import com.heinthanth.uit.Runtime.Statement.BlockStatement;
 import com.heinthanth.uit.Runtime.Statement.BreakStatement;
 import com.heinthanth.uit.Runtime.Statement.ContinueStatement;
 import com.heinthanth.uit.Runtime.Statement.ExpressionStatement;
 import com.heinthanth.uit.Runtime.Statement.IfStatement;
 import com.heinthanth.uit.Runtime.Statement.OutputStatement;
-import com.heinthanth.uit.Runtime.Statement.VariableAssignStatement;
 import com.heinthanth.uit.Runtime.Statement.VariableDeclarationStatement;
 import com.heinthanth.uit.Runtime.Statement.WhileStatement;
 import com.heinthanth.uit.Utils.ErrorHandler;
@@ -98,16 +98,6 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
     }
 
     /**
-     * variable ကို value အသစ်ထည့်မယ်။
-     */
-    @Override
-    public Void visitVariableAssignStatement(VariableAssignStatement statement) {
-        Object value = evaluate(statement.value);
-        environment.assign(statement.identifier, value);
-        return null;
-    }
-
-    /**
      * if statement ကို interpret မယ်။
      *
      * @param statement
@@ -141,7 +131,7 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
             } catch (BreakSignal sig) {
                 break;
             } catch (ContinueSignal sig) {
-                // do nothing
+                continue;
             }
         }
         return null;
@@ -198,6 +188,16 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
     public Void visitExpressionStatement(ExpressionStatement statement) {
         evaluate(statement.expression);
         return null;
+    }
+
+    /**
+     * variable ကို value အသစ်ထည့်မယ်။
+     */
+    @Override
+    public Object visitVariableAssignExpression(VariableAssignExpression expression) {
+        Object value = evaluate(expression.value);
+        environment.assign(expression.identifier, value);
+        return value;
     }
 
     /**

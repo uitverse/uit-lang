@@ -20,6 +20,7 @@ public class GenerateNode {
                 "LiteralExpression  : Token value",
                 "UnaryExpression    : Token operator, Expression right",
                 "VariableAccessExpression : Token identifier",
+                "VariableAssignExpression : Token identifier, Expression value",
                 "LogicalExpression  : Expression left, Token operator, Expression right"
             ),
             Arrays.asList("com.heinthanth.uit.Lexer.Token")
@@ -29,7 +30,6 @@ public class GenerateNode {
                 "ExpressionStatement: Expression expression",
                 "OutputStatement    : Expression expression",
                 "VariableDeclarationStatement : Token type, Token identifier, Expression initializer",
-                "VariableAssignStatement : Token identifier, Expression value",
                 "BlockStatement     : List<Statement> statements",
                 "IfStatement        : Map<Expression,Statement> branches, Statement elseBranch",
                 "WhileStatement     : Expression condition, Statement instructions",

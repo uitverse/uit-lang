@@ -38,6 +38,8 @@ public class Lexer {
         reserved.put("elseif", ELSEIF);
         reserved.put("else", ELSE);
         reserved.put("endif", ENDIF);
+        reserved.put("for", FOR);
+        reserved.put("endfor", ENDFOR);
         reserved.put("while", WHILE);
         reserved.put("endwhile", ENDWHILE);
         reserved.put("break", BREAK);

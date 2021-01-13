@@ -25,10 +25,23 @@ ifStatement         ->  "if" "(" expression ")" "=>" statement
 whileStatement      ->  "while" "(" expression ")" "=>" statement
                     ->  "while" "(" expression ")" declaration* "endwhile"
 
+forStatement        ->  "for"
+                            "(" ( variableDeclaration | expressionStatement | ";" )
+                            expression? ";"
+                            expression?
+                        ")" "=>" statement
+                    |   "for"
+                            "(" ( variableDeclaration | expressionStatement | ";" )
+                            expression? ";"
+                            expression?
+                        ")" declaration* "endfor"
+
 expressionStatement ->  expression ";"
 outputStatement     ->  "output"
 
-expression          ->  logicOr
+expression          ->  assignment
+assignment          ->  "set" IDENTIFIER "=" assignment
+                    |   logicOr
 logicOr             ->  logicAnd ( "or" | "||" logicAnd )*
 logicAnd            ->  logicEqual ( "and" | "&&" logicEqual )*
 logicEqual               ->  comparison ( ( "!=" | "==" ) comparison )*

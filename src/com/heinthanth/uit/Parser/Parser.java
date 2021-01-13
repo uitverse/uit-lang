@@ -1,6 +1,7 @@
 package com.heinthanth.uit.Parser;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -78,33 +79,20 @@ public class Parser {
         return new Statement.VariableDeclarationStatement(type, identifier, initializer);
     }
 
-    /**
-     * ရှိပြီးသား variable ကို value အသစ်ထည့်မယ်။
-     *
-     * @return
-     */
-    private Statement variableAssignment() {
-        Token identifier = expect(IDENTIFIER, "Expect variable identifier.");
-        expect(ASSIGN, "Expect '=' in variable assignment.");
-        Expression value = expression();
-        expect(SEMICOLON, "Expect ';' after statement.");
-        return new Statement.VariableAssignStatement(identifier, value);
-    }
-
     // statement တွေစစ်မယ်။ မဟုတ်ရင် expression statement ပေါ့။
     private Statement statement() {
         if (match(IF))
             return ifStatement();
         if (match(WHILE))
             return whileStatement();
+        if (match(FOR))
+            return forStatement();
         if (match(BREAK))
             return breakStatement();
         if (match(CONTINUE))
             return continueStatement();
         if (match(OUTPUT))
             return outputStatement();
-        if (match(SET))
-            return variableAssignment();
         if (match(BLOCK))
             return new Statement.BlockStatement(block(ENDBLOCK, "endblock"));
         if (match(LEFT_CURLY))
@@ -131,6 +119,53 @@ public class Parser {
             }
             Statement instructions = new Statement.BlockStatement(block(ENDWHILE, "endblock"));
             return new Statement.WhileStatement(condition, instructions);
+        } finally {
+            loopDepth--;
+        }
+    }
+
+    /**
+     * for statement ကို while statement အဖြစ်ပြောင်းမယ်။
+     */
+    private Statement forStatement() {
+        expect(LEFT_PAREN, "Expect '(' after 'while'.");
+
+        Statement initializer;
+        if (match(SEMICOLON)) {
+            initializer = null;
+        } else if (match(VT_NUMBER, VT_STRING, VT_BOOLEAN)) {
+            initializer = variableDeclaration();
+        } else {
+            initializer = expressionStatement();
+        }
+
+        Expression condition = null;
+        if (!check(SEMICOLON))
+            condition = expression();
+        expect(SEMICOLON, "Expect ';' after loop condition.");
+
+        Expression increment = null;
+        if (!check(RIGHT_PAREN))
+            increment = expression();
+        expect(RIGHT_PAREN, "Expect ')' after loop clause.");
+
+        try {
+            loopDepth++;
+            Statement instructions = new Statement.BlockStatement(block(ENDFOR, "endfor"));
+
+            if (increment != null) {
+                instructions = new Statement.BlockStatement(
+                        Arrays.asList(instructions, new Statement.ExpressionStatement(increment)));
+            }
+            if (condition == null)
+                condition = new Expression.LiteralExpression(new Token(BOOLEAN_LITERAL, "true", true, -1, -1));
+
+            instructions = new Statement.WhileStatement(condition, instructions);
+
+            if (initializer != null) {
+                instructions = new Statement.BlockStatement(Arrays.asList(initializer, instructions));
+            }
+            return instructions;
         } finally {
             loopDepth--;
         }
@@ -232,7 +267,23 @@ public class Parser {
 
     // expression ထက် precedence ပုိမြင့်တာက logic or
     private Expression expression() {
-        return logicOr();
+        return assignment();
+    }
+
+    /**
+     * ရှိပြီးသား variable ကို value အသစ်ထည့်မယ်။
+     *
+     * @return
+     */
+    private Expression assignment() {
+        if (match(SET)) {
+            Token identifier = expect(IDENTIFIER, "Expect variable identifier.");
+            expect(ASSIGN, "Expect '=' in variable assignment.");
+            Expression value = assignment();
+            return new Expression.VariableAssignExpression(identifier, value);
+        } else {
+            return logicOr();
+        }
     }
 
     // expression ထက်ပိုမြင့်တာက logic and
@@ -384,7 +435,6 @@ public class Parser {
                 case CONTINUE:
                 case FUNC:
                 case RETURN:
-                case SET:
                 case INPUT:
                 case OUTPUT:
                     return;

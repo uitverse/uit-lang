@@ -1,11 +1,8 @@
-block
-    output "HELLO";
-endblock
+Num a = 0;
+Num temp;
 
-
-
-
-
-
-
-output "HELLO"
+for (Num b = 1; a < 10000; set b = temp + b)
+    output a;
+    set temp = a;
+    set a = b;
+endfor
