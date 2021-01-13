@@ -15,12 +15,31 @@ import com.heinthanth.uit.Runtime.Expression.LogicalExpression;
 import com.heinthanth.uit.Runtime.Expression.UnaryExpression;
 import com.heinthanth.uit.Runtime.Expression.VariableAccessExpression;
 import com.heinthanth.uit.Runtime.Statement.BlockStatement;
+import com.heinthanth.uit.Runtime.Statement.BreakStatement;
+import com.heinthanth.uit.Runtime.Statement.ContinueStatement;
 import com.heinthanth.uit.Runtime.Statement.ExpressionStatement;
 import com.heinthanth.uit.Runtime.Statement.IfStatement;
 import com.heinthanth.uit.Runtime.Statement.OutputStatement;
 import com.heinthanth.uit.Runtime.Statement.VariableAssignStatement;
 import com.heinthanth.uit.Runtime.Statement.VariableDeclarationStatement;
+import com.heinthanth.uit.Runtime.Statement.WhileStatement;
 import com.heinthanth.uit.Utils.ErrorHandler;
+
+class BreakSignal extends RuntimeException {
+
+    /**
+     *
+     */
+    private static final long serialVersionUID = 8307277094185297477L;
+};
+
+class ContinueSignal extends RuntimeException {
+
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
+}
 
 public class Interpreter implements Expression.Visitor<Object>, Statement.Visitor<Void> {
     // global variable တွေ သိမ်းဖို့
@@ -88,6 +107,12 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
         return null;
     }
 
+    /**
+     * if statement ကို interpret မယ်။
+     *
+     * @param statement
+     * @return
+     */
     @Override
     public Void visitIfStatement(IfStatement statement) {
         for (Map.Entry<Expression, Statement> stmt : statement.branches.entrySet()) {
@@ -100,6 +125,38 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
             execute(statement.elseBranch);
         }
         return null;
+    }
+
+    /**
+     * while statement ကို interpret မယ်။
+     *
+     * @param statement
+     * @return
+     */
+    @Override
+    public Void visitWhileStatement(WhileStatement statement) {
+        while (isTrue(evaluate(statement.condition))) {
+            try {
+                execute(statement.instructions);
+            } catch (BreakSignal sig) {
+                break;
+            } catch (ContinueSignal sig) {
+                // do nothing
+            }
+        }
+        return null;
+    }
+
+    // loop break မယ်။
+    @Override
+    public Void visitBreakStatement(BreakStatement statement) {
+        throw new BreakSignal();
+    }
+
+    // continue break မယ်။
+    @Override
+    public Void visitContinueStatement(ContinueStatement statement) {
+        throw new ContinueSignal();
     }
 
     @Override

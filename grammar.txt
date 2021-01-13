@@ -9,17 +9,21 @@ statement           ->  expressionStatement
                     |   simpleBlock
                     |   curlBlock
                     |   ifStatement
+                    |   whileStatement
+                    |   forStatement
 
 simpleBlock         ->  "block" declaration* "endblock"
 curlBlock           ->   "{" declaration* "}"
 
-ifStatement         ->  "if" "(" expression ")" "THEN" statement
+ifStatement         ->  "if" "(" expression ")" "=>" statement
                     |   "if" "(" expression ")"
                             declaration*
                         ("elseif" declaration*)*
                         ("else" declaration*)?
                         "endif"
 
+whileStatement      ->  "while" "(" expression ")" "=>" statement
+                    ->  "while" "(" expression ")" declaration* "endwhile"
 
 expressionStatement ->  expression ";"
 outputStatement     ->  "output"

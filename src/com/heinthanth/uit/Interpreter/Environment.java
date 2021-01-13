@@ -14,24 +14,24 @@ public class Environment {
     private final Map<String, Object> values = new HashMap<>();
 
     /**
-     * nested loop တွေအတွက် child variable
+     * nested loop တွေအတွက် parent variable
      */
-    private final Environment child;
+    private final Environment parent;
 
     /**
-     * assign child environment
+     * assign parent environment
      */
     Environment() {
-        child = null;
+        parent = null;
     }
 
     /**
-     * assign child environemtn
+     * assign parent environemtn
      *
-     * @param child
+     * @param parent
      */
-    Environment(Environment child) {
-        this.child = child;
+    Environment(Environment parent) {
+        this.parent = parent;
     }
 
     /**
@@ -72,8 +72,6 @@ public class Environment {
             Object old = values.get(identifier.lexeme);
             if (value.getClass() == old.getClass()) {
                 values.put(identifier.lexeme, value);
-            } else if (child != null) {
-                child.assign(identifier, value);
             } else {
                 StringBuilder msg = new StringBuilder();
                 msg.append("Cannot assign ");
@@ -85,6 +83,8 @@ public class Environment {
                 msg.append("'.");
                 throw new RuntimeError(identifier, msg.toString());
             }
+        } else if (parent != null) {
+            parent.assign(identifier, value);
         } else {
             throw new RuntimeError(identifier, "variable '" + identifier.lexeme + "' does not exists.");
         }
@@ -100,8 +100,8 @@ public class Environment {
         if (values.containsKey(identifier.lexeme)) {
             return values.get(identifier.lexeme);
         }
-        if (child != null)
-            return child.get(identifier);
+        if (parent != null)
+            return parent.get(identifier);
         throw new RuntimeError(identifier, "variable '" + identifier.lexeme + "'.");
     }
 }

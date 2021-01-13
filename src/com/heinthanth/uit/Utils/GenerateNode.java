@@ -31,7 +31,10 @@ public class GenerateNode {
                 "VariableDeclarationStatement : Token type, Token identifier, Expression initializer",
                 "VariableAssignStatement : Token identifier, Expression value",
                 "BlockStatement     : List<Statement> statements",
-                "IfStatement        : Map<Expression,Statement> branches, Statement elseBranch"
+                "IfStatement        : Map<Expression,Statement> branches, Statement elseBranch",
+                "WhileStatement     : Expression condition, Statement instructions",
+                "BreakStatement     : ",
+                "ContinueStatement  : "
             ),
             Arrays.asList(
                 "java.util.List",
@@ -95,7 +98,13 @@ public class GenerateNode {
         // property တွေကို define မယ်။
         writer.println();
 
-        String[] fields = fieldList.split(", ");
+        String[] fields;
+
+        if (fieldList.isEmpty()) {
+            fields = new String[0];
+        } else {
+            fields = fieldList.split(", ");
+        }
 
         for (String field : fields) {
             writer.println("        public final " + field + ";");

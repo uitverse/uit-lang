@@ -186,9 +186,11 @@ public class Main {
         List<Token> tokens = lexer.tokenize();
         if (!handleError(errorHandler, fromREPL))
             return;
+
         // for (Token token : tokens) {
         // System.out.println(token);
         // }
+        // System.exit(0);
 
         // parser နဲ့ parse မယ်။
         Parser parser = new Parser(tokens, errorHandler);

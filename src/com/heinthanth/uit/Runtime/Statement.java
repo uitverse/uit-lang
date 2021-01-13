@@ -13,6 +13,9 @@ public abstract class Statement {
         R visitVariableAssignStatement(VariableAssignStatement statement);
         R visitBlockStatement(BlockStatement statement);
         R visitIfStatement(IfStatement statement);
+        R visitWhileStatement(WhileStatement statement);
+        R visitBreakStatement(BreakStatement statement);
+        R visitContinueStatement(ContinueStatement statement);
     }
 
     public abstract <R> R accept(Visitor<R> visitor);
@@ -106,6 +109,46 @@ public abstract class Statement {
         @Override
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitIfStatement(this);
+        }
+    }
+
+    public static class WhileStatement extends Statement {
+
+        public final Expression condition;
+        public final Statement instructions;
+
+        public WhileStatement(Expression condition, Statement instructions) {
+            this.condition = condition;
+            this.instructions = instructions;
+        }
+
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitWhileStatement(this);
+        }
+    }
+
+    public static class BreakStatement extends Statement {
+
+
+        public BreakStatement() {
+        }
+
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitBreakStatement(this);
+        }
+    }
+
+    public static class ContinueStatement extends Statement {
+
+
+        public ContinueStatement() {
+        }
+
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitContinueStatement(this);
         }
     }
 

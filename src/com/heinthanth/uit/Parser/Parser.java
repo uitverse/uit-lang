@@ -20,7 +20,6 @@ class ParseError extends RuntimeException {
 };
 
 public class Parser {
-
     // tokenizer ကနေ ရလာတဲ့ token array
     private final List<Token> tokens;
 
@@ -29,6 +28,9 @@ public class Parser {
 
     // parser cursor ရဲ့ position
     private int current = 0;
+
+    // loop ထဲမှာ ဟုတ်မဟုတ် စစ်ဖို့။
+    private int loopDepth = 0;
 
     // parser constructor
     public Parser(List<Token> tokens, ErrorHandler errorHandler) {
@@ -93,6 +95,12 @@ public class Parser {
     private Statement statement() {
         if (match(IF))
             return ifStatement();
+        if (match(WHILE))
+            return whileStatement();
+        if (match(BREAK))
+            return breakStatement();
+        if (match(CONTINUE))
+            return continueStatement();
         if (match(OUTPUT))
             return outputStatement();
         if (match(SET))
@@ -103,6 +111,45 @@ public class Parser {
             return new Statement.BlockStatement(block(RIGHT_CURLY, "}"));
         // ကျန်တာကတော့ expression ပေါ့။
         return expressionStatement();
+    }
+
+    /**
+     * while statement ဖြစ်အောင် parse မယ်။
+     *
+     * @return
+     */
+    private Statement whileStatement() {
+        expect(LEFT_PAREN, "Expect '(' after 'while'.");
+        Expression condition = expression();
+        expect(RIGHT_PAREN, "Expect ')' after condition.");
+
+        try {
+            loopDepth++;
+            if (match(THEN)) {
+                Statement instructions = statement();
+                return new Statement.WhileStatement(condition, instructions);
+            }
+            Statement instructions = new Statement.BlockStatement(block(ENDWHILE, "endblock"));
+            return new Statement.WhileStatement(condition, instructions);
+        } finally {
+            loopDepth--;
+        }
+    }
+
+    private Statement breakStatement() {
+        expect(SEMICOLON, "Expect ';' after 'break'.");
+        if (loopDepth == 0) {
+            error(previous(), "'break' must be use inside loop.");
+        }
+        return new Statement.BreakStatement();
+    }
+
+    private Statement continueStatement() {
+        expect(SEMICOLON, "Expect ';' after 'continue'.");
+        if (loopDepth == 0) {
+            error(previous(), "'continue' must be use inside loop.");
+        }
+        return new Statement.ContinueStatement();
     }
 
     /**
@@ -308,7 +355,7 @@ public class Parser {
     private Token expect(token_t type, String message) {
         if (check(type))
             return advance();
-        throw error(getCurrentToken(), message);
+        throw error(previous(), message);
     }
 
     // parse error တက်ဖို့

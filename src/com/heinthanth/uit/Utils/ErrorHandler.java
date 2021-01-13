@@ -83,7 +83,10 @@ public class ErrorHandler {
 
         System.err.printf("\n%s: %s\n\n", level, message);
         System.err.println(filename + ":");
-        System.err.printf("    %d | %s\n", line + 1, sourceLines[line]);
-        System.err.printf("        %s%s\n\n", " ".repeat(col), "^");
+
+        int frontPadding = 3 - String.valueOf(line + 1).length() + 1;
+
+        System.err.printf(" %s%d | %s\n", " ".repeat(frontPadding), line + 1, sourceLines[line]);
+        System.err.printf("        %s%s\n\n", " ".repeat(padding), "^");
     }
 }

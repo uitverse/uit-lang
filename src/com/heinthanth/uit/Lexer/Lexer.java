@@ -37,7 +37,6 @@ public class Lexer {
         reserved.put("if", IF);
         reserved.put("elseif", ELSEIF);
         reserved.put("else", ELSE);
-        reserved.put("then", THEN);
         reserved.put("endif", ENDIF);
         reserved.put("while", WHILE);
         reserved.put("endwhile", ENDWHILE);
@@ -141,10 +140,16 @@ public class Lexer {
                 addToken(match('=') ? NOT_EQUAL : NOT);
                 break;
             case '=':
-                addToken(match('=') ? EQUAL : ASSIGN);
+                token_t type = ASSIGN;
+                if (match('=')) {
+                    type = EQUAL;
+                } else if (match('>')) {
+                    type = THEN;
+                }
+                addToken(type);
                 break;
             case '<':
-                token_t type = LESS;
+                type = LESS;
                 if (match('>')) {
                     type = NOT_EQUAL;
                 } else if (match('=')) {
