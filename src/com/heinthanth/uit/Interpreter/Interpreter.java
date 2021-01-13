@@ -2,6 +2,7 @@ package com.heinthanth.uit.Interpreter;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -54,6 +55,8 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
     // global variable တွေ သိမ်းဖို့
     public final Environment globals = new Environment();
     private Environment environment = globals;
+
+    private final Map<Expression, Integer> locals = new HashMap<>();
 
     // builtin function တွေကို define ဖို့ constructor
     public Interpreter() {
@@ -108,7 +111,7 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
      */
     @Override
     public Void visitFunctionStatement(FunctionStatement statement) {
-        UitFunction function = new UitFunction(statement);
+        UitFunction function = new UitFunction(statement, environment);
         environment.define(statement.identifier, function);
         return null;
     }
@@ -266,7 +269,14 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
     @Override
     public Object visitVariableAssignExpression(VariableAssignExpression expression) {
         Object value = evaluate(expression.value);
-        environment.assign(expression.identifier, value);
+
+        Integer distance = locals.get(expression);
+        if (distance != null) {
+            environment.assignAt(distance, expression.identifier, value);
+        } else {
+            globals.assign(expression.identifier, value);
+        }
+
         return value;
     }
 
@@ -280,7 +290,14 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
             Object previous = evaluate(variable);
             if (previous instanceof Double) {
                 Object current = (double) previous + 1;
-                environment.assign(variable.identifier, current);
+
+                Integer distance = locals.get(expression);
+                if (distance != null) {
+                    environment.assignAt(distance, variable.identifier, current);
+                } else {
+                    globals.assign(variable.identifier, current);
+                }
+
                 if ("prefix".equals(expression.mode)) {
                     return current;
                 } else {
@@ -304,7 +321,14 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
             Object previous = evaluate(variable);
             if (previous instanceof Double) {
                 Object current = (double) previous - 1;
-                environment.assign(variable.identifier, current);
+
+                Integer distance = locals.get(expression);
+                if (distance != null) {
+                    environment.assignAt(distance, variable.identifier, current);
+                } else {
+                    globals.assign(variable.identifier, current);
+                }
+
                 if ("prefix".equals(expression.mode)) {
                     return current;
                 } else {
@@ -408,7 +432,16 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
      */
     @Override
     public Object visitVariableAccessExpression(VariableAccessExpression expression) {
-        return environment.get(expression.identifier);
+        return lookUpVariable(expression.identifier, expression);
+    }
+
+    private Object lookUpVariable(Token name, Expression expr) {
+        Integer distance = locals.get(expr);
+        if (distance != null) {
+            return environment.getAt(distance, name.lexeme);
+        } else {
+            return globals.get(name);
+        }
     }
 
     /**
@@ -419,6 +452,10 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
      */
     private void execute(Statement statement) {
         statement.accept(this);
+    }
+
+    public void resolve(Expression expr, int depth) {
+        locals.put(expr, depth);
     }
 
     /**

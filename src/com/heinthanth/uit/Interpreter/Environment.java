@@ -119,4 +119,33 @@ public class Environment {
             return parent.get(identifier);
         throw new RuntimeError(identifier, "variable '" + identifier.lexeme + "'.");
     }
+
+    public Object getAt(int distance, String name) {
+        return ancestor(distance).values.get(name);
+    }
+
+    void assignAt(int distance, Token identifier, Object value) {
+        Object old = ancestor(distance).values.get(identifier.lexeme);
+        if (value.getClass() == old.getClass()) {
+            ancestor(distance).values.put(identifier.lexeme, value);
+        } else {
+            StringBuilder msg = new StringBuilder();
+            msg.append("Cannot assign ");
+            msg.append(TypeMapper.JavaT2String.get(value.getClass()));
+            msg.append(" to ");
+            msg.append(TypeMapper.JavaT2String.get(old.getClass()));
+            msg.append(" variable '");
+            msg.append(identifier.lexeme);
+            msg.append("'.");
+            throw new RuntimeError(identifier, msg.toString());
+        }
+    }
+
+    Environment ancestor(int distance) {
+        Environment environment = this;
+        for (int i = 0; i < distance; i++) {
+            environment = environment.parent;
+        }
+        return environment;
+    }
 }

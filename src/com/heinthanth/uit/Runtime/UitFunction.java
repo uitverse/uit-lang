@@ -29,13 +29,19 @@ public class UitFunction implements UitCallable {
      */
     private final FunctionStatement declaration;
 
-    public UitFunction(FunctionStatement declaration) {
+    /**
+     * closure environment
+     */
+    private final Environment closure;
+
+    public UitFunction(FunctionStatement declaration, Environment closure) {
         this.declaration = declaration;
+        this.closure = closure;
     }
 
     @Override
     public Object invoke(Interpreter interpreter, List<Object> arguments) {
-        Environment environment = new Environment(interpreter.globals);
+        Environment environment = new Environment(closure);
         for (int i = 0; i < declaration.parameters.size(); i++) {
             environment.define(declaration.parameters.get(i).get(0), declaration.parameters.get(i).get(1),
                     arguments.get(i));

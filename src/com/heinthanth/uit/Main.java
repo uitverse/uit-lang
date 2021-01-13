@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.heinthanth.uit.Interpreter.Interpreter;
+import com.heinthanth.uit.Interpreter.Resolver;
 import com.heinthanth.uit.Lexer.Lexer;
 import com.heinthanth.uit.Parser.Parser;
 import com.heinthanth.uit.Lexer.Token;
@@ -195,6 +196,12 @@ public class Main {
         // parser နဲ့ parse မယ်။
         Parser parser = new Parser(tokens, errorHandler);
         List<Statement> statements = parser.parse();
+        if (!handleError(errorHandler, fromREPL))
+            return;
+
+        Resolver resolver = new Resolver(interpreter, errorHandler);
+        resolver.resolve(statements);
+
         if (!handleError(errorHandler, fromREPL))
             return;
 
