@@ -1,18 +1,22 @@
 package com.heinthanth.uit.Interpreter;
 
 import java.util.List;
+import java.util.Map;
 
 import com.heinthanth.uit.Lexer.Token;
+import com.heinthanth.uit.Lexer.token_t;
 import com.heinthanth.uit.Runtime.Expression;
 import com.heinthanth.uit.Runtime.Statement;
 import com.heinthanth.uit.Runtime.RuntimeError;
 import com.heinthanth.uit.Runtime.Expression.BinaryExpression;
 import com.heinthanth.uit.Runtime.Expression.GroupingExpression;
 import com.heinthanth.uit.Runtime.Expression.LiteralExpression;
+import com.heinthanth.uit.Runtime.Expression.LogicalExpression;
 import com.heinthanth.uit.Runtime.Expression.UnaryExpression;
 import com.heinthanth.uit.Runtime.Expression.VariableAccessExpression;
 import com.heinthanth.uit.Runtime.Statement.BlockStatement;
 import com.heinthanth.uit.Runtime.Statement.ExpressionStatement;
+import com.heinthanth.uit.Runtime.Statement.IfStatement;
 import com.heinthanth.uit.Runtime.Statement.OutputStatement;
 import com.heinthanth.uit.Runtime.Statement.VariableAssignStatement;
 import com.heinthanth.uit.Runtime.Statement.VariableDeclarationStatement;
@@ -82,6 +86,33 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
         Object value = evaluate(statement.value);
         environment.assign(statement.identifier, value);
         return null;
+    }
+
+    @Override
+    public Void visitIfStatement(IfStatement statement) {
+        for (Map.Entry<Expression, Statement> stmt : statement.branches.entrySet()) {
+            if (isTrue(evaluate(stmt.getKey()))) {
+                execute(stmt.getValue());
+                return null;
+            }
+        }
+        if (statement.elseBranch != null) {
+            execute(statement.elseBranch);
+        }
+        return null;
+    }
+
+    @Override
+    public Object visitLogicalExpression(LogicalExpression expression) {
+        Object left = evaluate(expression.left);
+        if (expression.operator.type == token_t.OR) {
+            if (isTrue(left))
+                return left;
+        } else {
+            if (!isTrue(left))
+                return left;
+        }
+        return evaluate(expression.right);
     }
 
     /**

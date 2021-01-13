@@ -18,7 +18,7 @@ public enum token_t {
     // block
     BLOCK, ENDBLOCK,
     // if
-    IF, ELSEIF, ELSE, THEN,
+    IF, ELSEIF, ELSE, THEN, ENDIF,
     // for
     FOR, ENDFOR,
     // while

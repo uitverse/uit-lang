@@ -1,7 +1,9 @@
 package com.heinthanth.uit.Parser;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.heinthanth.uit.Lexer.Token;
 import com.heinthanth.uit.Lexer.token_t;
@@ -89,6 +91,8 @@ public class Parser {
 
     // statement တွေစစ်မယ်။ မဟုတ်ရင် expression statement ပေါ့။
     private Statement statement() {
+        if (match(IF))
+            return ifStatement();
         if (match(OUTPUT))
             return outputStatement();
         if (match(SET))
@@ -102,7 +106,56 @@ public class Parser {
     }
 
     /**
+     * if statement ကို parse မယ်။
+     */
+    private Statement ifStatement() {
+        expect(LEFT_PAREN, "Expect '(' after 'if'.");
+        Expression condition = expression();
+        expect(RIGHT_PAREN, "Expect ')' after if condition.");
+
+        Map<Expression, Statement> branches = new HashMap<>();
+        List<Statement> branch = new ArrayList<>();
+
+        // single line then statement
+        if (match(THEN)) {
+            branch.add(statement());
+            branches.put(condition, new Statement.BlockStatement(branch));
+            return new Statement.IfStatement(branches, null);
+        }
+
+        // checking if branch
+        while (!(check(ENDIF) || check(ELSEIF) || check(ELSE)) && !isEOF()) {
+            branch.add(declaration());
+        }
+        branches.put(condition, new Statement.BlockStatement(branch));
+        // checking elseif
+        while (match(ELSEIF)) {
+            expect(LEFT_PAREN, "Expect '(' after 'elseif'.");
+            condition = expression();
+            expect(RIGHT_PAREN, "Expect ')' after if condition.");
+
+            branch = new ArrayList<>();
+            while (!(check(ENDIF) || check(ELSE) || check(ELSEIF)) && !isEOF()) {
+                branch.add(declaration());
+            }
+            branches.put(condition, new Statement.BlockStatement(branch));
+        }
+        // checking else branch
+        Statement elseBranch = null;
+        if (match(ELSE)) {
+            List<Statement> statements = new ArrayList<>();
+            while (!check(ENDIF) && !isEOF()) {
+                statements.add(declaration());
+            }
+            elseBranch = new Statement.BlockStatement(statements);
+        }
+        expect(ENDIF, "Expect 'endif' after if statement");
+        return new Statement.IfStatement(branches, elseBranch);
+    }
+
+    /**
      * block level statement တွေကို parse ဖို့
+     *
      * @param end
      * @param stringForm
      * @return
@@ -130,14 +183,36 @@ public class Parser {
         return new Statement.ExpressionStatement(expression);
     }
 
-    // expression ထက် precedence ပုိမြင့်တာက equal (==, !=)
+    // expression ထက် precedence ပုိမြင့်တာက logic or
     private Expression expression() {
-        return equal();
+        return logicOr();
+    }
+
+    // expression ထက်ပိုမြင့်တာက logic and
+    private Expression logicOr() {
+        Expression left = logicAnd();
+        while (match(OR)) {
+            Token operator = previous();
+            Expression right = logicAnd();
+            left = new Expression.LogicalExpression(left, operator, right);
+        }
+        return left;
+    }
+
+    // logic or ထက်ပိုမြင့်တာက logic equal
+    private Expression logicAnd() {
+        Expression left = logicEqual();
+        while (match(AND)) {
+            Token operator = previous();
+            Expression right = logicEqual();
+            left = new Expression.LogicalExpression(left, operator, right);
+        }
+        return left;
     }
 
     // equal ထက် ပိုမြင့်တာက comparison: သူ့ကို အရင်ရှာမယ်။ ပြီးရင် binary operation
     // လုပ်မယ်။
-    private Expression equal() {
+    private Expression logicEqual() {
         Expression left = comparison();
         // ==, != ရှိမရှိ ... ရှိရင် binary operation ေပါ့ မဟုတ်ရင် ကျန် node
         // အတိုင်းပေါ့။

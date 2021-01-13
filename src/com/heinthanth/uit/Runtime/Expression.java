@@ -10,6 +10,7 @@ public abstract class Expression {
         R visitLiteralExpression(LiteralExpression expression);
         R visitUnaryExpression(UnaryExpression expression);
         R visitVariableAccessExpression(VariableAccessExpression expression);
+        R visitLogicalExpression(LogicalExpression expression);
     }
 
     public abstract <R> R accept(Visitor<R> visitor);
@@ -87,6 +88,24 @@ public abstract class Expression {
         @Override
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitVariableAccessExpression(this);
+        }
+    }
+
+    public static class LogicalExpression extends Expression {
+
+        public final Expression left;
+        public final Token operator;
+        public final Expression right;
+
+        public LogicalExpression(Expression left, Token operator, Expression right) {
+            this.left = left;
+            this.operator = operator;
+            this.right = right;
+        }
+
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitLogicalExpression(this);
         }
     }
 

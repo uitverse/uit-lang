@@ -1,6 +1,7 @@
 package com.heinthanth.uit.Runtime;
 
 import java.util.List;
+import java.util.Map;
 import com.heinthanth.uit.Lexer.Token;
 
 public abstract class Statement {
@@ -11,6 +12,7 @@ public abstract class Statement {
         R visitVariableDeclarationStatement(VariableDeclarationStatement statement);
         R visitVariableAssignStatement(VariableAssignStatement statement);
         R visitBlockStatement(BlockStatement statement);
+        R visitIfStatement(IfStatement statement);
     }
 
     public abstract <R> R accept(Visitor<R> visitor);
@@ -88,6 +90,22 @@ public abstract class Statement {
         @Override
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitBlockStatement(this);
+        }
+    }
+
+    public static class IfStatement extends Statement {
+
+        public final Map<Expression,Statement> branches;
+        public final Statement elseBranch;
+
+        public IfStatement(Map<Expression,Statement> branches, Statement elseBranch) {
+            this.branches = branches;
+            this.elseBranch = elseBranch;
+        }
+
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitIfStatement(this);
         }
     }
 

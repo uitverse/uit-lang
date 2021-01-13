@@ -8,15 +8,26 @@ statement           ->  expressionStatement
                     |   outputStatement
                     |   simpleBlock
                     |   curlBlock
+                    |   ifStatement
 
-simpleBlock      ->  "block" declaration* "endblock"
-curlBlock       ->   "{" declaration* "}"
+simpleBlock         ->  "block" declaration* "endblock"
+curlBlock           ->   "{" declaration* "}"
+
+ifStatement         ->  "if" "(" expression ")" "THEN" statement
+                    |   "if" "(" expression ")"
+                            declaration*
+                        ("elseif" declaration*)*
+                        ("else" declaration*)?
+                        "endif"
+
 
 expressionStatement ->  expression ";"
 outputStatement     ->  "output"
 
-expression          ->  equal
-equal               ->  comparison ( ( "!=" | "==" ) comparison )*
+expression          ->  logicOr
+logicOr             ->  logicAnd ( "or" | "||" logicAnd )*
+logicAnd            ->  logicEqual ( "and" | "&&" logicEqual )*
+logicEqual               ->  comparison ( ( "!=" | "==" ) comparison )*
 comparison          ->  term ( ( ">" | ">=" | "<" | "<=" ) term )*
 term                ->  factor ( ( "+" | "-" ) factor )*
 factor              ->  power ( ( "*" | "/" | "%" ) power )*
