@@ -27,7 +27,8 @@ public class GenerateNode {
             Arrays.asList(
                 "ExpressionStatement: Expression expression",
                 "OutputStatement    : Expression expression",
-                "VariableDeclarationStatement : Token type, Token identifier, Expression initializer"
+                "VariableDeclarationStatement : Token type, Token identifier, Expression initializer",
+                "VariableAssignStatement : Token identifier, Expression value"
             ),
             Arrays.asList("com.heinthanth.uit.Lexer.Token")
         );

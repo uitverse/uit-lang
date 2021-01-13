@@ -41,7 +41,35 @@ public class Environment {
     }
 
     /**
+     * ရှိပြီးသား variable ကို value အသစ်ထည့်မယ်။ variable မရှိရင် error တက်မယ်။
+     *
+     * @param identifer
+     * @param value
+     */
+    public void assign(Token identifier, Object value) {
+        if (values.containsKey(identifier.lexeme)) {
+            Object old = values.get(identifier.lexeme);
+            if (value.getClass() == old.getClass()) {
+                values.put(identifier.lexeme, value);
+            } else {
+                StringBuilder msg = new StringBuilder();
+                msg.append("Cannot assign ");
+                msg.append(TypeMapper.JavaT2String.get(value.getClass()));
+                msg.append(" to ");
+                msg.append(TypeMapper.JavaT2String.get(old.getClass()));
+                msg.append(" variable '");
+                msg.append(identifier.lexeme);
+                msg.append("'.");
+                throw new RuntimeError(identifier, msg.toString());
+            }
+        } else {
+            throw new RuntimeError(identifier, "variable '" + identifier.lexeme + "' does not exists.");
+        }
+    }
+
+    /**
      * variable တန်ဖိုးယူမယ်။ မရှိရင် error တက်မယ်။
+     *
      * @param identifier
      * @return
      */

@@ -8,6 +8,7 @@ public abstract class Statement {
         R visitExpressionStatement(ExpressionStatement statement);
         R visitOutputStatement(OutputStatement statement);
         R visitVariableDeclarationStatement(VariableDeclarationStatement statement);
+        R visitVariableAssignStatement(VariableAssignStatement statement);
     }
 
     public abstract <R> R accept(Visitor<R> visitor);
@@ -55,6 +56,22 @@ public abstract class Statement {
         @Override
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitVariableDeclarationStatement(this);
+        }
+    }
+
+    public static class VariableAssignStatement extends Statement {
+
+        public final Token identifier;
+        public final Expression value;
+
+        public VariableAssignStatement(Token identifier, Expression value) {
+            this.identifier = identifier;
+            this.value = value;
+        }
+
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitVariableAssignStatement(this);
         }
     }
 

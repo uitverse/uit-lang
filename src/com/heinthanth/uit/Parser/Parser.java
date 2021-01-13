@@ -58,6 +58,9 @@ public class Parser {
         }
     }
 
+    /**
+     * variable အသစ်ကို declare လုပ်မယ်။
+     */
     private Statement variableDeclaration() {
         Token type = previous();
         Token identifier = expect(IDENTIFIER, "Expect variable identifier.");
@@ -71,10 +74,25 @@ public class Parser {
         return new Statement.VariableDeclarationStatement(type, identifier, initializer);
     }
 
+    /**
+     * ရှိပြီးသား variable ကို value အသစ်ထည့်မယ်။
+     *
+     * @return
+     */
+    private Statement variableAssignment() {
+        Token identifier = expect(IDENTIFIER, "Expect variable identifier.");
+        expect(ASSIGN, "Expect '=' in variable assignment.");
+        Expression value = expression();
+        expect(SEMICOLON, "Expect ';' after statement.");
+        return new Statement.VariableAssignStatement(identifier, value);
+    }
+
     // statement တွေစစ်မယ်။ မဟုတ်ရင် expression statement ပေါ့။
     private Statement statement() {
         if (match(OUTPUT))
             return outputStatement();
+        if (match(SET))
+            return variableAssignment();
         // ကျန်တာကတော့ expression ပေါ့။
         return expressionStatement();
     }
