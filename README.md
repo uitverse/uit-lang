@@ -22,7 +22,7 @@ git clone -b main https://github.com/heinthanth/uit-lang && cd uit-lang
 
 ### Prebuilt Package
 
-Well, you can download prebuilt `jar` file [here](build/uit.jar). Then, run it through JRE.
+Well, you can download prebuilt `jar` and classes [here](build/). Then, run it through JRE.
 
 ### Building with JDK
 

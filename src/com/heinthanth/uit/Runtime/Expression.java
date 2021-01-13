@@ -12,6 +12,8 @@ public abstract class Expression {
         R visitVariableAccessExpression(VariableAccessExpression expression);
         R visitVariableAssignExpression(VariableAssignExpression expression);
         R visitLogicalExpression(LogicalExpression expression);
+        R visitIncrementExpression(IncrementExpression expression);
+        R visitDecrementExpression(DecrementExpression expression);
     }
 
     public abstract <R> R accept(Visitor<R> visitor);
@@ -123,6 +125,42 @@ public abstract class Expression {
         @Override
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitLogicalExpression(this);
+        }
+    }
+
+    public static class IncrementExpression extends Expression {
+
+        public final Expression identifier;
+        public final Token operator;
+        public final String mode;
+
+        public IncrementExpression(Expression identifier, Token operator, String mode) {
+            this.identifier = identifier;
+            this.operator = operator;
+            this.mode = mode;
+        }
+
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitIncrementExpression(this);
+        }
+    }
+
+    public static class DecrementExpression extends Expression {
+
+        public final Expression identifier;
+        public final Token operator;
+        public final String mode;
+
+        public DecrementExpression(Expression identifier, Token operator, String mode) {
+            this.identifier = identifier;
+            this.operator = operator;
+            this.mode = mode;
+        }
+
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitDecrementExpression(this);
         }
     }
 

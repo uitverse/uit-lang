@@ -1,8 +1,3 @@
-Num a = 0;
-Num temp;
-
-for (Num b = 1; a < 10000; set b = temp + b)
+for(Num a = 10; a > 0; --a)
     output a;
-    set temp = a;
-    set a = b;
 endfor

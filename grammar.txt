@@ -4,6 +4,7 @@ declaration         ->  variableDeclaration
                     |   statement
 
 variableDeclaration ->  ( "Num" | "String" | "Boolean" ) IDENTIFIER ( "=" expression )? ";"
+
 statement           ->  expressionStatement
                     |   outputStatement
                     |   simpleBlock
@@ -11,20 +12,16 @@ statement           ->  expressionStatement
                     |   ifStatement
                     |   whileStatement
                     |   forStatement
-
 simpleBlock         ->  "block" declaration* "endblock"
 curlBlock           ->   "{" declaration* "}"
-
 ifStatement         ->  "if" "(" expression ")" "=>" statement
                     |   "if" "(" expression ")"
                             declaration*
                         ("elseif" declaration*)*
                         ("else" declaration*)?
                         "endif"
-
 whileStatement      ->  "while" "(" expression ")" "=>" statement
                     ->  "while" "(" expression ")" declaration* "endwhile"
-
 forStatement        ->  "for"
                             "(" ( variableDeclaration | expressionStatement | ";" )
                             expression? ";"
@@ -35,7 +32,6 @@ forStatement        ->  "for"
                             expression? ";"
                             expression?
                         ")" declaration* "endfor"
-
 expressionStatement ->  expression ";"
 outputStatement     ->  "output"
 
@@ -50,12 +46,13 @@ term                ->  factor ( ( "+" | "-" ) factor )*
 factor              ->  power ( ( "*" | "/" | "%" ) power )*
 power               ->  unary ( "^" unary )*
 unary               ->  ( "!" | "-" ) unary
+                    |   prefix
+prefix              ->  ( "++" | "--" ) prefix
                     |   primary
 primary             ->  literal | grouping | IDENTIFIER
 
 grouping            ->  "(" expression ")"
 literal             ->  NUMBER | STRING | BOOLEAN
-
 operator            ->  "==" | "!=" | ">" | ">=" | "<" | "<="
                     |   "+" | "-" | "*" | "/" | "%" | "^"
                     |   "."

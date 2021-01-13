@@ -2,7 +2,7 @@ package com.heinthanth.uit.Lexer;
 
 public enum token_t {
     // arithmetic နဲ့ဆိုင်တဲ့ operator တွေအတွက်
-    PLUS, MINUS, STAR, SLASH, CARET, PERCENT,
+    PLUS, MINUS, STAR, SLASH, CARET, PERCENT, INCREMENT, DECREMENT,
     // logical operators
     NOT, EQUAL, NOT_EQUAL, LESS, GREATER, LESS_EQUAL, GREATER_EQUAL,
     // grouping expression

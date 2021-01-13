@@ -21,7 +21,9 @@ public class GenerateNode {
                 "UnaryExpression    : Token operator, Expression right",
                 "VariableAccessExpression : Token identifier",
                 "VariableAssignExpression : Token identifier, Expression value",
-                "LogicalExpression  : Expression left, Token operator, Expression right"
+                "LogicalExpression  : Expression left, Token operator, Expression right",
+                "IncrementExpression   : Expression identifier, Token operator, String mode",
+                "DecrementExpression   : Expression identifier, Token operator, String mode"
             ),
             Arrays.asList("com.heinthanth.uit.Lexer.Token")
         );

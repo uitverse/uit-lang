@@ -90,10 +90,10 @@ public class Lexer {
         char c = advance();
         switch (c) {
             case '+':
-                addToken(PLUS);
+                addToken(match('+') ? INCREMENT : PLUS);
                 break;
             case '-':
-                addToken(MINUS);
+                addToken(match('-') ? DECREMENT : MINUS);
                 break;
             case '*':
                 addToken(STAR);

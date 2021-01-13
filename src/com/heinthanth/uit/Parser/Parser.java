@@ -382,6 +382,19 @@ public class Parser {
             Expression right = unary();
             return new Expression.UnaryExpression(operator, right);
         }
+        return prefix();
+    }
+
+    private Expression prefix() {
+        if (match(INCREMENT, DECREMENT)) {
+            Token operator = previous();
+            Expression right = prefix();
+            if (operator.type.toString() == "INCREMENT") {
+                return new Expression.IncrementExpression(right, operator, "prefix");
+            } else {
+                return new Expression.DecrementExpression(right, operator, "prefix");
+            }
+        }
         return primary();
     }
 

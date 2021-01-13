@@ -9,7 +9,9 @@ import com.heinthanth.uit.Runtime.Expression;
 import com.heinthanth.uit.Runtime.Statement;
 import com.heinthanth.uit.Runtime.RuntimeError;
 import com.heinthanth.uit.Runtime.Expression.BinaryExpression;
+import com.heinthanth.uit.Runtime.Expression.DecrementExpression;
 import com.heinthanth.uit.Runtime.Expression.GroupingExpression;
+import com.heinthanth.uit.Runtime.Expression.IncrementExpression;
 import com.heinthanth.uit.Runtime.Expression.LiteralExpression;
 import com.heinthanth.uit.Runtime.Expression.LogicalExpression;
 import com.heinthanth.uit.Runtime.Expression.UnaryExpression;
@@ -198,6 +200,54 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
         Object value = evaluate(expression.value);
         environment.assign(expression.identifier, value);
         return value;
+    }
+
+    /**
+     * prefix / postfix increment လုပ်မယ်။
+     */
+    @Override
+    public Object visitIncrementExpression(IncrementExpression expression) {
+        if (expression.identifier instanceof VariableAccessExpression) {
+            VariableAccessExpression variable = (VariableAccessExpression) expression.identifier;
+            Object previous = evaluate(variable);
+            if (previous instanceof Double) {
+                Object current = (double) previous + 1;
+                environment.assign(variable.identifier, current);
+                if ("prefix".equals(expression.mode)) {
+                    return current;
+                } else {
+                    return previous;
+                }
+            } else {
+                throw new RuntimeError(expression.operator, "Cannot increase non-number.");
+            }
+        } else {
+            throw new RuntimeError(expression.operator, "Cannot increase non-variable.");
+        }
+    }
+
+    /**
+     * prefix / postfix decrement လုပ်မယ်။
+     */
+    @Override
+    public Object visitDecrementExpression(DecrementExpression expression) {
+        if (expression.identifier instanceof VariableAccessExpression) {
+            VariableAccessExpression variable = (VariableAccessExpression) expression.identifier;
+            Object previous = evaluate(variable);
+            if (previous instanceof Double) {
+                Object current = (double) previous - 1;
+                environment.assign(variable.identifier, current);
+                if ("prefix".equals(expression.mode)) {
+                    return current;
+                } else {
+                    return previous;
+                }
+            } else {
+                throw new RuntimeError(expression.operator, "Cannot decrease non-number.");
+            }
+        } else {
+            throw new RuntimeError(expression.operator, "Cannot decrease non-variable.");
+        }
     }
 
     /**
