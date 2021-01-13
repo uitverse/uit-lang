@@ -5,6 +5,7 @@ import java.util.List;
 import com.heinthanth.uit.Interpreter.Environment;
 import com.heinthanth.uit.Interpreter.Interpreter;
 import com.heinthanth.uit.Runtime.Statement.FunctionStatement;
+import com.heinthanth.uit.Utils.TypeMapper;
 
 public class UitFunction implements UitCallable {
     /**
@@ -42,6 +43,17 @@ public class UitFunction implements UitCallable {
         try {
             interpreter.executeBlock(declaration.instructions, environment);
         } catch (ReturnSignal sig) {
+            if (sig.value.getClass() != TypeMapper.Uit2Java.get(declaration.type.type)) {
+                StringBuilder msg = new StringBuilder();
+                msg.append("Cannot return ");
+                msg.append(TypeMapper.JavaT2String.get(sig.value.getClass()));
+                msg.append(" from ");
+                msg.append(TypeMapper.UitT2String.get(declaration.type.type));
+                msg.append(" function '");
+                msg.append(declaration.identifier.lexeme);
+                msg.append("'.");
+                throw new RuntimeError(declaration.type, msg.toString());
+            }
             return sig.value;
         }
         return null;

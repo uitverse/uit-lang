@@ -19,6 +19,7 @@ public class TypeMapper {
             put(token_t.VT_NUMBER, Double.class);
             put(token_t.VT_STRING, String.class);
             put(token_t.VT_BOOLEAN, Boolean.class);
+            put(token_t.FRT_VOID, Void.class);
         }
     };
 
@@ -35,6 +36,7 @@ public class TypeMapper {
             put(Double.class, token_t.VT_NUMBER);
             put(String.class, token_t.VT_STRING);
             put(Boolean.class, token_t.VT_BOOLEAN);
+            put(Void.class, token_t.FRT_VOID);
         }
     };
 
@@ -48,6 +50,7 @@ public class TypeMapper {
             put(token_t.VT_NUMBER, "Num");
             put(token_t.VT_STRING, "String");
             put(token_t.VT_BOOLEAN, "Boolean");
+            put(token_t.FRT_VOID, "void");
         }
     };
 
@@ -61,6 +64,7 @@ public class TypeMapper {
             put(Double.class, "Num");
             put(String.class, "String");
             put(Boolean.class, "Boolean");
+            put(Void.class, "void");
         }
     };
 }
