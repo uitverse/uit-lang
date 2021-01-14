@@ -1,0 +1,65 @@
+program             ->  declaration* EOF
+
+declaration         ->  variableDeclaration
+                    |   functionDeclaration
+                    |   statement
+
+variableDeclaration ->  ( "Num" | "String" | "Boolean" ) IDENTIFIER ( "=" expression )? ";"
+functionDeclaration ->  ( "void" | "Num" | "String" | "Boolean" ) IDENTIFIER
+                        "("parameters? ")" "=>" statement
+                    |   ( "void" | "Num" | "String" | "Boolean" ) IDENTIFIER
+                        "("parameters? ")" declaration* "endfunc"
+
+statement           ->  expressionStatement
+                    |   outputStatement
+                    |   simpleBlock
+                    |   curlBlock
+                    |   ifStatement
+                    |   whileStatement
+                    |   forStatement
+simpleBlock         ->  "block" declaration* "endblock"
+curlBlock           ->  "{" declaration* "}"
+ifStatement         ->  "if" "(" expression ")" "=>" statement
+                    |   "if" "(" expression ")"
+                            declaration*
+                        ("elseif" declaration*)*
+                        ("else" declaration*)?
+                        "endif"
+whileStatement      ->  "while" "(" expression ")" "=>" statement
+                    ->  "while" "(" expression ")" declaration* "endwhile"
+forStatement        ->  "for"
+                            "(" ( variableDeclaration | expressionStatement | ";" )
+                            expression? ";"
+                            expression?
+                        ")" "=>" statement
+                    |   "for"
+                            "(" ( variableDeclaration | expressionStatement | ";" )
+                            expression? ";"
+                            expression?
+                        ")" declaration* "endfor"
+expressionStatement ->  expression ";"
+outputStatement     ->  "output"
+
+expression          ->  assignment
+assignment          ->  "set" IDENTIFIER "=" assignment
+                    |   logicOr
+logicOr             ->  logicAnd ( "or" | "||" logicAnd )*
+logicAnd            ->  logicEqual ( "and" | "&&" logicEqual )*
+logicEqual               ->  comparison ( ( "!=" | "==" ) comparison )*
+comparison          ->  term ( ( ">" | ">=" | "<" | "<=" ) term )*
+term                ->  factor ( ( "+" | "-" ) factor )*
+factor              ->  power ( ( "*" | "/" | "%" ) power )*
+power               ->  unary ( "^" unary )*
+unary               ->  ( "!" | "-" ) unary
+                    |   prefix
+prefix              ->  ( "++" | "--" ) prefix
+                    |   postfix
+postfix             ->  call ( "++" | "--" )*
+call                ->  primary ( "(" arguments ")" )*
+primary             ->  literal | grouping | IDENTIFIER
+
+grouping            ->  "(" expression ")"
+literal             ->  NUMBER | STRING | BOOLEAN
+operator            ->  "==" | "!=" | ">" | ">=" | "<" | "<="
+                    |   "+" | "-" | "*" | "/" | "%" | "^"
+                    |   "."

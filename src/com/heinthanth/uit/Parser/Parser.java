@@ -1,70 +1,63 @@
 package com.heinthanth.uit.Parser;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.heinthanth.uit.Lexer.Token;
-import com.heinthanth.uit.Lexer.TokenType;
-import com.heinthanth.uit.Node.Statement;
-import com.heinthanth.uit.Uit;
-import com.heinthanth.uit.Node.Expression;
+import com.heinthanth.uit.Lexer.token_t;
+import com.heinthanth.uit.Runtime.Expression;
+import com.heinthanth.uit.Runtime.Statement;
+import com.heinthanth.uit.Utils.ErrorHandler;
+import static com.heinthanth.uit.Lexer.token_t.*;
 
-import static com.heinthanth.uit.Lexer.TokenType.*;
-
-import java.util.*;
+class ParseError extends RuntimeException {
+    /**
+     *
+     */
+    private static final long serialVersionUID = -9119994735797982514L;
+};
 
 public class Parser {
-    private static class ParseError extends RuntimeException {
-    }
-
-    /**
-     * List of tokens to parse
-     */
+    // tokenizer ကနေ ရလာတဲ့ token array
     private final List<Token> tokens;
 
-    /**
-     * current parser index
-     */
+    // error handle လုပ်ဖို့ handler
+    private ErrorHandler errorHandler;
+
+    // parser cursor ရဲ့ position
     private int current = 0;
 
+    // loop ထဲမှာ ဟုတ်မဟုတ် စစ်ဖို့။
     private int loopDepth = 0;
 
-    /**
-     * Parser constructor
-     *
-     * @param tokens List of token to parse
-     */
-    public Parser(List<Token> tokens) {
+    // parser constructor
+    public Parser(List<Token> tokens, ErrorHandler errorHandler) {
         this.tokens = tokens;
+        this.errorHandler = errorHandler;
     }
 
-    /**
-     * parse token
-     *
-     * @return statements to interpret
-     */
+    // token တွေကို parse မယ်။
     public List<Statement> parse() {
         List<Statement> statements = new ArrayList<>();
-        while (!isAtEnd()) {
+        while (!isEOF()) {
             statements.add(declaration());
         }
-        // auto call "__uit_internal_main_"
-        statements.add(new Statement.ExpressionStatement(
-                new Expression.CallExpression(
-                        new Expression.VariableExpression(
-                                new Token(IDENTIFIER, "__uit_internal_main_", null, 0, 0)
-                        ),
-                        new Token(RIGHT_PAREN, ")", null, 0, 0),
-                        new ArrayList<>()
-                )
-        ));
         return statements;
     }
 
-    /**
-     * declaration statement
-     */
+    // grammar.txt မှာရေးထားတဲ့အတိုင်း precedence တွေနဲ့ parse သွားမယ်။
+    // အရင်ဆုံး declaration
+
+    // var declaration ဘာညာစစ်မယ်။
     private Statement declaration() {
         try {
-            if (match(NUM, STRING, BOOLEAN, VOID)) return varDeclaration(previous());
-            if (match(START)) return mainFunctionDeclaration(previous());
+            if (match(FRT_VOID))
+                return functionDeclaration();
+            if (match(VT_NUMBER, VT_STRING, VT_BOOLEAN))
+                return variableDeclaration();
             return statement();
         } catch (ParseError error) {
             synchronize();
@@ -73,329 +66,324 @@ public class Parser {
     }
 
     /**
-     * variable declaration statement
+     * variable အသစ်ကို declare လုပ်မယ်။
      */
-    private Statement varDeclaration(Token typeDef) {
-        Token name = consume(IDENTIFIER, "Expect identifier.");
-        Expression initializer = null;
-        // may be function
-        if (match(LEFT_PAREN)) {
-            List<List<Token>> parameters = new ArrayList<>();
-            if (!check(RIGHT_PAREN)) {
-                do {
-                    if (parameters.size() >= 255) {
-                        error(getCurrentToken(), "Can't have more than 255 parameters.");
-                    }
-                    List<Token> param = new ArrayList<>();
-                    if (!(check(NUM) || check(STRING) || check(BOOLEAN) || check(VOID))) {
-                        throw error(getCurrentToken(), "Expect return type.");
-                    } else {
-                        param.add(advance());
-                    }
-                    param.add(consume(IDENTIFIER, "Expect parameter name."));
-                    parameters.add(param);
-                } while (match(COMMA));
-            }
-            consume(RIGHT_PAREN, "Expect ')' after parameters.");
-            // consume(LEFT_BRACE, "Expect '{' before " + kind + " body.");
-            List<Statement> body = functionBlock();
-            return new Statement.FunctionStatement(typeDef, name, parameters, body);
+    private Statement variableDeclaration() {
+        Token type = previous();
+
+        Token next = peekNext();
+        if (next != null && next.type == LEFT_PAREN) {
+            return functionDeclaration();
         }
+
+        Token identifier = expect(IDENTIFIER, "Expect variable identifier.");
+
+        Expression initializer = null;
         if (match(ASSIGN)) {
             initializer = expression();
         }
-        //consume(SEMICOLON, "Expect ';' after variable declaration.");
-        return new Statement.VariableDeclareStatement(typeDef, name, initializer);
+        expect(SEMICOLON, "Expect ';' after statement.");
+
+        return new Statement.VariableDeclarationStatement(type, identifier, initializer);
     }
 
-    private Statement mainFunctionDeclaration(Token token) {
-        Token name = new Token(IDENTIFIER, "__uit_internal_main_", token.value, token.line, token.index);
-        List<Statement> body = functionBlock();
-        return new Statement.FunctionStatement(null, name, new ArrayList<>(), body);
+    private Statement functionDeclaration() {
+        Token type = previous();
+        Token identifier = expect(IDENTIFIER, "Expect function identifier.");
+
+        match(LEFT_PAREN);
+
+        List<List<Token>> parameters = new ArrayList<>();
+        if (!check(RIGHT_PAREN)) {
+            do {
+                if (parameters.size() >= 255) {
+                    error(getCurrentToken(), "Can't have more than 255 parameters.");
+                }
+                List<Token> param = new ArrayList<>();
+                if (check(FRT_VOID))
+                    throw error(getCurrentToken(), "Invalid data type for variable.");
+                if (!(check(VT_NUMBER) || check(VT_STRING) || check(VT_BOOLEAN))) {
+                    throw error(getCurrentToken(), "Expect parameter data type.");
+                } else {
+                    param.add(advance());
+                }
+                param.add(expect(IDENTIFIER, "Expect parameter name."));
+                parameters.add(param);
+            } while (match(COMMA));
+        }
+        expect(RIGHT_PAREN, "Expect ')' after function parameters.");
+        if (match(THEN)) {
+            return new Statement.FunctionStatement(type, identifier, parameters, Arrays.asList(statement()));
+        }
+        List<Statement> instructions = block(ENDFUNC, "endfunc");
+        return new Statement.FunctionStatement(type, identifier, parameters, instructions);
     }
 
-    private Expression varAssignment() {
-        Token name = consume(IDENTIFIER, "Expect variable name.");
-        consume(ASSIGN, "Expect '='.");
-        Expression initializer = expression();
-        //consume(SEMICOLON, "Expect ';' after variable declaration.");
-        return new Expression.VariableAssignExpression(name, initializer);
-    }
-
-    /**
-     * operation statement or expression statement
-     *
-     * @return Statement
-     */
+    // statement တွေစစ်မယ်။ မဟုတ်ရင် expression statement ပေါ့။
     private Statement statement() {
-        if (match(SET)) return new Statement.ExpressionStatement(varAssignment());
-        if (match(IF)) return ifStatement();
-        if (match(OUTPUT)) return outputStatement();
-        if (match(RETURN)) return returnStatement();
-        if (match(BREAK)) return breakStatement();
-        if (match(WHILE)) return whileStatement();
-        if (match(FOR)) return forStatement();
-        if (match(BLOCK)) return new Statement.BlockStatement(block());
-
+        if (match(IF))
+            return ifStatement();
+        if (match(WHILE))
+            return whileStatement();
+        if (match(FOR))
+            return forStatement();
+        if (match(BREAK))
+            return breakStatement();
+        if (match(CONTINUE))
+            return continueStatement();
+        if (match(RETURN))
+            return returnStatement();
+        if (match(OUTPUT))
+            return outputStatement();
+        if (match(BLOCK))
+            return new Statement.BlockStatement(block(ENDBLOCK, "endblock"));
+        if (match(LEFT_CURLY))
+            return new Statement.BlockStatement(block(RIGHT_CURLY, "}"));
+        // ကျန်တာကတော့ expression ပေါ့။
         return expressionStatement();
     }
 
     /**
-     * Parse expression to Output statement
+     * while statement ဖြစ်အောင် parse မယ်။
      *
-     * @return output statement
+     * @return
      */
-    private Statement outputStatement() {
-        Expression value = expression();
-        //consume(SEMICOLON, "Expect ';' after value.");
-        return new Statement.OutputStatement(value);
+    private Statement whileStatement() {
+        expect(LEFT_PAREN, "Expect '(' after 'while'.");
+        Expression condition = expression();
+        expect(RIGHT_PAREN, "Expect ')' after condition.");
+
+        try {
+            loopDepth++;
+            if (match(THEN)) {
+                Statement instructions = statement();
+                return new Statement.WhileStatement(condition, instructions);
+            }
+            Statement instructions = new Statement.BlockStatement(block(ENDWHILE, "endblock"));
+            return new Statement.WhileStatement(condition, instructions);
+        } finally {
+            loopDepth--;
+        }
     }
 
     /**
-     * Parse return Statement
+     * for statement ကို while statement အဖြစ်ပြောင်းမယ်။
      */
+    private Statement forStatement() {
+        expect(LEFT_PAREN, "Expect '(' after 'while'.");
+
+        Statement initializer;
+        if (match(SEMICOLON)) {
+            initializer = null;
+        } else if (match(VT_NUMBER, VT_STRING, VT_BOOLEAN)) {
+            initializer = variableDeclaration();
+        } else {
+            initializer = expressionStatement();
+        }
+
+        Expression condition = null;
+        if (!check(SEMICOLON))
+            condition = expression();
+        expect(SEMICOLON, "Expect ';' after loop condition.");
+
+        Expression increment = null;
+        if (!check(RIGHT_PAREN))
+            increment = expression();
+        expect(RIGHT_PAREN, "Expect ')' after loop clause.");
+
+        try {
+            loopDepth++;
+            Statement instructions;
+            if (match(THEN)) {
+                instructions = statement();
+            } else {
+                instructions = new Statement.BlockStatement(block(ENDFOR, "endfor"));
+            }
+
+            if (increment != null) {
+                instructions = new Statement.BlockStatement(
+                        Arrays.asList(instructions, new Statement.ExpressionStatement(increment)));
+            }
+            if (condition == null)
+                condition = new Expression.LiteralExpression(new Token(BOOLEAN_LITERAL, "true", true, -1, -1));
+
+            instructions = new Statement.WhileStatement(condition, instructions);
+
+            if (initializer != null) {
+                instructions = new Statement.BlockStatement(Arrays.asList(initializer, instructions));
+            }
+            return instructions;
+        } finally {
+            loopDepth--;
+        }
+    }
+
+    private Statement breakStatement() {
+        expect(SEMICOLON, "Expect ';' after 'break'.");
+        if (loopDepth == 0) {
+            error(previous(), "'break' must be use inside loop.");
+        }
+        return new Statement.BreakStatement();
+    }
+
+    private Statement continueStatement() {
+        expect(SEMICOLON, "Expect ';' after 'continue'.");
+        if (loopDepth == 0) {
+            error(previous(), "'continue' must be use inside loop.");
+        }
+        return new Statement.ContinueStatement();
+    }
+
     private Statement returnStatement() {
-        Token keyword = previous();
+        Token ret = previous();
         Expression value = null;
         if (!check(SEMICOLON)) {
             value = expression();
         }
-        //consume(SEMICOLON, "Expect ';' after return value.");
-        return new Statement.ReturnStatement(keyword, value);
-    }
-
-    private Statement breakStatement() {
-        //consume(SEMICOLON, "Expect ';' after 'break'.");
-        if (loopDepth == 0) {
-            error(previous(), "'break' must be use inside loop.");
-        }
-        //consume(SEMICOLON, "Expect ';' after 'break'.");
-        return new Statement.BreakStatement();
+        expect(SEMICOLON, "Expect ';' after return");
+        return new Statement.ReturnStatement(ret, value);
     }
 
     /**
-     * Get If statement
-     *
-     * @return if statement
+     * if statement ကို parse မယ်။
      */
     private Statement ifStatement() {
-        consume(LEFT_PAREN, "Expect '(' after 'if'.");
+        expect(LEFT_PAREN, "Expect '(' after 'if'.");
         Expression condition = expression();
-        consume(RIGHT_PAREN, "Expect ')' after if condition.");
+        expect(RIGHT_PAREN, "Expect ')' after if condition.");
+
         Map<Expression, Statement> branches = new HashMap<>();
         List<Statement> branch = new ArrayList<>();
-        while (!(check(ENDIF) || check(ELSEIF) || check(ELSE)) && !isAtEnd()) {
+
+        // single line then statement
+        if (match(THEN)) {
+            branch.add(statement());
+            branches.put(condition, new Statement.BlockStatement(branch));
+            return new Statement.IfStatement(branches, null);
+        }
+
+        // checking if branch
+        while (!(check(ENDIF) || check(ELSEIF) || check(ELSE)) && !isEOF()) {
             branch.add(declaration());
         }
         branches.put(condition, new Statement.BlockStatement(branch));
+        // checking elseif
         while (match(ELSEIF)) {
-            consume(LEFT_PAREN, "Expect '(' after 'if'.");
+            expect(LEFT_PAREN, "Expect '(' after 'elseif'.");
             condition = expression();
-            consume(RIGHT_PAREN, "Expect ')' after if condition.");
+            expect(RIGHT_PAREN, "Expect ')' after if condition.");
+
             branch = new ArrayList<>();
-            while (!(check(ENDIF) || check(ELSE) || check(ELSEIF)) && !isAtEnd()) {
+            while (!(check(ENDIF) || check(ELSE) || check(ELSEIF)) && !isEOF()) {
                 branch.add(declaration());
             }
             branches.put(condition, new Statement.BlockStatement(branch));
         }
+        // checking else branch
         Statement elseBranch = null;
         if (match(ELSE)) {
             List<Statement> statements = new ArrayList<>();
-            while (!check(ENDIF) && !isAtEnd()) {
+            while (!check(ENDIF) && !isEOF()) {
                 statements.add(declaration());
             }
             elseBranch = new Statement.BlockStatement(statements);
         }
-        consume(ENDIF, "Expect 'endif' after if statement");
+        expect(ENDIF, "Expect 'endif' after if statement");
         return new Statement.IfStatement(branches, elseBranch);
     }
 
     /**
-     * while statement
-     */
-    private Statement whileStatement() {
-        consume(LEFT_PAREN, "Expect '(' after 'while'.");
-        Expression condition = expression();
-        consume(RIGHT_PAREN, "Expect ')' after condition.");
-        try {
-            loopDepth++;
-            Statement body = new Statement.BlockStatement(whileBlock());
-            return new Statement.WhileStatement(condition, body);
-        } finally {
-            loopDepth--;
-        }
-    }
-
-    /**
-     * for statement
-     */
-    private Statement forStatement() {
-        consume(LEFT_PAREN, "Expect '(' after 'for'.");
-        Statement initializer;
-        if (match(SEMICOLON)) {
-            initializer = null;
-        } else if (match(NUM)) {
-            initializer = varDeclaration(previous());
-            consume(SEMICOLON, "Expect ';' after initializer.");
-        } else {
-            initializer = expressionStatement();
-            consume(SEMICOLON, "Expect ';' after initializer expression.");
-        }
-        Expression condition = null;
-        if (!check(SEMICOLON)) {
-            condition = expression();
-        }
-        consume(SEMICOLON, "Expect ';' after loop condition.");
-        Statement increment = null;
-        if (!check(RIGHT_PAREN)) {
-            increment = statement();
-        }
-        consume(RIGHT_PAREN, "Expect ')' after for clauses.");
-        try {
-            loopDepth++;
-            Statement body = new Statement.BlockStatement(forBlock());
-
-            if (increment != null) {
-                body = new Statement.BlockStatement(
-                        Arrays.asList(body, increment)
-                );
-            }
-            if (condition == null) condition = new Expression.LiteralExpression(true);
-            body = new Statement.WhileStatement(condition, body);
-
-            if (initializer != null) {
-                body = new Statement.BlockStatement(Arrays.asList(initializer, body));
-            }
-            return body;
-        } finally {
-            loopDepth--;
-        }
-    }
-
-    /**
-     * Get expression statement
+     * block level statement တွေကို parse ဖို့
      *
-     * @return Expression statement
+     * @param end
+     * @param stringForm
+     * @return
      */
+    private List<Statement> block(token_t end, String stringForm) {
+        List<Statement> statements = new ArrayList<>();
+        while (!check(end) && !isEOF()) {
+            statements.add(declaration());
+        }
+        expect(end, "Expect '" + stringForm + "' after block statement");
+        return statements;
+    }
+
+    // output statement parse မယ်
+    private Statement outputStatement() {
+        Expression value = expression();
+        expect(SEMICOLON, "Missing ';' after statement");
+        return new Statement.OutputStatement(value);
+    }
+
+    // expression statement
     private Statement expressionStatement() {
-        Expression expr = expression();
-        //consume(SEMICOLON, "Expect ';' after expression.");
-        return new Statement.ExpressionStatement(expr);
+        Expression expression = expression();
+        expect(SEMICOLON, "Missing ';' after statement");
+        return new Statement.ExpressionStatement(expression);
     }
 
-    /**
-     * block statements
-     *
-     * @return list of statements inside block
-     */
-    private List<Statement> block() {
-        List<Statement> statements = new ArrayList<>();
-
-        while (!check(ENDBLOCK) && !isAtEnd()) {
-            statements.add(declaration());
-        }
-        consume(ENDBLOCK, "Expect 'endblock' after block.");
-        return statements;
-    }
-
-    /**
-     * while block statements
-     *
-     * @return list of statements inside while block
-     */
-    private List<Statement> whileBlock() {
-        List<Statement> statements = new ArrayList<>();
-
-        while (!check(ENDWHILE) && !isAtEnd()) {
-            statements.add(declaration());
-        }
-        consume(ENDWHILE, "Expect 'endwhile' after while statement.");
-        return statements;
-    }
-
-    /**
-     * for block statements
-     *
-     * @return list of statements inside for block
-     */
-    private List<Statement> forBlock() {
-        List<Statement> statements = new ArrayList<>();
-
-        while (!check(ENDFOR) && !isAtEnd()) {
-            statements.add(declaration());
-        }
-        consume(ENDFOR, "Expect 'endfor' after for statement.");
-        return statements;
-    }
-
-    /**
-     * for block statements
-     *
-     * @return list of statements inside for block
-     */
-    private List<Statement> functionBlock() {
-        List<Statement> statements = new ArrayList<>();
-
-        while (!check(STOP) && !isAtEnd()) {
-            statements.add(declaration());
-        }
-        consume(STOP, "Expect 'stop' after function statement.");
-        return statements;
-    }
-
-    /**
-     * expression -> or
-     */
+    // expression ထက် precedence ပုိမြင့်တာက logic or
     private Expression expression() {
-        return or();
+        return assignment();
     }
 
     /**
-     * or -> and
+     * ရှိပြီးသား variable ကို value အသစ်ထည့်မယ်။
+     *
+     * @return
      */
-    private Expression or() {
-        Expression left = and();
+    private Expression assignment() {
+        if (match(SET)) {
+            Token identifier = expect(IDENTIFIER, "Expect variable identifier.");
+            expect(ASSIGN, "Expect '=' in variable assignment.");
+            Expression value = assignment();
+            return new Expression.VariableAssignExpression(identifier, value);
+        } else {
+            return logicOr();
+        }
+    }
+
+    // expression ထက်ပိုမြင့်တာက logic and
+    private Expression logicOr() {
+        Expression left = logicAnd();
         while (match(OR)) {
             Token operator = previous();
-            Expression right = and();
+            Expression right = logicAnd();
             left = new Expression.LogicalExpression(left, operator, right);
         }
         return left;
     }
 
-    /**
-     * or -> and
-     */
-    private Expression and() {
-        Expression left = equality();
+    // logic or ထက်ပိုမြင့်တာက logic equal
+    private Expression logicAnd() {
+        Expression left = logicEqual();
         while (match(AND)) {
             Token operator = previous();
-            Expression right = equality();
+            Expression right = logicEqual();
             left = new Expression.LogicalExpression(left, operator, right);
         }
         return left;
     }
 
-    /**
-     * Equality -> comparison (<>|==) comparison
-     */
-    private Expression equality() {
+    // equal ထက် ပိုမြင့်တာက comparison: သူ့ကို အရင်ရှာမယ်။ ပြီးရင် binary operation
+    // လုပ်မယ်။
+    private Expression logicEqual() {
         Expression left = comparison();
-
+        // ==, != ရှိမရှိ ... ရှိရင် binary operation ေပါ့ မဟုတ်ရင် ကျန် node
+        // အတိုင်းပေါ့။
         while (match(NOT_EQUAL, EQUAL)) {
             Token operator = previous();
             Expression right = comparison();
             left = new Expression.BinaryExpression(left, operator, right);
         }
-
         return left;
     }
 
-    /**
-     * comparison -> term (>, <, >=, <=) term
-     */
+    // comparison ထက်မြင့်တာက term
     private Expression comparison() {
         Expression left = term();
+        // >, <, >=, <= ရှိမရှိ ... ရှိရင် binary operation ေပါ့ မဟုတ်ရင် ကျန် node
+        // အတိုင်းပေါ့။
         while (match(GREATER, GREATER_EQUAL, LESS, LESS_EQUAL)) {
             Token operator = previous();
             Expression right = term();
@@ -404,12 +392,12 @@ public class Parser {
         return left;
     }
 
-    /**
-     * term -> factor (+,-) factor
-     */
+    // term ထက်မြင့်တာ factor
     private Expression term() {
         Expression left = factor();
-        while (match(PLUS, MINUS)) {
+        // +, -, . ရှိမရှိ ... ရှိရင် binary operation ေပါ့ မဟုတ်ရင် ကျန် node
+        // အတိုင်းပေါ့။
+        while (match(MINUS, PLUS, DOT)) {
             Token operator = previous();
             Expression right = factor();
             left = new Expression.BinaryExpression(left, operator, right);
@@ -417,12 +405,25 @@ public class Parser {
         return left;
     }
 
-    /**
-     * factor -> unary
-     */
+    // factor ထက်မြင့်တာ power
     private Expression factor() {
+        Expression left = power();
+        // / * ရှိမရှိ ... ရှိရင် binary operation ေပါ့ မဟုတ်ရင် ကျန် node
+        // အတိုင်းပေါ့။
+        while (match(PERCENT, SLASH, STAR)) {
+            Token operator = previous();
+            Expression right = power();
+            left = new Expression.BinaryExpression(left, operator, right);
+        }
+        return left;
+    }
+
+    // power ထက်မြင့်တာ unary
+    private Expression power() {
         Expression left = unary();
-        while (match(STAR, SLASH)) {
+        // ^ ရှိမရှိ ... ရှိရင် binary operation ေပါ့ မဟုတ်ရင် ကျန် node
+        // အတိုင်းပေါ့။
+        while (match(CARET)) {
             Token operator = previous();
             Expression right = unary();
             left = new Expression.BinaryExpression(left, operator, right);
@@ -430,36 +431,46 @@ public class Parser {
         return left;
     }
 
-    /**
-     * unary -> element
-     */
+    // unary (!, -)
     private Expression unary() {
+        // -, ! မရှိရင် primary ဆီသွားမယ်။
         if (match(NOT, MINUS)) {
             Token operator = previous();
             Expression right = unary();
             return new Expression.UnaryExpression(operator, right);
         }
-
-        return call();
+        return prefix();
     }
 
-    private Expression finishCall(Expression callee) {
-        List<Expression> arguments = new ArrayList<>();
-        if (!check(RIGHT_PAREN)) {
-            do {
-                if (arguments.size() >= 255) {
-                    error(getCurrentToken(), "Can't have more than 255 arguments.");
-                }
-                arguments.add(expression());
-            } while (match(COMMA));
+    // prefix (++a, --a)
+    private Expression prefix() {
+        if (match(INCREMENT, DECREMENT)) {
+            Token operator = previous();
+            Expression right = prefix();
+            if (operator.type.toString() == "INCREMENT") {
+                return new Expression.IncrementExpression(right, operator, "prefix");
+            } else {
+                return new Expression.DecrementExpression(right, operator, "prefix");
+            }
         }
-        Token paren = consume(RIGHT_PAREN, "Expect ')' after arguments.");
-        return new Expression.CallExpression(callee, paren, arguments);
+        return postfix();
     }
 
-    /**
-     * function call
-     */
+    // postfix ( a++, a-- )
+    private Expression postfix() {
+        Expression expr = call();
+        if (match(INCREMENT, DECREMENT)) {
+            Token operator = previous();
+            if (operator.type.toString() == "INCREMENT") {
+                expr = new Expression.IncrementExpression(expr, operator, "postfix");
+            } else {
+                expr = new Expression.DecrementExpression(expr, operator, "postfix");
+            }
+        }
+        return expr;
+    }
+
+    // call expression
     private Expression call() {
         Expression expr = primary();
         while (true) {
@@ -472,138 +483,125 @@ public class Parser {
         return expr;
     }
 
-    private Expression primary() {
-        if (match(FALSE)) return new Expression.LiteralExpression(false);
-        if (match(TRUE)) return new Expression.LiteralExpression(true);
-
-        if (match(NUMBER_LITERAL, STRING_LITERAL)) {
-            return new Expression.LiteralExpression(previous().value);
+    // finish call
+    private Expression finishCall(Expression callee) {
+        List<Expression> arguments = new ArrayList<>();
+        if (!check(RIGHT_PAREN)) {
+            do {
+                if (arguments.size() >= 255) {
+                    error(getCurrentToken(), "Callable can't have more than 255 arguments.");
+                }
+                arguments.add(expression());
+            } while (match(COMMA));
         }
+        Token paren = expect(RIGHT_PAREN, "Expect ')' after arguments.");
+        return new Expression.CallExpression(callee, paren, arguments);
+    }
+
+    // ဒါက ထပ်ခွဲမရတော့တဲ့ basic element တွေ literal ဘာညာ
+    private Expression primary() {
+        if (match(NUMBER_LITERAL, STRING_LITERAL, BOOLEAN_LITERAL))
+            return new Expression.LiteralExpression(previous());
+
+        if (match(IDENTIFIER))
+            return new Expression.VariableAccessExpression(previous());
+
         if (match(LEFT_PAREN)) {
             Expression expr = expression();
-            consume(RIGHT_PAREN, "Expect ')' after expression.");
+            expect(RIGHT_PAREN, "Expect ')' after expression.");
             return new Expression.GroupingExpression(expr);
         }
-        if (match(IDENTIFIER)) {
-            return new Expression.VariableExpression(previous());
-        }
+
         throw error(getCurrentToken(), "Expect expression.");
     }
 
-    /**
-     * check if current token is in given list
-     *
-     * @param types expect types
-     * @return true if matched
-     */
-    private boolean match(TokenType... types) {
-        for (TokenType type : types) {
+    // token type မဟုတ်ရင် error တက်ဖို့
+    private Token expect(token_t type, String message) {
+        if (check(type))
+            return advance();
+        throw error(previous(), message);
+    }
+
+    // parse error တက်ဖို့
+    private ParseError error(Token token, String message) {
+        errorHandler.reportError(token, message);
+        return new ParseError();
+    }
+
+    private void synchronize() {
+        advance();
+
+        while (!isEOF()) {
+            if (previous().type == SEMICOLON)
+                return;
+            // new line ဖြစ်တဲ့ token အားလုံး
+            switch (getCurrentToken().type) {
+                case VT_STRING:
+                case VT_NUMBER:
+                case VT_BOOLEAN:
+                case FRT_VOID:
+                case BLOCK:
+                case IF:
+                case FOR:
+                case WHILE:
+                case BREAK:
+                case CONTINUE:
+                case FUNC:
+                case RETURN:
+                case INPUT:
+                case OUTPUT:
+                    return;
+                default:
+                    advance();
+                    break;
+            }
+        }
+    }
+
+    // လက်ရှိ token type ကို စစ်ဖို့
+    private boolean match(token_t... types) {
+        for (token_t type : types) {
             if (check(type)) {
                 advance();
                 return true;
             }
         }
-
         return false;
     }
-    //< match
 
-    /**
-     * force check next token and warn error if not match
-     *
-     * @param type    Type of token
-     * @param message Error message
-     * @return next character
-     */
-    private Token consume(TokenType type, String message) {
-        if (check(type)) return advance();
-
-        throw error(getCurrentToken(), message);
-    }
-
-    /**
-     * check token type
-     *
-     * @param type Type of token
-     * @return true if current token match expected
-     */
-    private boolean check(TokenType type) {
-        if (isAtEnd()) return false;
+    // သူလည်း token type စစ်ဖို့ပဲ။ match က multiple types
+    private boolean check(token_t type) {
+        if (isEOF())
+            return false;
         return getCurrentToken().type == type;
     }
 
-    /**
-     * Go to next token
-     *
-     * @return current token
-     */
+    // လက်ရှိ token ကို ပြန်ပေးတယ်။ index 1 တိုးတယ်။
     private Token advance() {
-        if (!isAtEnd()) current++;
+        if (!isEOF())
+            current++;
         return previous();
     }
 
-    /**
-     * Check if we are at the end of token
-     *
-     * @return true if we are at last token
-     */
-    private boolean isAtEnd() {
+    // index တို့ 1 မတိုးဘဲ ကြည့်ကြည့်မယ်။
+    private Token peekNext() {
+        if (current + 1 >= tokens.size())
+            return null;
+        return tokens.get(current + 1);
+    }
+
+    // အဆုံး token ဟုတ် မဟုတ် စစ်ဖို့
+    private boolean isEOF() {
         return getCurrentToken().type == EOF;
     }
 
-    /**
-     * Get current token
-     *
-     * @return current token
-     */
+    // လက်ရှိ token ကို ယူဖို့
     private Token getCurrentToken() {
         return tokens.get(current);
     }
 
-    /**
-     * Get previous token
-     *
-     * @return previous token
-     */
+    // အရင် token ကို ကြည့်ဖို့
     private Token previous() {
         return tokens.get(current - 1);
-    }
-
-    /**
-     * report error
-     *
-     * @param token   error causing token
-     * @param message error message
-     * @return Parser Error instance
-     */
-    private ParseError error(Token token, String message) {
-        Uit.error(token, message);
-        return new ParseError();
-    }
-
-    /**
-     * Error synchronization
-     */
-    private void synchronize() {
-        advance();
-
-        while (!isAtEnd()) {
-            //if (previous().type == SEMICOLON) return;
-
-            switch (getCurrentToken().type) {
-                case FUNC:
-                case FOR:
-                case IF:
-                case WHILE:
-                case OUTPUT:
-                case NUM:
-                case STRING:
-                case BOOLEAN:
-                case RETURN:
-                    return;
-            }
-
-            advance();
-        }
     }
 }

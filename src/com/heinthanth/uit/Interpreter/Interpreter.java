@@ -1,268 +1,204 @@
 package com.heinthanth.uit.Interpreter;
 
-import com.heinthanth.uit.Lexer.Token;
-import com.heinthanth.uit.Lexer.TokenType;
-import com.heinthanth.uit.Node.*;
-import com.heinthanth.uit.Uit;
-
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.heinthanth.uit.Lexer.Token;
+import com.heinthanth.uit.Lexer.token_t;
+import com.heinthanth.uit.Runtime.Expression;
+import com.heinthanth.uit.Runtime.Statement;
+import com.heinthanth.uit.Runtime.UitCallable;
+import com.heinthanth.uit.Runtime.UitFunction;
+import com.heinthanth.uit.Runtime.RuntimeError;
+import com.heinthanth.uit.Runtime.Expression.BinaryExpression;
+import com.heinthanth.uit.Runtime.Expression.CallExpression;
+import com.heinthanth.uit.Runtime.Expression.DecrementExpression;
+import com.heinthanth.uit.Runtime.Expression.GroupingExpression;
+import com.heinthanth.uit.Runtime.Expression.IncrementExpression;
+import com.heinthanth.uit.Runtime.Expression.LiteralExpression;
+import com.heinthanth.uit.Runtime.Expression.LogicalExpression;
+import com.heinthanth.uit.Runtime.Expression.UnaryExpression;
+import com.heinthanth.uit.Runtime.Expression.VariableAccessExpression;
+import com.heinthanth.uit.Runtime.Expression.VariableAssignExpression;
+import com.heinthanth.uit.Runtime.Statement.BlockStatement;
+import com.heinthanth.uit.Runtime.Statement.BreakStatement;
+import com.heinthanth.uit.Runtime.Statement.ContinueStatement;
+import com.heinthanth.uit.Runtime.Statement.ExpressionStatement;
+import com.heinthanth.uit.Runtime.Statement.FunctionStatement;
+import com.heinthanth.uit.Runtime.Statement.IfStatement;
+import com.heinthanth.uit.Runtime.Statement.OutputStatement;
+import com.heinthanth.uit.Runtime.Statement.ReturnStatement;
+import com.heinthanth.uit.Runtime.Statement.VariableDeclarationStatement;
+import com.heinthanth.uit.Runtime.Statement.WhileStatement;
+import com.heinthanth.uit.Utils.ErrorHandler;
+
+class BreakSignal extends RuntimeException {
+
+    /**
+     *
+     */
+    private static final long serialVersionUID = 8307277094185297477L;
+};
+
+class ContinueSignal extends RuntimeException {
+
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
+}
+
 public class Interpreter implements Expression.Visitor<Object>, Statement.Visitor<Void> {
-    /**
-     * interrupt to break loop
-     */
-    private static class BreakException extends RuntimeException {
-    }
+    // global variable တွေ သိမ်းဖို့
+    public final Environment globals = new Environment();
+    private Environment environment = globals;
 
-    /**
-     * visit to literal expression -> Java Object (double, string, bool)
-     */
-    @Override
-    public Object visitLiteralExpression(Expression.LiteralExpression expression) {
-        return expression.value;
-    }
+    private final Map<Expression, Integer> locals = new HashMap<>();
 
-    /**
-     * visit grouping expression -> recursive evaluation
-     */
-    @Override
-    public Object visitGroupingExpression(Expression.GroupingExpression expression) {
-        return evaluate(expression.expression);
-    }
+    // builtin function တွေကို define ဖို့ constructor
+    public Interpreter() {
 
-    /**
-     * evaluate unary expression to value
-     */
-    @Override
-    public Object visitUnaryExpression(Expression.UnaryExpression expression) {
-        Object right = evaluate(expression.right);
-        switch (expression.operator.type) {
-            case MINUS:
-                checkNumberOperand(expression.operator, right);
-                return -(double) right;
-            case NOT:
-                return !isTrue(right);
-        }
-        return null;
-    }
+        // native time function -> return Unix Epoch
+        globals._define("time", new UitCallable() {
+            @Override
+            public int argsCount() {
+                return 0;
+            }
 
-    /**
-     * Get variable value from identifier
-     *
-     * @param expression variable access expression
-     * @return value of variable
-     */
-    @Override
-    public Object visitVariableExpression(Expression.VariableExpression expression) {
-        return lookUpVariable(expression.name, expression);
-    }
+            @Override
+            public Object invoke(Interpreter interpreter, List<Object> arguments) {
+                return (double) Instant.now().getEpochSecond();
+            }
 
-    private Object lookUpVariable(Token name, Expression expr) {
-        Integer distance = locals.get(expr);
-        if (distance != null) {
-            return environment.getAt(distance, name.sourceString);
-        } else {
-            return globals.get(name);
-        }
-    }
+            @Override
+            public String toString() {
+                return "[ builtin fn - time ]";
+            }
+        });
+        ;
 
-    /**
-     * evaluate binary operation
-     *
-     * @param expression binary expression
-     * @return result from expression
-     */
-    @Override
-    public Object visitBinaryExpression(Expression.BinaryExpression expression) {
-        Object left = evaluate(expression.left);
-        Object right = evaluate(expression.right);
+        // string
+        globals._define("toString", new UitCallable() {
+            @Override
+            public int argsCount() {
+                return 1;
+            }
 
-        switch (expression.operator.type) {
-            case PLUS:
-                return concatOrPlus(left, expression.operator, right);
-//                checkNumberOperands(expression.operator, left, right);
-//                return (double) left + (double) right;
-            case MINUS:
-                checkNumberOperands(expression.operator, left, right);
-                return ((Number) left).doubleValue() - ((Number) right).doubleValue();
-            case SLASH:
-                checkNumberOperands(expression.operator, left, right);
-                if(((Number) right).doubleValue() == 0) {
-                    throw new RuntimeError(expression.operator, "cannot divide number with zero");
+            @Override
+            public Object invoke(Interpreter interpreter, List<Object> arguments) {
+                return stringify(arguments.get(0));
+            }
+
+            @Override
+            public String toString() {
+                return "[ builtin fn - toString ]";
+            }
+        });
+
+        // string to number
+        globals._define("String2Num", new UitCallable() {
+            @Override
+            public int argsCount() {
+                return 1;
+            }
+
+            @Override
+            public Object invoke(Interpreter interpreter, List<Object> arguments) {
+                try {
+                    return Double.valueOf((String) arguments.get(0));
+                } catch (Exception e) {
+                    return 0.0;
                 }
-                return ((Number) left).doubleValue() / ((Number) right).doubleValue();
-            case STAR:
-                checkNumberOperands(expression.operator, left, right);
-                return ((Number) left).doubleValue() * ((Number) right).doubleValue();
-            case GREATER:
-                checkNumberOperands(expression.operator, left, right);
-                return ((Number) left).doubleValue() > ((Number) right).doubleValue();
-            case GREATER_EQUAL:
-                checkNumberOperands(expression.operator, left, right);
-                return ((Number) left).doubleValue() >= ((Number) right).doubleValue();
-            case LESS:
-                checkNumberOperands(expression.operator, left, right);
-                return ((Number) left).doubleValue() < ((Number) right).doubleValue();
-            case LESS_EQUAL:
-                checkNumberOperands(expression.operator, left, right);
-                return ((Number) left).doubleValue() <= ((Number) right).doubleValue();
-            case NOT_EQUAL:
-                return !isEqual(left, right);
-            case EQUAL:
-                return isEqual(left, right);
-        }
-        return null;
-    }
-
-    private Object concatOrPlus(Object left, Token operator, Object right) {
-        if (left instanceof Number && right instanceof Number) {
-            return ((Number) left).doubleValue() + ((Number) right).doubleValue();
-        }
-        if (left instanceof String && right instanceof String) {
-            return left + (String) right;
-        }
-        if (left instanceof String && right instanceof Number) {
-            if (
-                    (((Number) right).doubleValue() == Math.floor(((Number) right).doubleValue()))
-                            && !Double.isInfinite(((Number) right).doubleValue())
-            ) {
-                double r = ((Number) right).doubleValue();
-                return (String) left + (int) r;
             }
-            return (String) left + ((Number) right).doubleValue();
-        }
-        if (left instanceof Number && right instanceof String) {
-            if (
-                    (((Number) left).doubleValue() == Math.floor(((Number) left).doubleValue()))
-                            && !Double.isInfinite(((Number) left).doubleValue())
-            ) {
-                double l = ((Number) left).doubleValue();
-                return (int) l + (String) right;
+
+            @Override
+            public String toString() {
+                return "[ builtin fn - String2Num ]";
             }
-            return ((Number) left).doubleValue() + (String) right;
-        }
-        throw new RuntimeError(operator,
-                "Cannot concat non-strings or non-numbers");
+        });
     }
 
     /**
-     * Get true/false from Logical expression
-     */
-    @Override
-    public Object visitLogicalExpression(Expression.LogicalExpression expression) {
-        Object left = evaluate(expression.left);
-        if (expression.operator.type == TokenType.OR) {
-            if (isTrue(left)) return left;
-        } else {
-            if (!isTrue(left)) return left;
-        }
-        return evaluate(expression.right);
-    }
-
-    /**
-     * visit function call
-     */
-    @Override
-    public Object visitCallExpression(Expression.CallExpression expression) {
-        Object callee = evaluate(expression.callee);
-
-        List<Object> arguments = new ArrayList<>();
-        for (Expression argument : expression.arguments) {
-            arguments.add(evaluate(argument));
-        }
-
-        if (!(callee instanceof UitCallable)) {
-            throw new RuntimeError(expression.paren,
-                    "Cannot call non-function.");
-        }
-
-        UitCallable function = (UitCallable) callee;
-        if (arguments.size() != function.arity()) {
-            throw new RuntimeError(expression.paren, "Expected " +
-                    function.arity() + " arguments but got " +
-                    arguments.size() + ".");
-        }
-
-        return function.call(this, arguments);
-    }
-
-    /**
-     * interpret expression statement
+     * parser ကရလာတဲ့ expression ကို evaluate လုပ်မယ်။
      *
-     * @param statement expression statement
-     * @return null
+     * @param expression
+     * @param errorHandler
+     * @param fromREPL
+     */
+    public void interpret(List<Statement> statements, ErrorHandler errorHandler, boolean fromREPL) {
+        try {
+            if (fromREPL && statements.size() == 1 && statements.get(0) instanceof ExpressionStatement) {
+                // REPL မှာ expression statement run ခဲ့ရင် auto output ထုတ်ပေးမယ်။
+                ExpressionStatement statement = (ExpressionStatement) statements.get(0);
+                Object value = evaluate(statement.expression);
+                if (value != null)
+                    System.out.println(stringify(value));
+                return;
+            } else {
+                for (Statement statement : statements) {
+                    execute(statement);
+                }
+            }
+        } catch (RuntimeError error) {
+            errorHandler.reportRuntimeError(error.getMessage(), error.token.line, error.token.col);
+        }
+    }
+
+    /**
+     * function call တွေကို interpret မယ်။
      */
     @Override
-    public Void visitExpressionStatement(Statement.ExpressionStatement statement) {
-        evaluate(statement.expression);
+    public Void visitFunctionStatement(FunctionStatement statement) {
+        UitFunction function = new UitFunction(statement, environment);
+        environment.define(statement.identifier, function);
         return null;
     }
 
-    /**
-     * interpret output statement
-     *
-     * @param stmt Output statement
-     * @return null
-     */
     @Override
-    public Void visitOutputStatement(Statement.OutputStatement stmt) {
-        Object value = evaluate(stmt.expression);
-        System.out.println(stringify(value));
-        return null;
-    }
-
-    /**
-     * Declare variable
-     *
-     * @param stmt variable declaration statement
-     * @return null
-     */
-    @Override
-    public Void visitVariableDeclareStatement(Statement.VariableDeclareStatement stmt) {
+    public Void visitReturnStatement(ReturnStatement statement) {
         Object value = null;
-        if (stmt.initializer != null) {
-            value = evaluate(stmt.initializer);
+        if (statement.value != null)
+            value = evaluate(statement.value);
+        throw new UitFunction.ReturnSignal(value);
+    }
+
+    /**
+     * variable declare မယ်။
+     */
+    @Override
+    public Void visitVariableDeclarationStatement(VariableDeclarationStatement statement) {
+        Object value = null;
+        switch (statement.type.type) {
+            case VT_STRING:
+                value = "";
+                break;
+            case VT_BOOLEAN:
+                value = false;
+                break;
+            case VT_NUMBER:
+                value = 0.0;
+                break;
+            default:
+                break;
         }
-        environment.define(stmt.typeDef, stmt.name, value);
+        if (statement.initializer != null) {
+            value = evaluate(statement.initializer);
+        }
+        environment.define(statement.type, statement.identifier, value);
         return null;
     }
 
     /**
-     * assign variable with new value
+     * if statement ကို interpret မယ်။
      *
-     * @param expr variable declaration statement
-     * @return null
+     * @param statement
+     * @return
      */
     @Override
-    public Void visitVariableAssignExpression(Expression.VariableAssignExpression expr) {
-        Object value = evaluate(expr.value);
-        Integer distance = locals.get(expr);
-        if (distance != null) {
-            environment.assignAt(distance, expr.name, value);
-        } else {
-            globals.assign(expr.name, value);
-        }
-        return null;
-    }
-
-    /**
-     * visit block statement
-     *
-     * @param statement block statement
-     * @return null
-     */
-    @Override
-    public Void visitBlockStatement(Statement.BlockStatement statement) {
-        executeBlock(statement.statements, new Environment(environment));
-        return null;
-    }
-
-    @Override
-    public Void visitIfStatement(Statement.IfStatement statement) {
+    public Void visitIfStatement(IfStatement statement) {
         for (Map.Entry<Expression, Statement> stmt : statement.branches.entrySet()) {
             if (isTrue(evaluate(stmt.getKey()))) {
                 execute(stmt.getValue());
@@ -276,109 +212,298 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
     }
 
     /**
-     * interpret while statement
-     */
-    @Override
-    public Void visitWhileStatement(Statement.WhileStatement statement) {
-
-        try {
-            while (isTrue(evaluate(statement.condition))) {
-                execute(statement.body);
-            }
-        } catch (BreakException e) {
-            // nothing
-        }
-        return null;
-    }
-
-    /**
-     * Interpret function declaration
-     */
-    @Override
-    public Void visitFunctionStatement(Statement.FunctionStatement statement) {
-        UitFunction function = new UitFunction(statement, environment);
-        environment.define(statement.name.sourceString, function);
-        return null;
-    }
-
-    /**
-     * Interpret return statement
-     */
-    @Override
-    public Void visitReturnStatement(Statement.ReturnStatement statement) {
-        Object value = null;
-        if (statement.value != null) value = evaluate(statement.value);
-        throw new FunctionReturn(value);
-    }
-
-    @Override
-    public Void visitBreakStatement(Statement.BreakStatement stmt) {
-        throw new BreakException();
-    }
-
-    /**
-     * Environment for identifier
-     */
-    public final Environment globals = new Environment();
-    private Environment environment = globals;
-    private final Map<Expression, Integer> locals = new HashMap<>();
-
-    /**
-     * Interpreter constructor
-     */
-    public Interpreter() {
-        globals.define("time", new UitCallable() {
-            @Override
-            public int arity() {
-                return 0;
-            }
-
-            @Override
-            public Object call(Interpreter interpreter,
-                               List<Object> arguments) {
-                return Instant.now().getEpochSecond();
-            }
-
-            @Override
-            public String toString() {
-                return "<native func>";
-            }
-        });
-    }
-
-    /**
-     * Interpret parse statements
+     * while statement ကို interpret မယ်။
      *
-     * @param statements Statements to interpret
+     * @param statement
+     * @return
      */
-    public void interpret(List<Statement> statements) {
-        try {
-            for (Statement statement : statements) {
-                execute(statement);
+    @Override
+    public Void visitWhileStatement(WhileStatement statement) {
+        while (isTrue(evaluate(statement.condition))) {
+            try {
+                execute(statement.instructions);
+            } catch (BreakSignal sig) {
+                break;
+            } catch (ContinueSignal sig) {
+                continue;
             }
-        } catch (RuntimeError error) {
-            Uit.runtimeError(error);
+        }
+        return null;
+    }
+
+    // loop break မယ်။
+    @Override
+    public Void visitBreakStatement(BreakStatement statement) {
+        throw new BreakSignal();
+    }
+
+    // continue break မယ်။
+    @Override
+    public Void visitContinueStatement(ContinueStatement statement) {
+        throw new ContinueSignal();
+    }
+
+    @Override
+    public Object visitLogicalExpression(LogicalExpression expression) {
+        Object left = evaluate(expression.left);
+        if (expression.operator.type == token_t.OR) {
+            if (isTrue(left))
+                return left;
+        } else {
+            if (!isTrue(left))
+                return left;
+        }
+        return evaluate(expression.right);
+    }
+
+    /**
+     * block statement တွေကို interpret လုပ်မယ်။
+     */
+    @Override
+    public Void visitBlockStatement(BlockStatement statement) {
+        executeBlock(statement.statements, new Environment(this.environment));
+        return null;
+    }
+
+    /**
+     * output statement ကို interpret မယ်။
+     */
+    @Override
+    public Void visitOutputStatement(OutputStatement statement) {
+        Object value = evaluate(statement.expression);
+        System.out.println(stringify(value));
+        return null;
+    }
+
+    /**
+     * expression statement ကို interpret မယ်။
+     */
+    @Override
+    public Void visitExpressionStatement(ExpressionStatement statement) {
+        evaluate(statement.expression);
+        return null;
+    }
+
+    /**
+     * function call တွေကို interpret မယ်။
+     */
+    @Override
+    public Object visitCallExpression(CallExpression expression) {
+        Object callee = evaluate(expression.callee);
+
+        List<Object> arguments = new ArrayList<>();
+        for (Expression argument : expression.arguments) {
+            arguments.add(evaluate(argument));
+        }
+
+        if (!(callee instanceof UitCallable)) {
+            throw new RuntimeError(expression.paren, "Cannot invoke non-functions.");
+        }
+
+        UitCallable function = (UitCallable) callee;
+        return function.invoke(this, arguments);
+    }
+
+    /**
+     * variable ကို value အသစ်ထည့်မယ်။
+     */
+    @Override
+    public Object visitVariableAssignExpression(VariableAssignExpression expression) {
+        Object value = evaluate(expression.value);
+
+        Integer distance = locals.get(expression);
+        if (distance != null) {
+            environment.assignAt(distance, expression.identifier, value);
+        } else {
+            globals.assign(expression.identifier, value);
+        }
+
+        return value;
+    }
+
+    /**
+     * prefix / postfix increment လုပ်မယ်။
+     */
+    @Override
+    public Object visitIncrementExpression(IncrementExpression expression) {
+        if (expression.identifier instanceof VariableAccessExpression) {
+            VariableAccessExpression variable = (VariableAccessExpression) expression.identifier;
+            Object previous = evaluate(variable);
+            if (previous instanceof Double) {
+                Object current = (double) previous + 1;
+
+                Integer distance = locals.get(expression);
+                if (distance != null) {
+                    environment.assignAt(distance, variable.identifier, current);
+                } else {
+                    globals.assign(variable.identifier, current);
+                }
+
+                if ("prefix".equals(expression.mode)) {
+                    return current;
+                } else {
+                    return previous;
+                }
+            } else {
+                throw new RuntimeError(expression.operator, "Cannot increase non-number.");
+            }
+        } else {
+            throw new RuntimeError(expression.operator, "Cannot increase non-variable.");
         }
     }
 
-    void resolve(Expression expr, int depth) {
+    /**
+     * prefix / postfix decrement လုပ်မယ်။
+     */
+    @Override
+    public Object visitDecrementExpression(DecrementExpression expression) {
+        if (expression.identifier instanceof VariableAccessExpression) {
+            VariableAccessExpression variable = (VariableAccessExpression) expression.identifier;
+            Object previous = evaluate(variable);
+            if (previous instanceof Double) {
+                Object current = (double) previous - 1;
+
+                Integer distance = locals.get(expression);
+                if (distance != null) {
+                    environment.assignAt(distance, variable.identifier, current);
+                } else {
+                    globals.assign(variable.identifier, current);
+                }
+
+                if ("prefix".equals(expression.mode)) {
+                    return current;
+                } else {
+                    return previous;
+                }
+            } else {
+                throw new RuntimeError(expression.operator, "Cannot decrease non-number.");
+            }
+        } else {
+            throw new RuntimeError(expression.operator, "Cannot decrease non-variable.");
+        }
+    }
+
+    /**
+     * literal expression တစ်ခုကနေ value ကိုယူမယ်။
+     */
+    @Override
+    public Object visitLiteralExpression(LiteralExpression expression) {
+        return expression.value.getValue();
+    }
+
+    /**
+     * grouping expression ကို evaluate လုပ်မယ်။
+     */
+    @Override
+    public Object visitGroupingExpression(GroupingExpression expression) {
+        return evaluate(expression.expression);
+    }
+
+    /**
+     * unary operation တွေကို ေဖြရှင်းမယ်။
+     */
+    @Override
+    public Object visitUnaryExpression(UnaryExpression expression) {
+        Object right = evaluate(expression.right);
+        switch (expression.operator.type) {
+            case NOT:
+                return !isTrue(right);
+            case MINUS:
+                checkNumberOperand(expression.operator, right);
+                return (double) right;
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * binary expression တွေကို solve မယ်။
+     */
+    @Override
+    public Object visitBinaryExpression(BinaryExpression expression) {
+        Object left = evaluate(expression.left);
+        Object right = evaluate(expression.right);
+
+        switch (expression.operator.type) {
+            case PLUS:
+                checkNumberOperands(expression.operator, left, right);
+                return (double) left + (double) right;
+            case MINUS:
+                checkNumberOperands(expression.operator, left, right);
+                return (double) left - (double) right;
+            case STAR:
+                checkNumberOperands(expression.operator, left, right);
+                return (double) left * (double) right;
+            case SLASH:
+                checkNumberOperands(expression.operator, left, right);
+                checkZeroOprand(expression.operator, right);
+                return (double) left / (double) right;
+            case PERCENT:
+                checkNumberOperands(expression.operator, left, right);
+                checkZeroOprand(expression.operator, right);
+                return (double) left % (double) right;
+            case CARET:
+                checkNumberOperands(expression.operator, left, right);
+                return Math.pow((double) left, (double) right);
+            case DOT:
+                return (String) left + (String) right;
+            case GREATER:
+                checkNumberOperands(expression.operator, left, right);
+                return (double) left > (double) right;
+            case GREATER_EQUAL:
+                checkNumberOperands(expression.operator, left, right);
+                return (double) left >= (double) right;
+            case LESS:
+                checkNumberOperands(expression.operator, left, right);
+                return (double) left < (double) right;
+            case LESS_EQUAL:
+                checkNumberOperands(expression.operator, left, right);
+                return (double) left <= (double) right;
+            case NOT_EQUAL:
+                return !isEqual(left, right);
+            case EQUAL:
+                return isEqual(left, right);
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * variable ကနေ တန်ဖိုးကိုယူမယ်။
+     */
+    @Override
+    public Object visitVariableAccessExpression(VariableAccessExpression expression) {
+        return lookUpVariable(expression.identifier, expression);
+    }
+
+    private Object lookUpVariable(Token name, Expression expr) {
+        Integer distance = locals.get(expr);
+        if (distance != null) {
+            return environment.getAt(distance, name.lexeme);
+        } else {
+            return globals.get(name);
+        }
+    }
+
+    /**
+     * statement တွေကို interpret မယ်။
+     *
+     * @param statement
+     * @return
+     */
+    private void execute(Statement statement) {
+        statement.accept(this);
+    }
+
+    public void resolve(Expression expr, int depth) {
         locals.put(expr, depth);
     }
 
     /**
-     * Execute statements
+     * block statement တွေကို scope အသစ်နဲ့ interpret လုပ်ဖို့။
      *
-     * @param stmt Statement to execute
-     */
-    private void execute(Statement stmt) {
-        stmt.accept(this);
-    }
-
-    /**
-     * Execute list of statements
-     *
-     * @param statements  list of statements to execute
-     * @param environment current environment
+     * @param statements
+     * @param environment
      */
     public void executeBlock(List<Statement> statements, Environment environment) {
         Environment previous = this.environment;
@@ -393,80 +518,105 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
     }
 
     /**
-     * Evaluate expression to value
+     * Expression ကနေ value ရအောင်ပြောင်းမယ်။
      *
-     * @return value of expression
+     * @param expression
+     * @return
      */
     private Object evaluate(Expression expression) {
         return expression.accept(this);
     }
 
     /**
-     * Get boolean representation and check true
+     * evaluate လုပ်လို့ ရလာတဲ့ object ကို string ပြောင်းမယ်။
      *
-     * @param object object to check
+     * @param object
+     * @return
      */
-    private boolean isTrue(Object object) {
-        if (object == null) return false;
-        if (object instanceof Boolean) return (boolean) object;
+    private String stringify(Object object) {
+        if (object == null)
+            return "null";
+        if (object instanceof Double) {
+            double value = (double) object;
+            if ((value == Math.floor(value)) && !Double.isInfinite(value)) {
+                return String.valueOf((long) value);
+            } else {
+                String text = object.toString();
+                if (text.endsWith(".0")) {
+                    text = text.substring(0, text.length() - 2);
+                }
+                return text;
+            }
+        }
+        return object.toString();
+    }
+
+    /**
+     * value တစ်ခုကို boolean true ဟုတ် မဟုတ် စစ်မယ်။ null ဆို false, bool ဆို သူ့
+     * value အတိုင်း ကျန်တာက exists သဘောနဲ့ true
+     *
+     * @param value
+     * @return
+     */
+    private boolean isTrue(Object value) {
+        if (value == null)
+            return false;
+        if (value instanceof Boolean)
+            return (boolean) value;
         return true;
     }
 
     /**
-     * check give object are equal
+     * unary operand က number ဖြစ်ကြောင်း စစ်မယ်။
      *
-     * @param a Object one
-     * @param b Object two
-     * @return true if object are equal
-     */
-    private boolean isEqual(Object a, Object b) {
-        if (a == null && b == null) return true;
-        if (a == null) return false;
-
-        return a.equals(b);
-    }
-
-    /**
-     * checking for number in unary operation
-     *
-     * @param operator Operator of expression
-     * @param operand  Operand
+     * @param operator
+     * @param operand
      */
     private void checkNumberOperand(Token operator, Object operand) {
-        if (operand instanceof Double) return;
+        if (operand instanceof Double)
+            return;
         throw new RuntimeError(operator, "Operand must be a number.");
     }
 
     /**
-     * check number operand for binary operation
+     * binary operands က number ဖြစ်ကြောင်း စစ်မယ်။
      *
-     * @param operator operator of expression
-     * @param left     left object
-     * @param right    right object
+     * @param operator
+     * @param left
+     * @param right
      */
     private void checkNumberOperands(Token operator, Object left, Object right) {
-        if (left instanceof Number && right instanceof Number) return;
+        if (left instanceof Double && right instanceof Double)
+            return;
 
         throw new RuntimeError(operator, "Operands must be numbers.");
     }
 
     /**
-     * Convert java object to string
+     * အစား, ဘာညာအတွက် zero ဟုတ် မဟုတ် စစ်မယ်။
      *
-     * @param object object to convert
-     * @return string representation of object
+     * @param operator
+     * @param right
      */
-    private String stringify(Object object) {
-        if (object == null) return "null";
+    private void checkZeroOprand(Token operator, Object right) {
+        if ((double) right != 0)
+            return;
+        throw new RuntimeError(operator, "Divider must not be zero.");
+    }
 
-        if (object instanceof Double) {
-            String text = object.toString();
-            if (text.endsWith(".0")) {
-                text = text.substring(0, text.length() - 2);
-            }
-            return text;
-        }
+    /**
+     * Object (value) နှစ်ခုတူမတူစစ်မယ်။
+     *
+     * @param a
+     * @param b
+     * @return
+     */
+    private boolean isEqual(Object a, Object b) {
+        if (a == null && b == null)
+            return true;
+        if (a == null)
+            return false;
 
-        return object.toString();
+        return a.equals(b);
     }
 }

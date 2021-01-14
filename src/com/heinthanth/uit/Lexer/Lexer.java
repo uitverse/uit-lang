@@ -5,106 +5,112 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.heinthanth.uit.Uit;
+import com.heinthanth.uit.Utils.ErrorHandler;
 
-import static com.heinthanth.uit.Lexer.TokenType.*;
+import static com.heinthanth.uit.Lexer.token_t.*;
 
 public class Lexer {
-    /**
-     * current source code to tokenize
-     */
+    // source code to tokenize
     private final String source;
 
-    /**
-     * list of token ( collector ) from lexer
-     */
+    // tokens တွေကို collect မယ့် list ( collector )
     private final List<Token> tokens = new ArrayList<>();
 
-    /**
-     * Map of reserved keywords
-     */
-    private static final Map<String, TokenType> keywords;
+    // error handling အတွက် object instance
+    private final ErrorHandler errorHandler;
+
+    // reserved keywords တွေ
+    private static final Map<String, token_t> reserved;
 
     static {
-        keywords = new HashMap<>();
-        keywords.put("and", AND);
-        keywords.put("or", OR);
-        keywords.put("true", TRUE);
-        keywords.put("false", FALSE);
-        keywords.put("block", BLOCK);
-        keywords.put("endblock", ENDBLOCK);
-        keywords.put("if", IF);
-        keywords.put("elseif", ELSEIF);
-        keywords.put("else", ELSE);
-        keywords.put("endif", ENDIF);
-        keywords.put("for", FOR);
-        keywords.put("endfor", ENDFOR);
-        keywords.put("while", WHILE);
-        keywords.put("endwhile", ENDWHILE);
-        keywords.put("func", FUNC);
-        keywords.put("stop", STOP);
-        keywords.put("output", OUTPUT);
-        keywords.put("return", RETURN);
-        keywords.put("Num", NUM);
-        keywords.put("String", STRING);
-        keywords.put("Boolean", BOOLEAN);
-        keywords.put("void", VOID);
-        keywords.put("set", SET);
-        keywords.put("break", BREAK);
-        keywords.put("start", START);
+        reserved = new HashMap<>();
+        reserved.put("String", VT_STRING);
+        reserved.put("Num", VT_NUMBER);
+        reserved.put("Boolean", VT_BOOLEAN);
+        reserved.put("void", FRT_VOID);
+        //reserved.put("start", START);
+        //reserved.put("stop", STOP);
+        reserved.put("and", AND);
+        reserved.put("or", OR);
+        reserved.put("block", BLOCK);
+        reserved.put("endblock", ENDBLOCK);
+        reserved.put("if", IF);
+        reserved.put("elseif", ELSEIF);
+        reserved.put("else", ELSE);
+        reserved.put("endif", ENDIF);
+        reserved.put("for", FOR);
+        reserved.put("endfor", ENDFOR);
+        reserved.put("while", WHILE);
+        reserved.put("endwhile", ENDWHILE);
+        reserved.put("break", BREAK);
+        reserved.put("continue", CONTINUE);
+        reserved.put("func", FUNC);
+        reserved.put("endfunc", ENDFUNC);
+        reserved.put("return", RETURN);
+        reserved.put("set", SET);
+        reserved.put("input", INPUT);
+        reserved.put("output", OUTPUT);
+        reserved.put("true", BOOLEAN_LITERAL);
+        reserved.put("false", BOOLEAN_LITERAL);
     }
 
-    /**
-     * current lexer index
-     */
+    // lexer ရဲ့ position တွေ
     private int start = 0;
     private int current = 0;
     private int line = 0;
 
     /**
-     * Lexer constructor
+     * သူက Lexer အတွက် constructor.
      *
-     * @param source Source code to tokenize
+     * @param source       tokenize လုပ်ချင်တဲ့ source code
+     * @param ErrorHandler ဒါက Lexer ကနေ throw မယ့် error တွေအတွက် handler
      */
-    public Lexer(String source) {
+    public Lexer(String source, ErrorHandler errorHandler) {
         this.source = source;
+        this.errorHandler = errorHandler;
     }
 
     /**
-     * convert ( tokenize ) source string to list of tokens
+     * string ကို token အဖြစ်ေပြာင်းပေးမယ့် methd
      *
-     * @return List of tokens
+     * @return ဒါက ရလာတဲ့ token list
      */
     public List<Token> tokenize() {
-        while (!isAtEnd()) {
+        // EOF အဆုံးမရောက်မချင်း token တွေကို scan သွားမယ်။
+        while (!isEOF()) {
             start = current;
             scanToken();
         }
-        tokens.add(new Token(EOF, "", null, line, current));
+        tokens.add(new Token(EOF, "", line, current));
         return tokens;
     }
 
-    /**
-     * Scan and check character one by one
-     */
+    // token တွေကို character တွေေပါ်မူတည်ပြီး သက်ဆိုင်ရာ token ထုတ်ပေးမယ်။
     private void scanToken() {
         char c = advance();
         switch (c) {
             case '+':
-                addToken(PLUS);
+                addToken(match('+') ? INCREMENT : PLUS);
                 break;
             case '-':
-                addToken(MINUS);
+                addToken(match('-') ? DECREMENT : MINUS);
                 break;
             case '*':
                 addToken(STAR);
                 break;
             case '/':
                 if (match('/')) {
-                    while (getCurrentCharacter() != '\n' && !isAtEnd()) advance();
+                    while (getCurrentCharacter() != '\n' && !isEOF())
+                        advance();
                 } else {
                     addToken(SLASH);
                 }
+                break;
+            case '^':
+                addToken(CARET);
+                break;
+            case '%':
+                addToken(PERCENT);
                 break;
             case '(':
                 addToken(LEFT_PAREN);
@@ -112,14 +118,40 @@ public class Lexer {
             case ')':
                 addToken(RIGHT_PAREN);
                 break;
+            case '{':
+                addToken(LEFT_CURLY);
+                break;
+            case '}':
+                addToken(RIGHT_CURLY);
+                break;
+            case '&':
+                if (match('&')) {
+                    addToken(AND);
+                } else {
+                    errorHandler.reportError("Expecting '&&', but not found.", line, current);
+                }
+                break;
+            case '|':
+                if (match('|')) {
+                    addToken(OR);
+                } else {
+                    errorHandler.reportError("Expecting '||', but not found.", line, current);
+                }
+                break;
             case '!':
-                addToken(NOT);
+                addToken(match('=') ? NOT_EQUAL : NOT);
                 break;
             case '=':
-                addToken(match('=') ? EQUAL : ASSIGN);
+                token_t type = ASSIGN;
+                if (match('=')) {
+                    type = EQUAL;
+                } else if (match('>')) {
+                    type = THEN;
+                }
+                addToken(type);
                 break;
             case '<':
-                TokenType type = LESS;
+                type = LESS;
                 if (match('>')) {
                     type = NOT_EQUAL;
                 } else if (match('=')) {
@@ -136,6 +168,9 @@ public class Lexer {
             case ',':
                 addToken(COMMA);
                 break;
+            case '.':
+                addToken(DOT);
+                break;
             case ' ':
             case '\r':
             case '\t':
@@ -145,137 +180,140 @@ public class Lexer {
                 line++;
                 break;
             case '"':
-                makeString();
+                makeString('"');
+                break;
+            case '\'':
+                makeString('\'');
                 break;
             default:
                 if (isDigit(c)) {
                     makeNumber();
+                } else if (isMmDigit(c)) {
+                    makeMmNumber();
                 } else if (isAlpha(c)) {
                     makeIdentifier();
                 } else {
-                    Uit.error(line, current, "Unexpect character");
+                    errorHandler.reportError("Unexpected character", line, current);
                 }
+                break;
         }
     }
 
     /**
-     * check if current character is something
+     * လက်ရှိ character က expected character ဟုတ် မဟုတ် စစ်မယ်။ ဟုတ်ခဲ့ရင် current 1
+     * တိုးမယ်။
      *
-     * @param expected expected character
-     * @return true if match given with expected
+     * @param expected စစ်မယ့် character
+     * @return မှန်ရင် true ပြန်မယ်။
      */
     private boolean match(char expected) {
-        if (isAtEnd()) return false;
-        if (source.charAt(current) != expected) return false;
+        if (isEOF())
+            return false;
+        if (source.charAt(current) != expected)
+            return false;
 
         current++;
         return true;
     }
 
     /**
-     * Get current character from source string
+     * လက်ရှိ character ကို ယူမယ်။
      *
-     * @return current character
+     * @return
      */
     private char getCurrentCharacter() {
-        if (isAtEnd()) return '\0';
+        if (isEOF())
+            return '\0';
         return source.charAt(current);
     }
 
-    /**
-     * peek next character without increasing Index.
-     *
-     * @return next character
-     */
+    // index တို့ 1 မတိုးဘဲ ကြည့်ကြည့်မယ်။
     private char peekNext() {
-        if (current + 1 >= source.length()) return '\0';
+        if (current + 1 >= source.length())
+            return '\0';
         return source.charAt(current + 1);
     }
 
-    /**
-     * Check if given character is A-Za-z or _
-     *
-     * @param c character to test
-     * @return true if character is in [a-zA-Z_]
-     */
-    private boolean isAlpha(char c) {
-        return (c >= 'a' && c <= 'z') ||
-                (c >= 'A' && c <= 'Z') ||
-                c == '_';
-    }
-
-    /**
-     * Check if given character is Alphabet or Number
-     *
-     * @param c character to test
-     * @return true if character is alphabet or number
-     */
-    private boolean isAlphaNumeric(char c) {
-        return isAlpha(c) || isDigit(c);
-    }
-
-    /**
-     * Check if given character is number
-     *
-     * @param c character to test
-     * @return true if character is number
-     */
-    private boolean isDigit(char c) {
-        return c >= '0' && c <= '9';
-    }
-
-    /**
-     * check if we're at the end of source
-     *
-     * @return true if we are at last character
-     */
-    private boolean isAtEnd() {
+    // EOF ဟုတ် မဟုတ် စစ်မယ့် method
+    private boolean isEOF() {
         return current >= source.length();
     }
 
-    /**
-     * Increase index to next and
-     *
-     * @return previous character ( aka current character - in the view of next )
-     */
+    // index ကို 1 တိုးမယ် ပြီးရင် index -1 ကို ပြန်မယ်။
+    // အဲ့တော့ current character ကို return လုပ်တာနဲ့တူတူပဲ။
     private char advance() {
-        current++;
-        return source.charAt(current - 1);
+        return source.charAt(current++);
     }
 
     /**
-     * add to token
+     * string token တစ်ခုလုပ်ဖို့။
      *
-     * @param type Token type
+     * @param type  token type
+     * @param value string value
      */
-    private void addToken(TokenType type) {
-        addToken(type, null);
+    private void addToken(token_t type, String value) {
+        String lexeme = source.substring(start, current);
+        tokens.add(new Token(type, lexeme, value, line, current - 1));
     }
 
     /**
-     * Add token of value
+     * number token တစ်ခုလုပ်ဖို့။
      *
-     * @param type  Token type
-     * @param value value of token
+     * @param type  token type
+     * @param value double value
      */
-    private void addToken(TokenType type, Object value) {
-        String text = source.substring(start, current);
-        tokens.add(new Token(type, text, value, line, current - 1));
+    private void addToken(token_t type, double value) {
+        String lexeme = source.substring(start, current);
+        tokens.add(new Token(type, lexeme, value, line, current - 1));
     }
 
     /**
-     * build java String from source string
+     * boolean token တစ်ခုလုပ်ဖို့။
+     *
+     * @param type  token type
+     * @param value boolean value
      */
-    private void makeString() {
+    private void addToken(token_t type, boolean value) {
+        String lexeme = source.substring(start, current);
+        tokens.add(new Token(type, lexeme, value, line, current - 1));
+    }
+
+    // /**
+    // * general object token တစ်ခုလုပ်ဖို့။
+    // *
+    // * @param type token type
+    // * @param value Object value
+    // */
+    // private void addToken(token_t type, Object value) {
+    // String lexeme = source.substring(start, current);
+    // tokens.add(new Token(type, lexeme, value, line, current - 1));
+    // }
+
+    /**
+     * value မပါတဲ့ token တစ်ခုလုပ်ဖို့။
+     *
+     * @param type token type
+     */
+    private void addToken(token_t type) {
+        String lexeme = source.substring(start, current);
+        tokens.add(new Token(type, lexeme, line, current - 1));
+    }
+
+    // source string တွေကနေ string token တစ်ခု ဆောက်မယ်။
+    private void makeString(char wrappingChar) {
         boolean isEscaped = false;
         StringBuilder stringString = new StringBuilder();
 
         Map<Character, Character> escapedValue = new HashMap<>();
         escapedValue.put('n', '\n');
         escapedValue.put('t', '\t');
+        escapedValue.put('"', '"');
+        escapedValue.put('\'', '\'');
+        escapedValue.put('\\', '\\');
 
-        while ((getCurrentCharacter() != '"' || isEscaped) && !isAtEnd()) {
-            if (getCurrentCharacter() == '\n') line++;
+        while ((getCurrentCharacter() != wrappingChar || isEscaped) && !isEOF()) {
+            if (getCurrentCharacter() == '\n')
+                line++;
             if (isEscaped) {
                 char c = getCurrentCharacter();
                 if (escapedValue.containsKey(c)) {
@@ -294,8 +332,8 @@ public class Lexer {
             advance();
         }
 
-        if (isAtEnd()) {
-            Uit.error(line, current, "Unterminated string.");
+        if (isEOF()) {
+            errorHandler.reportError("Unterminated string.", line, current);
             return;
         }
 
@@ -303,37 +341,97 @@ public class Lexer {
         advance();
 
         // Trim the surrounding quotes.
-        //String value = source.substring(start + 1, current - 1);
+        // String value = source.substring(start + 1, current - 1);
         addToken(STRING_LITERAL, stringString.toString());
     }
 
-    /**
-     * build java Double from source string
-     */
+    // source string တွေကနေ number token တစ်ခု ဆောက်မယ်။
     private void makeNumber() {
-        while (isDigit(getCurrentCharacter())) advance();
+        while (isDigit(getCurrentCharacter()))
+            advance();
 
         // Look for a fractional part.
         if (getCurrentCharacter() == '.' && isDigit(peekNext())) {
             // Consume the "."
             advance();
 
-            while (isDigit(getCurrentCharacter())) advance();
+            while (isDigit(getCurrentCharacter()))
+                advance();
         }
 
-        addToken(NUMBER_LITERAL,
-                Double.parseDouble(source.substring(start, current)));
+        addToken(NUMBER_LITERAL, Double.parseDouble(source.substring(start, current)));
+    }
+
+    // source string တွေကနေ number token တစ်ခု ဆောက်မယ်။
+    private void makeMmNumber() {
+        while (isMmDigit(getCurrentCharacter()))
+            advance();
+        // Look for a fractional part.
+        if (getCurrentCharacter() == '.' && isMmDigit(peekNext())) {
+            // Consume the "."
+            advance();
+
+            while (isMmDigit(getCurrentCharacter()))
+                advance();
+        }
+
+        // I Don't know whether efficient or not?
+        String number = source.substring(start, current).replace("၀", "0").replace("၁", "1").replace("၂", "2")
+                .replace("၃", "3").replace("၄", "4").replace("၅", "5").replace("၆", "6").replace("၇", "7")
+                .replace("၈", "8").replace("၉", "9");
+
+        addToken(NUMBER_LITERAL, Double.parseDouble(number));
+    }
+
+    // source string ကနေ identifier တစ်ခုဆောက်မယ်။
+    private void makeIdentifier() {
+        while (isAlphaNumeric(getCurrentCharacter()))
+            advance();
+
+        String text = source.substring(start, current);
+        token_t type = reserved.get(text);
+
+        if (type == BOOLEAN_LITERAL) {
+            addToken(BOOLEAN_LITERAL, "true".equals(text) ? true : false);
+        } else {
+            if (type == null)
+                type = IDENTIFIER;
+            addToken(type);
+        }
     }
 
     /**
-     * detect identifier
+     * character က alpha ဖြစ်မဖြစ် စစ်မယ်။
+     *
+     * @param c character to test
+     * @return true if character is in [a-zA-Z_]
      */
-    private void makeIdentifier() {
-        while (isAlphaNumeric(getCurrentCharacter())) advance();
+    private boolean isAlpha(char c) {
+        return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
+    }
 
-        String text = source.substring(start, current);
-        TokenType type = keywords.get(text);
-        if (type == null) type = IDENTIFIER;
-        addToken(type);
+    /**
+     * character က number သို့ alpha ဖြစ်မဖြစ် စစ်မယ်။
+     *
+     * @param c character to test
+     * @return true if character is alphabet or number
+     */
+    private boolean isAlphaNumeric(char c) {
+        return isAlpha(c) || isDigit(c);
+    }
+
+    /**
+     * character က number ဖြစ်မဖြစ် စစ်မယ်။
+     *
+     * @param c character to test
+     * @return true if character is number
+     */
+    private boolean isDigit(char c) {
+        return c >= '0' && c <= '9';
+    }
+
+    // same as isDigit but in Myanmar
+    private boolean isMmDigit(char c) {
+        return "၀၁၂၃၄၅၆၇၈၉".contains(String.valueOf(c));
     }
 }

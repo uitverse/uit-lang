@@ -1,15 +1,11 @@
-Num a = 35
+
+Num a = 40;
 
 Num fib(Num n)
-	if(n < 2)
-		return n
-	else
-		return fib(n - 2) + fib(n - 1)
-	endif
-stop
+	if(n < 2) => return n;
+	return fib(n - 2) + fib(n - 1);
+endfunc
 
-Num start = time()
-
-output fib(a) == 9227465
-
-output time() - start
+Num start = time();
+output fib(a);
+output time() - start;

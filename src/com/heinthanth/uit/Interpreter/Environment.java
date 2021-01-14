@@ -1,136 +1,151 @@
 package com.heinthanth.uit.Interpreter;
 
-import com.heinthanth.uit.Lexer.Token;
-import com.heinthanth.uit.Utils.Converter;
-
 import java.util.HashMap;
 import java.util.Map;
 
+import com.heinthanth.uit.Lexer.Token;
+import com.heinthanth.uit.Runtime.RuntimeError;
+import com.heinthanth.uit.Utils.TypeMapper;
+
 public class Environment {
     /**
-     * List of identifier and value
+     * define variable တွေ အားလုံးကို သိမ်းထားတဲ့နေရာ
      */
     private final Map<String, Object> values = new HashMap<>();
 
     /**
-     * nest environment
+     * nested loop တွေအတွက် parent variable
      */
-    final Environment enclosing;
+    private final Environment parent;
 
     /**
-     * environment constructor
+     * assign parent environment
      */
     Environment() {
-        enclosing = null;
-    }
-
-    public Environment(Environment enclosing) {
-        this.enclosing = enclosing;
+        parent = null;
     }
 
     /**
-     * define variable
-     */
-    public void define(Token typeDef, Token name, Object value) {
-        if (values.containsKey(name.sourceString)) {
-            throw new RuntimeError(name,
-                    "variable '" + name.sourceString + "' exists.");
-        } else {
-            if (value.getClass() != Long.class && value.getClass() != Converter.Uit2Java.get(typeDef.type)) {
-                throw new RuntimeError(typeDef,
-                        "Cannot assign " + Converter.Java2Uit.get(value.getClass()) + " to " + typeDef.type + " variable '" + name.sourceString + "'.");
-            } else {
-                values.put(name.sourceString, value);
-            }
-        }
-    }
-
-    /**
-     * define variable
-     */
-    public void defineFuncParam(Token typeDef, Token name, Object value) {
-        if (values.containsKey(name.sourceString)) {
-            throw new RuntimeError(name,
-                    "variable '" + name.sourceString + "' exists.");
-        } else {
-            if (value.getClass() != Converter.Uit2Java.get(typeDef.type)) {
-                throw new RuntimeError(typeDef,
-                        "Cannot assign " + Converter.Java2Uit.get(value.getClass()) + " to " + typeDef.type + " parameter '" + name.sourceString + "'.");
-            } else {
-                values.put(name.sourceString, value);
-            }
-        }
-    }
-
-    /**
-     * define for internal
-     */
-    public void define(String name, Object value) {
-        values.put(name, value);
-    }
-
-    /**
-     * define variable
-     */
-    void assign(Token name, Object value) {
-        if (values.containsKey(name.sourceString)) {
-            Object oldvalue = values.get(name.sourceString);
-            if (value.getClass() != oldvalue.getClass()) {
-                throw new RuntimeError(name,
-                        "Cannot assign " + Converter.Java2Uit.get(value.getClass()) + " to " + Converter.Java2Uit.get(oldvalue.getClass()) + " variable '" + name.sourceString + "'.");
-            } else {
-                values.put(name.sourceString, value);
-                return;
-            }
-        }
-        if (enclosing != null) {
-            enclosing.assign(name, value);
-            return;
-        }
-        throw new RuntimeError(name,
-                "variable '" + name.sourceString + "' not defined.");
-    }
-
-    /**
-     * Get identifier value
+     * assign parent environemtn
      *
-     * @param name identifier
-     * @return java value object
+     * @param parent
      */
-    Object get(Token name) {
-        if (values.containsKey(name.sourceString)) {
-            return values.get(name.sourceString);
-        }
-
-        if (enclosing != null) return enclosing.get(name);
-
-        throw new RuntimeError(name,
-                "variable '" + name.sourceString + "' not defined.");
+    public Environment(Environment parent) {
+        this.parent = parent;
     }
 
-    Object getAt(int distance, String name) {
+    /**
+     * variable အသစ် define လုပ်ဖို့။ type မတူရင် error တက်မယ်။
+     *
+     * @param type
+     * @param identifier
+     * @param value
+     */
+    public void define(Token type, Token identifier, Object value) {
+        if (values.containsKey(identifier.lexeme)) {
+            throw new RuntimeError(identifier, "variable '" + identifier.lexeme + "' exists.");
+        } else {
+            if (value.getClass() == TypeMapper.Uit2Java.get(type.type)) {
+                values.put(identifier.lexeme, value);
+            } else {
+                StringBuilder msg = new StringBuilder();
+                msg.append("Cannot assign ");
+                msg.append(TypeMapper.JavaT2String.get(value.getClass()));
+                msg.append(" to ");
+                msg.append(TypeMapper.UitT2String.get(type.type));
+                msg.append(" variable '");
+                msg.append(identifier.lexeme);
+                msg.append("'.");
+                throw new RuntimeError(type, msg.toString());
+            }
+        }
+    }
+
+    public void define(Token identifier, Object value) {
+        if (values.containsKey(identifier.lexeme)) {
+            throw new RuntimeError(identifier, "variable '" + identifier.lexeme + "' exists.");
+        } else {
+            values.put(identifier.lexeme, value);
+        }
+    }
+
+    /**
+     * internal interpreter ကနေ built in function တွေ define ဖို့
+     */
+    public void _define(String identifier, Object value) {
+        values.put(identifier, value);
+    }
+
+    /**
+     * ရှိပြီးသား variable ကို value အသစ်ထည့်မယ်။ variable မရှိရင် error တက်မယ်။
+     *
+     * @param identifer
+     * @param value
+     */
+    public void assign(Token identifier, Object value) {
+        if (values.containsKey(identifier.lexeme)) {
+            Object old = values.get(identifier.lexeme);
+            if (value.getClass() == old.getClass()) {
+                values.put(identifier.lexeme, value);
+            } else {
+                StringBuilder msg = new StringBuilder();
+                msg.append("Cannot assign ");
+                msg.append(TypeMapper.JavaT2String.get(value.getClass()));
+                msg.append(" to ");
+                msg.append(TypeMapper.JavaT2String.get(old.getClass()));
+                msg.append(" variable '");
+                msg.append(identifier.lexeme);
+                msg.append("'.");
+                throw new RuntimeError(identifier, msg.toString());
+            }
+        } else if (parent != null) {
+            parent.assign(identifier, value);
+        } else {
+            throw new RuntimeError(identifier, "variable '" + identifier.lexeme + "' does not exists.");
+        }
+    }
+
+    /**
+     * variable တန်ဖိုးယူမယ်။ မရှိရင် error တက်မယ်။
+     *
+     * @param identifier
+     * @return
+     */
+    public Object get(Token identifier) {
+        if (values.containsKey(identifier.lexeme)) {
+            return values.get(identifier.lexeme);
+        }
+        if (parent != null)
+            return parent.get(identifier);
+        throw new RuntimeError(identifier, "variable '" + identifier.lexeme + "'.");
+    }
+
+    public Object getAt(int distance, String name) {
         return ancestor(distance).values.get(name);
     }
 
-    void assignAt(int distance, Token name, Object value) {
-        if (ancestor(distance).values.containsKey(name.sourceString)) {
-            Object oldvalue = ancestor(distance).values.get(name.sourceString);
-            if (value.getClass() != oldvalue.getClass()) {
-                throw new RuntimeError(name,
-                        "Cannot assign " + Converter.Java2Uit.get(value.getClass()) + " to " + Converter.Java2Uit.get(oldvalue.getClass()) + " variable '" + name.sourceString + "'.");
-            } else {
-                ancestor(distance).values.put(name.sourceString, value);
-                return;
-            }
+    void assignAt(int distance, Token identifier, Object value) {
+        Object old = ancestor(distance).values.get(identifier.lexeme);
+        if (value.getClass() == old.getClass()) {
+            ancestor(distance).values.put(identifier.lexeme, value);
+        } else {
+            StringBuilder msg = new StringBuilder();
+            msg.append("Cannot assign ");
+            msg.append(TypeMapper.JavaT2String.get(value.getClass()));
+            msg.append(" to ");
+            msg.append(TypeMapper.JavaT2String.get(old.getClass()));
+            msg.append(" variable '");
+            msg.append(identifier.lexeme);
+            msg.append("'.");
+            throw new RuntimeError(identifier, msg.toString());
         }
     }
 
     Environment ancestor(int distance) {
         Environment environment = this;
         for (int i = 0; i < distance; i++) {
-            environment = environment.enclosing;
+            environment = environment.parent;
         }
-
         return environment;
     }
 }

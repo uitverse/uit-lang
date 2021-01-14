@@ -1,9 +1,0 @@
-if (false)
-    output "First Branch"
-elseif(false)
-    output "First elseif branch"
-elseif(false)
-    output "Second elseif branch"
-else
-    output "else branch"
-endif
