@@ -15,7 +15,6 @@ Since it's under development, documentations hasn't been written yet.
 I need
 
 - `termcolor.hpp` equivalent in Java.
-- `iomanip` equivalent in Java.
 
 with them, I can improve REPL prompt and Error responses.
 

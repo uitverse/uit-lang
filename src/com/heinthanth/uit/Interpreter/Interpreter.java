@@ -119,6 +119,29 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
                 return "[ builtin fn - String2Num ]";
             }
         });
+
+        globals._define("exit", new UitCallable() {
+            @Override
+            public int argsCount() {
+                return 1;
+            }
+
+            @Override
+            public Object invoke(Interpreter interpreter, List<Object> arguments) {
+                try {
+                    int exitCode = Integer.valueOf((String) arguments.get(0));
+                    System.exit(exitCode);
+                } catch (Exception e) {
+                    System.exit(0);
+                }
+                return null;
+            }
+
+            @Override
+            public String toString() {
+                return "[ builtin fn - exit ]";
+            }
+        });
     }
 
     /**
@@ -301,6 +324,11 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
         }
 
         UitCallable function = (UitCallable) callee;
+        if (arguments.size() != function.argsCount()) {
+            throw new RuntimeError(expression.paren,
+                    "Expected " + function.argsCount() + " arguments but got " + arguments.size() + ".");
+        }
+
         return function.invoke(this, arguments);
     }
 

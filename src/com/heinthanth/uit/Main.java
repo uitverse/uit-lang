@@ -1,9 +1,7 @@
 package com.heinthanth.uit;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -22,6 +20,7 @@ import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.UserInterruptException;
+import org.jline.reader.LineReader.Option;
 
 /**
  * interpreter အတွက် အဓိက class ပေါ့။ သူ့ကနေမှ command line argument
@@ -79,15 +78,13 @@ public class Main {
      *
      * @throws IOException
      */
-    private static void runREPL() throws IOException {
-        // InputStreamReader input = new InputStreamReader(System.in);
-        // BufferedReader reader = new BufferedReader(input);
-        LineReader reader = LineReaderBuilder.builder().build();
+    private static void runREPL() {
+        LineReader reader = LineReaderBuilder.builder().option(Option.INSERT_TAB, true).build();
         // loop နဲ့ evaluate လုပ်မယ်။
         while (true) {
             try {
                 String line = reader.readLine("uit > ");
-                interpretREPL(line);
+                interpretREPL(line, reader);
             } catch (UserInterruptException e) {
                 return;
             } catch (EndOfFileException e) {
@@ -104,11 +101,14 @@ public class Main {
      *
      * @param input REPL ကနေလာတဲ့ string input ပေါ့။
      */
-    private static void interpretREPL(String input) throws IOException {
+    private static void interpretREPL(String input, LineReader reader) {
         if (".clear".equals(input)) {
             System.out.print("\033[H\033[2J");
             System.out.flush();
             // သူက editor လိုချင်တာလား ?
+        } else if (input.equals(".editor")) {
+            runFromString(createEditor(reader), true, "repl");
+            // exit မှာလား
         } else if (".exit".equals(input) || ".quit".equals(input)) {
             System.exit(0);
         } else {
@@ -123,24 +123,26 @@ public class Main {
      * @return stdin ကရတဲ့ string
      * @throws IOException
      */
-    private static String getStringFromStandardInput() throws IOException {
+    private static String getStringFromStandardInput() {
         // reader class တွေ ဆောက်မယ်။
-        InputStreamReader input = new InputStreamReader(System.in);
-        BufferedReader reader = new BufferedReader(input);
-
+        // InputStreamReader input = new InputStreamReader(System.in);
+        // BufferedReader reader = new BufferedReader(input);
+        LineReader reader = LineReaderBuilder.builder().option(Option.INSERT_TAB, true).build();
         // အဓိကကတော့ shell redirection အတွက်ရည်ရွယ်ပြီး ထည့်ထားတာပါ။
         List<String> lines = new ArrayList<>();
         String[] code = new String[] {};
         String line = null;
 
-        // EOF ြဖစ်တဲ့အထိ readline ပေါ့။
-        while ((line = reader.readLine()) != null) {
-            lines.add(line);
+        try {
+            // EOF ြဖစ်တဲ့အထိ readline ပေါ့။
+            while ((line = reader.readLine()) != null) {
+                lines.add(line);
+            }
+        } catch (UserInterruptException e) {
+            System.exit(0);
+        } catch (EndOfFileException e) {
+            // just ignore it
         }
-
-        reader.close();
-        input.close();
-
         return String.join("\n", lines.toArray(code));
     }
 
@@ -149,9 +151,27 @@ public class Main {
      *
      * @throws IOException
      */
-    private static void runFromStandardInput() throws IOException {
+    private static void runFromStandardInput() {
         // ထုံးစံအတိုင်း code string ရပြီးဆိုတော့ interpret မယ်။
         runFromString(getStringFromStandardInput(), false, "stdin");
+    }
+
+    private static String createEditor(LineReader reader) {
+        List<String> lines = new ArrayList<>();
+        String[] code = new String[] {};
+        String line = null;
+
+        try {
+            // EOF ြဖစ်တဲ့အထိ readline ပေါ့။
+            while ((line = reader.readLine()) != null) {
+                lines.add(line);
+            }
+        } catch (UserInterruptException e) {
+            System.exit(0);
+        } catch (EndOfFileException e) {
+            // just ignore it
+        }
+        return String.join("\n", lines.toArray(code));
     }
 
     /**
