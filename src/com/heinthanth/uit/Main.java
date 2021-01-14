@@ -100,9 +100,6 @@ public class Main {
             System.out.print("\033[H\033[2J");
             System.out.flush();
             // သူက editor လိုချင်တာလား ?
-        } else if (".editor".equals(input)) {
-            runFromString(getStringFromStandardInput(), true, "repl");
-            // exit မှာလား
         } else if (".exit".equals(input) || ".quit".equals(input)) {
             System.exit(0);
         } else {
@@ -180,7 +177,7 @@ public class Main {
      */
     private static void runFromString(String code, boolean fromREPL, String filename) {
         // error handler ကို initialize လုပ်မယ်။
-        ErrorHandler errorHandler = new ErrorHandler(code, filename);
+        ErrorHandler errorHandler = new ErrorHandler(code, filename, fromREPL);
 
         // code string ကို token ပြောင်းမယ်။
         Lexer lexer = new Lexer(code, errorHandler);
@@ -194,7 +191,7 @@ public class Main {
         // System.exit(0);
 
         // parser နဲ့ parse မယ်။
-        Parser parser = new Parser(tokens, errorHandler);
+        Parser parser = new Parser(tokens, errorHandler, fromREPL);
         List<Statement> statements = parser.parse();
         if (!handleError(errorHandler, fromREPL))
             return;

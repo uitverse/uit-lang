@@ -15,15 +15,19 @@ public class ErrorHandler {
     // runtime error ရှိမရှိအတွက် status
     public boolean hadRuntimeError = false;
 
+    // repl က ဟုတ် မဟုတ်
+    private boolean fromREPL;
+
     /**
      * Error Handler အတွက် constructor
      *
      * @param source   source code
      * @param filename filename
      */
-    public ErrorHandler(String source, String filename) {
+    public ErrorHandler(String source, String filename, boolean fromREPL) {
         this.source = source;
         this.filename = filename;
+        this.fromREPL = fromREPL;
     }
 
     /**
@@ -47,6 +51,7 @@ public class ErrorHandler {
     public void reportError(String message, int line, int col) {
         showSource("ERROR", message, line, col);
         hadError = true;
+        if(!fromREPL) System.exit(65);
     }
 
     /**
@@ -60,6 +65,7 @@ public class ErrorHandler {
     public void reportRuntimeError(String message, int line, int col) {
         showSource("RUNTIME_ERROR", message, line, col);
         hadRuntimeError = true;
+        if(!fromREPL) System.exit(70);
     }
 
     /**

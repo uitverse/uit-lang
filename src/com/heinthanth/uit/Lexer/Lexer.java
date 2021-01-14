@@ -28,8 +28,8 @@ public class Lexer {
         reserved.put("Num", VT_NUMBER);
         reserved.put("Boolean", VT_BOOLEAN);
         reserved.put("void", FRT_VOID);
-        //reserved.put("start", START);
-        //reserved.put("stop", STOP);
+        reserved.put("start", START);
+        reserved.put("stop", STOP);
         reserved.put("and", AND);
         reserved.put("or", OR);
         reserved.put("block", BLOCK);

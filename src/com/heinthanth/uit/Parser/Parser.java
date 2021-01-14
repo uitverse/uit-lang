@@ -33,10 +33,16 @@ public class Parser {
     // loop ထဲမှာ ဟုတ်မဟုတ် စစ်ဖို့။
     private int loopDepth = 0;
 
+    private boolean fromREPL;
+
+    // entry point တွေ့ မတွေ့ စစ်ဖို့။
+    private boolean foundStart = false;
+
     // parser constructor
-    public Parser(List<Token> tokens, ErrorHandler errorHandler) {
+    public Parser(List<Token> tokens, ErrorHandler errorHandler, boolean fromREPL) {
         this.tokens = tokens;
         this.errorHandler = errorHandler;
+        this.fromREPL = fromREPL;
     }
 
     // token တွေကို parse မယ်။
@@ -44,6 +50,16 @@ public class Parser {
         List<Statement> statements = new ArrayList<>();
         while (!isEOF()) {
             statements.add(declaration());
+        }
+        Token EOF_t = tokens.get(tokens.size() - 1);
+        if (!fromREPL) {
+            if (!foundStart) {
+                errorHandler.reportError(EOF_t, "'start', 'stop' is needed for ENTRY unless running from REPL.");
+            } else {
+                statements.add(new Statement.ExpressionStatement(new Expression.CallExpression(
+                        new Expression.VariableAccessExpression(new Token(IDENTIFIER, "__uit_start", -1, -1)),
+                        new Token(RIGHT_PAREN, ")", -1, -1), new ArrayList<>())));
+            }
         }
         return statements;
     }
@@ -54,6 +70,8 @@ public class Parser {
     // var declaration ဘာညာစစ်မယ်။
     private Statement declaration() {
         try {
+            if (match(START))
+                return mainFunctionDeclaration();
             if (match(FRT_VOID))
                 return functionDeclaration();
             if (match(VT_NUMBER, VT_STRING, VT_BOOLEAN))
@@ -63,6 +81,16 @@ public class Parser {
             synchronize();
             return null;
         }
+    }
+
+    /**
+     * entry point of program
+     */
+    private Statement mainFunctionDeclaration() {
+        foundStart = true;
+        Token name = new Token(IDENTIFIER, "__uit_start", -1, -1);
+        List<Statement> instructions = block(STOP, "stop");
+        return new Statement.FunctionStatement(null, name, new ArrayList<>(), instructions);
     }
 
     /**

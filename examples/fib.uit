@@ -6,6 +6,8 @@ Num fib(Num n)
 	return fib(n - 2) + fib(n - 1);
 endfunc
 
-Num start = time();
-output fib(a);
-output time() - start;
+start
+    Num s = time();
+    output fib(a);
+    output time() - s;
+stop
