@@ -23,16 +23,15 @@ with them, I can improve REPL prompt and Error responses.
 ## Installation
 
 You can install `uit-lang` interpreter in various methods.
+### Prebuilt Package
 
-clone first!
+Well, you can download prebuilt `jar` and classes [here](build/). Then, run it through JRE.
 
 ``` shell
 git clone -b main https://github.com/heinthanth/uit-lang && cd uit-lang
 ```
 
-### Prebuilt Package
-
-Well, you can download prebuilt `jar` and classes [here](build/). Then, run it through JRE.
+clone first!
 
 ### Building with JDK
 

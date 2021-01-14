@@ -1,4 +1,5 @@
 program             ->  declaration* EOF
+                    |   "start" declaration* "stop"
 
 declaration         ->  variableDeclaration
                     |   functionDeclaration
@@ -38,7 +39,7 @@ forStatement        ->  "for"
                             expression?
                         ")" declaration* "endfor"
 expressionStatement ->  expression ";"
-outputStatement     ->  "output"
+outputStatement     ->  "output" expression ";"
 
 expression          ->  assignment
 assignment          ->  "set" IDENTIFIER "=" assignment
