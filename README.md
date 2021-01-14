@@ -47,3 +47,5 @@ Thanks to:
 
 -   [Bob](https://twitter.com/munificentbob) for his awesome [Crafting Interpreters](https://craftinginterpreters.com) - a handbook for making programming languages.
 -   [David Callanan](https://github.com/davidcallanan) for his awesome [tutorial on creating BASIC interpreter](https://youtube.com/playlist?list=PLZQftyCk7_SdoVexSmwy_tBgs7P0b97yD) with Python.
+-   [JLine3](https://github.com/jline/jline3) for awesome input handling. Without this, uit REPL won't allow editing, etc.
+-   [Jansi](https://github.com/fusesource/jansi) for awesome output formatter. Without this, I have to write from Scratch to get better colored response.
