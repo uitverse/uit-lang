@@ -18,7 +18,7 @@ You can install `uit-lang` interpreter in various methods.
 Well, you can download prebuilt `jar` [here](build/uit.jar). Then, run it through JRE.
 
 ``` shell
-git clone -b main https://github.com/heinthanth/uit-lang && cd uit-lang
+git clone -b main https://github.com/uitverse/uit-lang && cd uit-lang
 ```
 
 clone first!
