@@ -1,19 +1,6 @@
-String a = "global a";
-String b = "global b";
-String c = "global c";
-{
-  String a = "outer a";
-  String b = "outer b";
-  {
-    String a = "inner a";
-    output a;
-    output b;
-    output c;
-  }
-  output a;
-  output b;
-  output c;
-}
+Num a = 3;
+String test = "78.565";
+
+set a = String2Num(test);
+
 output a;
-output b;
-output c;

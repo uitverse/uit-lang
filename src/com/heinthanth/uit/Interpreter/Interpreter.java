@@ -60,6 +60,7 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
 
     // builtin function တွေကို define ဖို့ constructor
     public Interpreter() {
+
         // native time function -> return Unix Epoch
         globals._define("time", new UitCallable() {
             @Override
@@ -78,6 +79,46 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
             }
         });
         ;
+
+        // string
+        globals._define("toString", new UitCallable() {
+            @Override
+            public int argsCount() {
+                return 1;
+            }
+
+            @Override
+            public Object invoke(Interpreter interpreter, List<Object> arguments) {
+                return stringify(arguments.get(0));
+            }
+
+            @Override
+            public String toString() {
+                return "[ builtin fn - toString ]";
+            }
+        });
+
+        // string to number
+        globals._define("String2Num", new UitCallable() {
+            @Override
+            public int argsCount() {
+                return 1;
+            }
+
+            @Override
+            public Object invoke(Interpreter interpreter, List<Object> arguments) {
+                try {
+                    return Double.valueOf((String) arguments.get(0));
+                } catch (Exception e) {
+                    return 0.0;
+                }
+            }
+
+            @Override
+            public String toString() {
+                return "[ builtin fn - String2Num ]";
+            }
+        });
     }
 
     /**
