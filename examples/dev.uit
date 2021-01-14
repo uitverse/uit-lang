@@ -1,8 +1,0 @@
-start
-    Num a = 3;
-    String test = "78.565"
-
-    set a = String2Num(test);
-
-    output a;
-stop

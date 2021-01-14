@@ -49,7 +49,8 @@ public class Parser {
     public List<Statement> parse() {
         List<Statement> statements = new ArrayList<>();
         while (!isEOF()) {
-            statements.add(declaration());
+            Statement dec = declaration();
+            if(dec != null) statements.add(dec);
         }
         Token EOF_t = tokens.get(tokens.size() - 1);
         if (!fromREPL) {
@@ -167,6 +168,7 @@ public class Parser {
             return new Statement.BlockStatement(block(ENDBLOCK, "endblock"));
         if (match(LEFT_CURLY))
             return new Statement.BlockStatement(block(RIGHT_CURLY, "}"));
+        if (match(SEMICOLON)) return null;
         // ကျန်တာကတော့ expression ပေါ့။
         return expressionStatement();
     }
