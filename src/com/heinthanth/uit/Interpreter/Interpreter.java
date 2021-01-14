@@ -357,10 +357,11 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
         if (expression.identifier instanceof VariableAccessExpression) {
             VariableAccessExpression variable = (VariableAccessExpression) expression.identifier;
             Object previous = evaluate(variable);
+
             if (previous instanceof Double) {
                 Object current = (double) previous + 1;
 
-                Integer distance = locals.get(expression);
+                Integer distance = locals.get(variable);
                 if (distance != null) {
                     environment.assignAt(distance, variable.identifier, current);
                 } else {
@@ -474,7 +475,7 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
                 checkNumberOperands(expression.operator, left, right);
                 return Math.pow((double) left, (double) right);
             case DOT:
-                return (String) left + (String) right;
+                return stringify(left) + stringify(right);
             case GREATER:
                 checkNumberOperands(expression.operator, left, right);
                 return (double) left > (double) right;

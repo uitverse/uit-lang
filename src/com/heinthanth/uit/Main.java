@@ -16,6 +16,9 @@ import com.heinthanth.uit.Lexer.Token;
 import com.heinthanth.uit.Runtime.Statement;
 import com.heinthanth.uit.Utils.ErrorHandler;
 
+import org.fusesource.jansi.Ansi;
+import org.fusesource.jansi.AnsiConsole;
+import org.fusesource.jansi.Ansi.Color;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
@@ -37,6 +40,9 @@ public class Main {
     private static final Interpreter interpreter = new Interpreter();
 
     public static void main(String[] args) throws IOException {
+        // initialize terminal
+        AnsiConsole.systemInstall();
+
         // argument ဘာမှ မပါဘူးဆိုတာက stdin run ဖို့များတယ်။ အဲ့တော့
         // runFromStandardInput()
         // ကိုခေါ်လိုက်မယ်။
@@ -83,7 +89,7 @@ public class Main {
         // loop နဲ့ evaluate လုပ်မယ်။
         while (true) {
             try {
-                String line = reader.readLine("uit > ");
+                String line = reader.readLine(Ansi.ansi().fg(Color.YELLOW).a("uit > ").reset().toString());
                 interpretREPL(line, reader);
             } catch (UserInterruptException e) {
                 return;
@@ -262,20 +268,27 @@ public class Main {
     private static void showUsage(int exitStatus) {
         if (exitStatus == 0) {
             showInterpreterInfo(false);
-            System.out.println("usage:\tuit [script?]");
-            System.out.println("\tscript: path to .uit script to interpret.\n");
-            System.out.println("examples:");
-            System.out.println("\tuit hello.uit\t[ run 'hello.uit' script' ]");
-            System.out.println("\tuit\t\t[ run REPL ]");
-            System.out.println("\tuit -\t\t[ run from STDIN ]\n");
         } else {
-            System.err.println("\nusage:\tuit [script?]");
-            System.err.println("\tscript: path to .uit script to interpret.\n");
-            System.err.println("examples:");
-            System.err.println("\tuit hello.uit\t[ run 'hello.uit' script' ]");
-            System.err.println("\tuit\t\t[ run REPL ]");
-            System.err.println("\tuit -\t\t[ run from STDIN ]\n");
+            System.out.println();
         }
+        System.out.println(Ansi.ansi().fgBright(Color.GREEN).a("usage:\tuit [options] [FILE] [args ...]").reset());
+
+        System.out.println(Ansi.ansi().fgBright(Color.YELLOW).a("\nOptions:").reset());
+        System.out.println(
+                Ansi.ansi().fgBright(Color.GREEN).a("\t-h").reset().a(", ").fgBright(Color.GREEN).a("--help").reset());
+        System.out.println("\t\tShow help message like usage information.");
+        System.out.println(Ansi.ansi().fgBright(Color.GREEN).a("\t-v").reset().a(", ").fgBright(Color.GREEN)
+                .a("--version").reset());
+        System.out.println("\t\tShow interpreter version.");
+        System.out.println(Ansi.ansi().fgBright(Color.GREEN).a("\t-i").reset().a(", ").fgBright(Color.GREEN)
+                .a("--interactive").reset());
+        System.out.println("\t\tRun interpreter in REPL mode.");
+
+        System.out.println(Ansi.ansi().fgBright(Color.YELLOW).a("\nExamples:").reset());
+        System.out.println(Ansi.ansi().fgBright(Color.GREEN).a("\tuit").reset().a("\n\t\tInterpret Standard Input (stdin)."));
+        System.out.println(Ansi.ansi().fgBright(Color.GREEN).a("\tuit hello-world.uit").reset()
+                .a("\n\t\tInterpret code from 'hello-world.uit'."));
+        System.out.println(Ansi.ansi().fgBright(Color.GREEN).a("\tuit -i").reset().a("\n\t\tRun interpreter in REPL mode. Get input and interpret it.\n"));
         System.exit(exitStatus);
     }
 
@@ -286,8 +299,8 @@ public class Main {
      *                   နဲ့ဆုံးဖြတ်မယ်။
      */
     private static void showInterpreterInfo(boolean shouldExit) {
-        System.out.println("\nuit-lang - " + version);
-        System.out.println("(c) Hein Thant Maung Maung. MIT Licensed.\n");
+        System.out.println(Ansi.ansi().fg(Color.YELLOW).a("\nuit-lang - ").a(version).reset());
+        System.out.println(Ansi.ansi().fg(Color.YELLOW).a("(c) Hein Thant Maung Maung. MIT Licensed.\n").reset());
         if (shouldExit)
             System.exit(0);
     }

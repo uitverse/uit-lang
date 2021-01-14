@@ -2,6 +2,9 @@ package com.heinthanth.uit.Utils;
 
 import com.heinthanth.uit.Lexer.Token;
 
+import org.fusesource.jansi.Ansi;
+import org.fusesource.jansi.Ansi.Color;
+
 public class ErrorHandler {
     // handle လုပ်ရမယ့် source code (error snippet တွေပြဖို့)
     private final String source;
@@ -51,7 +54,8 @@ public class ErrorHandler {
     public void reportError(String message, int line, int col) {
         showSource("ERROR", message, line, col);
         hadError = true;
-        if(!fromREPL) System.exit(65);
+        if (!fromREPL)
+            System.exit(65);
     }
 
     /**
@@ -65,7 +69,8 @@ public class ErrorHandler {
     public void reportRuntimeError(String message, int line, int col) {
         showSource("RUNTIME_ERROR", message, line, col);
         hadRuntimeError = true;
-        if(!fromREPL) System.exit(70);
+        if (!fromREPL)
+            System.exit(70);
     }
 
     /**
@@ -87,12 +92,14 @@ public class ErrorHandler {
             }
         }
 
-        System.err.printf("\n%s: %s\n\n", level, message);
+        System.err.printf("\n%s: %s\n\n", Ansi.ansi().fg(Color.YELLOW).a(level).reset(),
+                Ansi.ansi().fg(Color.RED).a(message).reset());
         System.err.println(filename + ":");
 
         int frontPadding = 3 - String.valueOf(line + 1).length() + 1;
 
-        System.err.printf(" %s%d | %s\n", " ".repeat(frontPadding), line + 1, sourceLines[line]);
-        System.err.printf("        %s%s\n\n", " ".repeat(padding), "^");
+        System.err.printf(" %s%s | %s\n", " ".repeat(frontPadding), Ansi.ansi().fg(Color.YELLOW).a(line + 1),
+                Ansi.ansi().reset().a(sourceLines[line]));
+        System.err.printf("        %s%s\n\n", " ".repeat(padding), Ansi.ansi().fg(Color.RED).a("^ error found around here!").reset());
     }
 }

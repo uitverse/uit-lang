@@ -4,10 +4,11 @@ all: jar man docker
 
 jar: class
 	unzip lib/jline-3.18.0.jar "org/*" -d "build"
+	unzip lib/jansi-2.1.0.jar "org/*" -d "build"
 	jar cmvf META-INF/MANIFEST.MF build/uit.jar -C build .
 
 class: clean node
-	JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8 javac -g:none -Werror -d build -cp "lib/jline-3.18.0.jar:src" src/com/heinthanth/uit/Main.java
+	JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8 javac -g:none -Werror -d build -cp "lib/*:src" src/com/heinthanth/uit/Main.java
 
 node:
 	javac -d build src/com/heinthanth/uit/Utils/GenerateNode.java

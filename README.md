@@ -10,14 +10,6 @@
 
 Since it's under development, documentations hasn't been written yet.
 
-## Help Needed
-
-I need
-
-- `termcolor.hpp` equivalent in Java.
-
-with them, I can improve REPL prompt and Error responses.
-
 ## Installation
 
 You can install `uit-lang` interpreter in various methods.

@@ -5,13 +5,12 @@ RUN apt update \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /opt/heinthanth/uit
-COPY src ./
+COPY lib src ./
 
 ENV JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8
 RUN javac -d build com/heinthanth/uit/Utils/GenerateNode.java \
 	&& java -cp build com.heinthanth.uit.Utils.GenerateNode com/heinthanth/uit/Runtime \
-    && javac -g:none -Werror -d build -cp . com/heinthanth/uit/Main.java
-
+    && javac -g:none -Werror -d build -cp ".:jansi-2.1.0.jar:jline-3.18.0.jar" com/heinthanth/uit/Main.java
 
 FROM debian:buster
 
@@ -21,5 +20,6 @@ RUN apt update \
 
 WORKDIR /opt/heinthanth/uit
 COPY --from=compiler /opt/heinthanth/uit/build .
+COPY lib .
 
-ENTRYPOINT ["java", "-cp", ".", "com.heinthanth.uit.Main"]
+ENTRYPOINT ["java", "-cp", ".:jansi-2.1.0.jar:jline-3.18.0.jar", "com.heinthanth.uit.Main"]
