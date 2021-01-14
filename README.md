@@ -14,7 +14,6 @@ Since it's under development, documentations hasn't been written yet.
 
 I need
 
-- `libreadline` ( `readline.h` ) equivalent in Java.
 - `termcolor.hpp` equivalent in Java.
 - `iomanip` equivalent in Java.
 
@@ -25,7 +24,7 @@ with them, I can improve REPL prompt and Error responses.
 You can install `uit-lang` interpreter in various methods.
 ### Prebuilt Package
 
-Well, you can download prebuilt `jar` and classes [here](build/). Then, run it through JRE.
+Well, you can download prebuilt `jar` [here](build/uit.jar). Then, run it through JRE.
 
 ``` shell
 git clone -b main https://github.com/heinthanth/uit-lang && cd uit-lang

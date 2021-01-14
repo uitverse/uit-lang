@@ -18,6 +18,11 @@ import com.heinthanth.uit.Lexer.Token;
 import com.heinthanth.uit.Runtime.Statement;
 import com.heinthanth.uit.Utils.ErrorHandler;
 
+import org.jline.reader.EndOfFileException;
+import org.jline.reader.LineReader;
+import org.jline.reader.LineReaderBuilder;
+import org.jline.reader.UserInterruptException;
+
 /**
  * interpreter အတွက် အဓိက class ပေါ့။ သူ့ကနေမှ command line argument
  * ပေါ်မူတည်ပြီး ဘာလုပ်မယ် ညာလုပ်မယ်။ အဲ့လို ဆက်စဥ်းစားသွားမယ်။
@@ -75,18 +80,22 @@ public class Main {
      * @throws IOException
      */
     private static void runREPL() throws IOException {
-        InputStreamReader input = new InputStreamReader(System.in);
-        BufferedReader reader = new BufferedReader(input);
+        // InputStreamReader input = new InputStreamReader(System.in);
+        // BufferedReader reader = new BufferedReader(input);
+        LineReader reader = LineReaderBuilder.builder().build();
         // loop နဲ့ evaluate လုပ်မယ်။
         while (true) {
-            System.out.print("uit > ");
-            String line = reader.readLine();
-            if (line == null)
-                break;
-            interpretREPL(line);
+            try {
+                String line = reader.readLine("uit > ");
+                interpretREPL(line);
+            } catch (UserInterruptException e) {
+                return;
+            } catch (EndOfFileException e) {
+                return;
+            }
         }
-        reader.close();
-        input.close();
+        // reader.close();
+        // input.close();
     }
 
     /**
