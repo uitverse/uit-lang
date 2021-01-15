@@ -34,7 +34,7 @@ import org.jline.reader.LineReader.Option;
  */
 public class Main {
     // ဒါက interpreter version const
-    static final String version = "v1.0.0-aplha";
+    static final String version = "v1.0.0-alpha";
 
     // interpreter instance
     private static final Interpreter interpreter = new Interpreter();
