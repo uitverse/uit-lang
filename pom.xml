@@ -48,6 +48,8 @@
                 </executions>
                 <configuration>
                     <shortRevisionLength>7</shortRevisionLength>
+                    <!-- <doCheck>true</doCheck>
+                    <doUpdate>true</doUpdate> -->
                 </configuration>
             </plugin>
             <plugin>
@@ -62,7 +64,7 @@
                         <manifestEntries>
                             <Version>${project.version}</Version>
                             <Build-Time>${maven.build.timestamp}</Build-Time>
-                            <Build-Hash>${buildNumber}</Build-Hash>
+                            <Build-Number>${buildNumber}</Build-Number>
                         </manifestEntries>
                     </archive>
                     <descriptorRefs>

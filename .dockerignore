@@ -4,6 +4,4 @@
 .classpath
 .settings
 
-build/*
-!build/uit-*.jar
-!build/uit.1.gz
+build/

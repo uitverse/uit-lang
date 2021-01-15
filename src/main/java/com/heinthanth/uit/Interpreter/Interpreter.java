@@ -41,6 +41,7 @@ import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.UserInterruptException;
 import org.jline.reader.LineReader.Option;
+import org.jline.reader.impl.DefaultParser;
 
 class BreakSignal extends RuntimeException {
 
@@ -341,13 +342,15 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
 
     @Override
     public Object visitInputExpression(InputExpression expression) {
-        LineReader reader = LineReaderBuilder.builder().option(Option.INSERT_TAB, true).build();
+        DefaultParser parser = new DefaultParser();
+        parser.setEscapeChars(null);
+        LineReader reader = LineReaderBuilder.builder().option(Option.INSERT_TAB, true).parser(parser).build();
         String input = "";
         try {
             input = reader.readLine();
-        } catch(UserInterruptException e) {
+        } catch (UserInterruptException e) {
             System.exit(123);
-        } catch(EndOfFileException e) {
+        } catch (EndOfFileException e) {
             //
         }
         Integer distance = locals.get(expression);

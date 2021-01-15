@@ -26,6 +26,7 @@ import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.UserInterruptException;
 import org.jline.reader.LineReader.Option;
+import org.jline.reader.impl.DefaultParser;
 
 /**
  * interpreter အတွက် အဓိက class ပေါ့။ သူ့ကနေမှ command line argument
@@ -84,7 +85,9 @@ public class Main {
      * @throws IOException
      */
     private static void runREPL() {
-        LineReader reader = LineReaderBuilder.builder().option(Option.INSERT_TAB, true).build();
+        DefaultParser parser = new DefaultParser();
+        parser.setEscapeChars(null);
+        LineReader reader = LineReaderBuilder.builder().option(Option.INSERT_TAB, true).parser(parser).build();
         // loop နဲ့ evaluate လုပ်မယ်။
         while (true) {
             try {
@@ -132,7 +135,9 @@ public class Main {
         // reader class တွေ ဆောက်မယ်။
         // InputStreamReader input = new InputStreamReader(System.in);
         // BufferedReader reader = new BufferedReader(input);
-        LineReader reader = LineReaderBuilder.builder().option(Option.INSERT_TAB, true).build();
+        DefaultParser parser = new DefaultParser();
+        parser.setEscapeChars(null);
+        LineReader reader = LineReaderBuilder.builder().option(Option.INSERT_TAB, true).parser(parser).build();
         // အဓိကကတော့ shell redirection အတွက်ရည်ရွယ်ပြီး ထည့်ထားတာပါ။
         List<String> lines = new ArrayList<>();
         String[] code = new String[] {};
@@ -303,7 +308,7 @@ public class Main {
         Attributes manifest = loadManifest();
 
         System.out.println(Ansi.ansi().fg(Color.YELLOW).a("\nuit-lang ").a(manifest.getValue("Version")).a(" ")
-                .a("(build: ").a(manifest.getValue("Build-Hash").toUpperCase()).a(" - ")
+                .a("(build: ").a(manifest.getValue("Build-Number").toUpperCase()).a(" - ")
                 .a(manifest.getValue("Build-Time")).a(")").reset());
         System.out.println(Ansi.ansi().fg(Color.YELLOW).a("(c) 2021 Hein Thant Maung Maung. MIT Licensed.\n").reset());
         if (shouldExit)
