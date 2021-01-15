@@ -15,7 +15,7 @@ Since it's under development, documentations hasn't been written yet.
 You can install `uit-lang` interpreter in various methods.
 ### Prebuilt Package
 
-Well, you can download prebuilt `jar` [here](build/uit.jar). Then, run it through JRE.
+Well, you can download prebuilt `jar` [here](build/). Then, run it through JRE.
 
 ``` shell
 git clone -b main https://github.com/uitverse/uit-lang && cd uit-lang
@@ -26,8 +26,7 @@ clone first!
 ### Building with JDK
 
 ```shell
-javac -g:none -Werror -d build -cp src src/com/heinthanth/uit/Main.java
-java -cp build com.heinthanth.uit.Main
+mvn clean package
 ```
 
 ### Building with Docker
