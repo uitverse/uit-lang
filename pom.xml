@@ -5,7 +5,8 @@
     <version>1.0.0-alpha</version>
     <properties>
         <timestamp>${maven.build.timestamp}</timestamp>
-        <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
+        <maven.build.timestamp.format>MMM dd yyyy HH:mm:ss ZZZZ</maven.build.timestamp.format>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <dependencies>
         <dependency>
@@ -19,7 +20,11 @@
             <version>2.1.1</version>
         </dependency>
     </dependencies>
+    <scm>
+        <connection>scm:git:https://github.com/uitverse/uit-lang.git</connection>
+    </scm>
     <build>
+        <directory>build</directory>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -27,6 +32,22 @@
                 <version>3.8.1</version>
                 <configuration>
                     <release>11</release>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <version>1.4</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>create</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <shortRevisionLength>7</shortRevisionLength>
                 </configuration>
             </plugin>
             <plugin>
@@ -39,14 +60,15 @@
                             <mainClass>com.heinthanth.uit.Main</mainClass>
                         </manifest>
                         <manifestEntries>
+                            <Version>${project.version}</Version>
                             <Build-Time>${maven.build.timestamp}</Build-Time>
+                            <Build-Hash>${buildNumber}</Build-Hash>
                         </manifestEntries>
                     </archive>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
                     <appendAssemblyId>false</appendAssemblyId>
-                    <outputDirectory>build/</outputDirectory>
                 </configuration>
                 <executions>
                     <execution>

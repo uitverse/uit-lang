@@ -13,6 +13,7 @@ import com.heinthanth.uit.Runtime.Expression.CallExpression;
 import com.heinthanth.uit.Runtime.Expression.DecrementExpression;
 import com.heinthanth.uit.Runtime.Expression.GroupingExpression;
 import com.heinthanth.uit.Runtime.Expression.IncrementExpression;
+import com.heinthanth.uit.Runtime.Expression.InputExpression;
 import com.heinthanth.uit.Runtime.Expression.LiteralExpression;
 import com.heinthanth.uit.Runtime.Expression.LogicalExpression;
 import com.heinthanth.uit.Runtime.Expression.UnaryExpression;
@@ -84,6 +85,12 @@ public class Resolver implements Expression.Visitor<Void>, Statement.Visitor<Voi
         if (!scopes.isEmpty() && scopes.peek().get(expression.identifier.lexeme) == Boolean.FALSE) {
             errorHandler.reportError(expression.identifier, "Can't read local variable in its own initializer.");
         }
+        resolveLocal(expression, expression.identifier);
+        return null;
+    }
+
+    @Override
+    public Void visitInputExpression(InputExpression expression) {
         resolveLocal(expression, expression.identifier);
         return null;
     }

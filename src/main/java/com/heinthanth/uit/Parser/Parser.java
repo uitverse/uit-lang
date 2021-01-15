@@ -50,7 +50,8 @@ public class Parser {
         List<Statement> statements = new ArrayList<>();
         while (!isEOF()) {
             Statement dec = declaration();
-            if(dec != null) statements.add(dec);
+            if (dec != null)
+                statements.add(dec);
         }
         Token EOF_t = tokens.get(tokens.size() - 1);
         if (!fromREPL) {
@@ -168,7 +169,11 @@ public class Parser {
             return new Statement.BlockStatement(block(ENDBLOCK, "endblock"));
         if (match(LEFT_CURLY))
             return new Statement.BlockStatement(block(RIGHT_CURLY, "}"));
-        if (match(SEMICOLON)) return null;
+        if (match(INPUT))
+            return inputStatement();
+        if (match(SEMICOLON))
+            return null;
+
         // ကျန်တာကတော့ expression ပေါ့။
         return expressionStatement();
     }
@@ -355,6 +360,12 @@ public class Parser {
     // expression ထက် precedence ပုိမြင့်တာက logic or
     private Expression expression() {
         return assignment();
+    }
+
+    private Statement inputStatement() {
+        Token identifier = expect(IDENTIFIER, "Expect variable identifier.");
+        expect(SEMICOLON, "Missing ';' after statement");
+        return new Statement.ExpressionStatement(new Expression.InputExpression(identifier));
     }
 
     /**

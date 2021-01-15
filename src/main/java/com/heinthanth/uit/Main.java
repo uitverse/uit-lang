@@ -7,6 +7,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 
 import com.heinthanth.uit.Interpreter.Interpreter;
 import com.heinthanth.uit.Interpreter.Resolver;
@@ -33,9 +35,6 @@ import org.jline.reader.LineReader.Option;
  * @author (c) 2021 Hein Thant Maung Maung. MIT Licensed
  */
 public class Main {
-    // ဒါက interpreter version const
-    static final String version = "v1.0.0-alpha";
-
     // interpreter instance
     private static final Interpreter interpreter = new Interpreter();
 
@@ -265,7 +264,7 @@ public class Main {
      *
      * @param exitStatus info ပြပြီးရင် ဘာ code နဲ့ exit မလဲ
      */
-    private static void showUsage(int exitStatus) {
+    private static void showUsage(int exitStatus) throws IOException {
         if (exitStatus == 0) {
             showInterpreterInfo(false);
         } else {
@@ -285,10 +284,12 @@ public class Main {
         System.out.println("\t\tRun interpreter in REPL mode.");
 
         System.out.println(Ansi.ansi().fgBright(Color.YELLOW).a("\nExamples:").reset());
-        System.out.println(Ansi.ansi().fgBright(Color.GREEN).a("\tuit").reset().a("\n\t\tInterpret Standard Input (stdin)."));
+        System.out.println(
+                Ansi.ansi().fgBright(Color.GREEN).a("\tuit").reset().a("\n\t\tInterpret Standard Input (stdin)."));
         System.out.println(Ansi.ansi().fgBright(Color.GREEN).a("\tuit hello-world.uit").reset()
                 .a("\n\t\tInterpret code from 'hello-world.uit'."));
-        System.out.println(Ansi.ansi().fgBright(Color.GREEN).a("\tuit -i").reset().a("\n\t\tRun interpreter in REPL mode. Get input and interpret it.\n"));
+        System.out.println(Ansi.ansi().fgBright(Color.GREEN).a("\tuit -i").reset()
+                .a("\n\t\tRun interpreter in REPL mode. Get input and interpret it.\n"));
         System.exit(exitStatus);
     }
 
@@ -298,10 +299,23 @@ public class Main {
      * @param shouldExit info ပြပြီးရင် exit လုပ်သင့်လား မလုပ်သင့်လား ဒီ paramter
      *                   နဲ့ဆုံးဖြတ်မယ်။
      */
-    private static void showInterpreterInfo(boolean shouldExit) {
-        System.out.println(Ansi.ansi().fg(Color.YELLOW).a("\nuit-lang - ").a(version).reset());
-        System.out.println(Ansi.ansi().fg(Color.YELLOW).a("(c) Hein Thant Maung Maung. MIT Licensed.\n").reset());
+    private static void showInterpreterInfo(boolean shouldExit) throws IOException {
+        Attributes manifest = loadManifest();
+
+        System.out.println(Ansi.ansi().fg(Color.YELLOW).a("\nuit-lang ").a(manifest.getValue("Version")).a(" ")
+                .a("(build: ").a(manifest.getValue("Build-Hash").toUpperCase()).a(" - ")
+                .a(manifest.getValue("Build-Time")).a(")").reset());
+        System.out.println(Ansi.ansi().fg(Color.YELLOW).a("(c) 2021 Hein Thant Maung Maung. MIT Licensed.\n").reset());
         if (shouldExit)
             System.exit(0);
+    }
+
+    /**
+     * manifest file reader
+     */
+    private static Attributes loadManifest() throws IOException {
+        Manifest mf = new Manifest();
+        mf.read(Main.class.getClassLoader().getResourceAsStream("META-INF/MANIFEST.MF"));
+        return mf.getMainAttributes();
     }
 }

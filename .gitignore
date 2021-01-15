@@ -1,5 +1,6 @@
 .DS_Store
 .vscode
 .project
-
-target
+.settings
+build/*
+!build/uit-*.jar

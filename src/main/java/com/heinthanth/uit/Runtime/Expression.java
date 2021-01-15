@@ -13,6 +13,7 @@ public abstract class Expression {
         R visitVariableAccessExpression(VariableAccessExpression expression);
         R visitVariableAssignExpression(VariableAssignExpression expression);
         R visitLogicalExpression(LogicalExpression expression);
+        R visitInputExpression(InputExpression expression);
         R visitIncrementExpression(IncrementExpression expression);
         R visitDecrementExpression(DecrementExpression expression);
         R visitCallExpression(CallExpression expression);
@@ -127,6 +128,20 @@ public abstract class Expression {
         @Override
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitLogicalExpression(this);
+        }
+    }
+
+    public static class InputExpression extends Expression {
+
+        public final Token identifier;
+
+        public InputExpression(Token identifier) {
+            this.identifier = identifier;
+        }
+
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitInputExpression(this);
         }
     }
 

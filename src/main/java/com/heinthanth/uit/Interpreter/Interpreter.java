@@ -18,6 +18,7 @@ import com.heinthanth.uit.Runtime.Expression.CallExpression;
 import com.heinthanth.uit.Runtime.Expression.DecrementExpression;
 import com.heinthanth.uit.Runtime.Expression.GroupingExpression;
 import com.heinthanth.uit.Runtime.Expression.IncrementExpression;
+import com.heinthanth.uit.Runtime.Expression.InputExpression;
 import com.heinthanth.uit.Runtime.Expression.LiteralExpression;
 import com.heinthanth.uit.Runtime.Expression.LogicalExpression;
 import com.heinthanth.uit.Runtime.Expression.UnaryExpression;
@@ -34,6 +35,12 @@ import com.heinthanth.uit.Runtime.Statement.ReturnStatement;
 import com.heinthanth.uit.Runtime.Statement.VariableDeclarationStatement;
 import com.heinthanth.uit.Runtime.Statement.WhileStatement;
 import com.heinthanth.uit.Utils.ErrorHandler;
+
+import org.jline.reader.EndOfFileException;
+import org.jline.reader.LineReader;
+import org.jline.reader.LineReaderBuilder;
+import org.jline.reader.UserInterruptException;
+import org.jline.reader.LineReader.Option;
 
 class BreakSignal extends RuntimeException {
 
@@ -294,7 +301,7 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
     @Override
     public Void visitOutputStatement(OutputStatement statement) {
         Object value = evaluate(statement.expression);
-        System.out.println(stringify(value));
+        System.out.print(stringify(value));
         return null;
     }
 
@@ -330,6 +337,26 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
         }
 
         return function.invoke(this, arguments);
+    }
+
+    @Override
+    public Object visitInputExpression(InputExpression expression) {
+        LineReader reader = LineReaderBuilder.builder().option(Option.INSERT_TAB, true).build();
+        String input = "";
+        try {
+            input = reader.readLine();
+        } catch(UserInterruptException e) {
+            System.exit(123);
+        } catch(EndOfFileException e) {
+            //
+        }
+        Integer distance = locals.get(expression);
+        if (distance != null) {
+            environment.assignAt(distance, expression.identifier, input);
+        } else {
+            globals.assign(expression.identifier, input);
+        }
+        return input;
     }
 
     /**

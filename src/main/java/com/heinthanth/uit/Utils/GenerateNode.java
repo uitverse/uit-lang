@@ -22,6 +22,7 @@ public class GenerateNode {
                 "VariableAccessExpression : Token identifier",
                 "VariableAssignExpression : Token identifier, Expression value",
                 "LogicalExpression  : Expression left, Token operator, Expression right",
+                "InputExpression    : Token identifier",
                 "IncrementExpression   : Expression identifier, Token operator, String mode",
                 "DecrementExpression   : Expression identifier, Token operator, String mode",
                 "CallExpression     : Expression callee, Token paren, List<Expression> arguments"
