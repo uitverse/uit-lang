@@ -5,7 +5,7 @@ uit: classes manifest
 	unzip "lib/jansi-2.1.0.jar" "org/*" -d "tmp"
 	mkdir build
 	jar cmvf "META-INF/MANIFEST.MF" build/uit.jar -C "tmp" .
-	rm -rf "tmp"
+	rm -rf "tmp" "META-INF"
 
 classes: clean
 	# create classes
@@ -27,7 +27,7 @@ manifest:
 	echo "Built-On: $$(echo $$(whoami)@$$(hostname) | cut -d"." -f1)" >> "META-INF/MANIFEST.MF"
 
 clean:
-	rm -rf build tmp
+	rm -rf build tmp "META-INF"
 
 man:
 	test -d build || mkdir build

@@ -4,7 +4,8 @@
 .classpath
 .settings
 
-build/*
-!build/uit-*.jar
-!build/uit.1.gz
 META-INF/
+
+build/*
+!build/uit.jar
+!build/uit.1.gz
