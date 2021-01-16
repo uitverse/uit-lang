@@ -64,6 +64,8 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
     public final Environment globals = new Environment();
     private Environment environment = globals;
 
+    private LineReader reader;
+
     private final Map<Expression, Integer> locals = new HashMap<>();
 
     // builtin function တွေကို define ဖို့ constructor
@@ -159,7 +161,9 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
      * @param errorHandler
      * @param fromREPL
      */
-    public void interpret(List<Statement> statements, ErrorHandler errorHandler, boolean fromREPL) {
+    public void interpret(List<Statement> statements, ErrorHandler errorHandler, boolean fromREPL, LineReader reader) {
+        this.reader = reader;
+
         try {
             if (fromREPL && statements.size() == 1 && statements.get(0) instanceof ExpressionStatement) {
                 // REPL မှာ expression statement run ခဲ့ရင် auto output ထုတ်ပေးမယ်။
@@ -342,9 +346,6 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
 
     @Override
     public Object visitInputExpression(InputExpression expression) {
-        DefaultParser parser = new DefaultParser();
-        parser.setEscapeChars(null);
-        LineReader reader = LineReaderBuilder.builder().option(Option.INSERT_TAB, true).parser(parser).build();
         String input = "";
         try {
             input = reader.readLine();

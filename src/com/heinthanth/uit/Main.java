@@ -43,11 +43,13 @@ public class Main {
         // initialize terminal
         AnsiConsole.systemInstall();
 
+        LineReader reader = createReader();
+
         // argument ဘာမှ မပါဘူးဆိုတာက stdin run ဖို့များတယ်။ အဲ့တော့
         // runFromStandardInput()
         // ကိုခေါ်လိုက်မယ်။
         if (args.length == 0) {
-            runFromStandardInput();
+            runFromStandardInput(reader);
             // ဒီမှာဆို argument တစ်ခုပါလာပြီး
         } else if (args.length == 1) {
             // သူ help တောင်းတာလား ? အာ့ဆို usage information ပြမယ်။
@@ -58,10 +60,10 @@ public class Main {
                 showInterpreterInfo(true);
                 // သူက interactive mode run ချင်တာလား? အာ့ဆို REPL run မယ်။
             } else if ("-i".equals(args[0]) || "--interactive".equals(args[0])) {
-                runREPL();
+                runREPL(reader);
                 // အရင်ဆုံး file လား stdin လားလို့ အရင်စစ်မယ်။ (stdin == "-")
             } else if ("-".equals(args[0])) {
-                runFromStandardInput();
+                runFromStandardInput(reader);
                 // အပေါ်သုံးခုမဟုတ်ဘူးဆိုရင် သေချာတာက file ကို argument အနေနဲ့ပေးတာပဲ။
             } else {
                 // ဒါပေမယ့် file တွေက (-, --) နဲ့ စလေ့မရှိဘူး။ ဒီတော့ option flag
@@ -70,7 +72,7 @@ public class Main {
                     System.err.println("\nError: invalid option '" + args[0] + "'.\n");
                     System.exit(1);
                 } else {
-                    runFile(args[0]);
+                    runFile(args[0], reader);
                 }
             }
         } else {
@@ -84,10 +86,7 @@ public class Main {
      *
      * @throws IOException
      */
-    private static void runREPL() {
-        DefaultParser parser = new DefaultParser();
-        parser.setEscapeChars(null);
-        LineReader reader = LineReaderBuilder.builder().option(Option.INSERT_TAB, true).parser(parser).build();
+    private static void runREPL(LineReader reader) {
         // loop နဲ့ evaluate လုပ်မယ်။
         while (true) {
             try {
@@ -115,13 +114,13 @@ public class Main {
             System.out.flush();
             // သူက editor လိုချင်တာလား ?
         } else if (input.equals(".editor")) {
-            runFromString(createEditor(reader), true, "repl");
+            runFromString(createEditor(reader), true, "repl", reader);
             // exit မှာလား
         } else if (".exit".equals(input) || ".quit".equals(input)) {
             System.exit(0);
         } else {
             // ဘာမှန်းမသိလို့ ဒီအတိုင်း run လိုက်မယ်။
-            runFromString(input, true, "repl");
+            runFromString(input, true, "repl", reader);
         }
     }
 
@@ -131,13 +130,7 @@ public class Main {
      * @return stdin ကရတဲ့ string
      * @throws IOException
      */
-    private static String getStringFromStandardInput() {
-        // reader class တွေ ဆောက်မယ်။
-        // InputStreamReader input = new InputStreamReader(System.in);
-        // BufferedReader reader = new BufferedReader(input);
-        DefaultParser parser = new DefaultParser();
-        parser.setEscapeChars(null);
-        LineReader reader = LineReaderBuilder.builder().option(Option.INSERT_TAB, true).parser(parser).build();
+    private static String getStringFromStandardInput(LineReader reader) {
         // အဓိကကတော့ shell redirection အတွက်ရည်ရွယ်ပြီး ထည့်ထားတာပါ။
         List<String> lines = new ArrayList<>();
         String[] code = new String[] {};
@@ -161,9 +154,9 @@ public class Main {
      *
      * @throws IOException
      */
-    private static void runFromStandardInput() {
+    private static void runFromStandardInput(LineReader reader) {
         // ထုံးစံအတိုင်း code string ရပြီးဆိုတော့ interpret မယ်။
-        runFromString(getStringFromStandardInput(), false, "stdin");
+        runFromString(getStringFromStandardInput(reader), false, "stdin", reader);
     }
 
     private static String createEditor(LineReader reader) {
@@ -190,13 +183,13 @@ public class Main {
      * @param path ဒါကတော့ interpret မယ့် file ရဲ့ path ပေါ့။
      * @throws IOException
      */
-    private static void runFile(String path) throws IOException {
+    private static void runFile(String path, LineReader reader) throws IOException {
         // file class တစ်ခု create တယ်။
         File script = new File(path);
         if (script.canRead()) {
             // file content ကို ဖတ်ပြီး run မယ်။
             byte[] bytes = Files.readAllBytes(Paths.get(path));
-            runFromString(new String(bytes, Charset.defaultCharset()), false, script.getName());
+            runFromString(new String(bytes, Charset.defaultCharset()), false, script.getName(), reader);
             // အဲ့တော့ file content ကို ဖတ်လို့မရရင် error ပြမယ်။
         } else {
             // error မို့လို့ standard error ထဲကို write မယ်။
@@ -214,7 +207,7 @@ public class Main {
      * @param fromREPL ဒါက REPL ကလာတာလား file က လာတာလား ခွဲချင်လို့ပါ။ REPL ကဆိုရင်
      *                 error တက်လည်း script exit မဖြစ်အောင်ပေါ့။
      */
-    private static void runFromString(String code, boolean fromREPL, String filename) {
+    private static void runFromString(String code, boolean fromREPL, String filename, LineReader reader) {
         // error handler ကို initialize လုပ်မယ်။
         ErrorHandler errorHandler = new ErrorHandler(code, filename, fromREPL);
 
@@ -243,7 +236,7 @@ public class Main {
 
         // AstPrinter printer = new AstPrinter();
         // System.out.println(printer.print(expression));
-        interpreter.interpret(statements, errorHandler, fromREPL);
+        interpreter.interpret(statements, errorHandler, fromREPL, reader);
     }
 
     private static boolean handleError(ErrorHandler errorHandler, boolean fromREPL) {
@@ -310,7 +303,8 @@ public class Main {
         System.out.println(Ansi.ansi().fg(Color.YELLOW).a("\nuit-lang ").a(manifest.getValue("Version")).a(" ")
                 .a("(build: ").a(manifest.getValue("Build-Number").toUpperCase()).a(" - ")
                 .a(manifest.getValue("Build-Time")).a(")").reset());
-        System.out.println(Ansi.ansi().fg(Color.YELLOW).a("(c) 2021 Hein Thant Maung Maung. MIT Licensed.\n").reset());
+        System.out.println(
+                Ansi.ansi().fg(Color.YELLOW).a("(c) 2021 Hein Thant Maung Maung. Licensed under MIT.\n").reset());
         if (shouldExit)
             System.exit(0);
     }
@@ -322,5 +316,13 @@ public class Main {
         Manifest mf = new Manifest();
         mf.read(Main.class.getClassLoader().getResourceAsStream("META-INF/MANIFEST.MF"));
         return mf.getMainAttributes();
+    }
+
+    private static LineReader createReader() {
+        DefaultParser parser = new DefaultParser();
+        parser.setEscapeChars(null);
+        LineReader reader = LineReaderBuilder.builder().option(Option.INSERT_TAB, true).parser(parser).build();
+
+        return reader;
     }
 }

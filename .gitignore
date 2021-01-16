@@ -7,3 +7,4 @@
 build/*
 !build/uit-*.jar
 !build/uit.1.gz
+META-INF/
