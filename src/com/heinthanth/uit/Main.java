@@ -39,17 +39,18 @@ public class Main {
     // interpreter instance
     private static final Interpreter interpreter = new Interpreter();
 
+    private static LineReader reader;
+
     public static void main(String[] args) throws IOException {
         // initialize terminal
         AnsiConsole.systemInstall();
 
-        LineReader reader = createReader();
-
+        reader = createReader();
         // argument ဘာမှ မပါဘူးဆိုတာက stdin run ဖို့များတယ်။ အဲ့တော့
         // runFromStandardInput()
         // ကိုခေါ်လိုက်မယ်။
         if (args.length == 0) {
-            runFromStandardInput(reader);
+            runFromStandardInput();
             // ဒီမှာဆို argument တစ်ခုပါလာပြီး
         } else if (args.length == 1) {
             // သူ help တောင်းတာလား ? အာ့ဆို usage information ပြမယ်။
@@ -60,10 +61,10 @@ public class Main {
                 showInterpreterInfo(true);
                 // သူက interactive mode run ချင်တာလား? အာ့ဆို REPL run မယ်။
             } else if ("-i".equals(args[0]) || "--interactive".equals(args[0])) {
-                runREPL(reader);
+                runREPL();
                 // အရင်ဆုံး file လား stdin လားလို့ အရင်စစ်မယ်။ (stdin == "-")
             } else if ("-".equals(args[0])) {
-                runFromStandardInput(reader);
+                runFromStandardInput();
                 // အပေါ်သုံးခုမဟုတ်ဘူးဆိုရင် သေချာတာက file ကို argument အနေနဲ့ပေးတာပဲ။
             } else {
                 // ဒါပေမယ့် file တွေက (-, --) နဲ့ စလေ့မရှိဘူး။ ဒီတော့ option flag
@@ -72,7 +73,7 @@ public class Main {
                     System.err.println("\nError: invalid option '" + args[0] + "'.\n");
                     System.exit(1);
                 } else {
-                    runFile(args[0], reader);
+                    runFile(args[0]);
                 }
             }
         } else {
@@ -86,12 +87,12 @@ public class Main {
      *
      * @throws IOException
      */
-    private static void runREPL(LineReader reader) {
+    private static void runREPL() {
         // loop နဲ့ evaluate လုပ်မယ်။
         while (true) {
             try {
                 String line = reader.readLine(Ansi.ansi().fg(Color.YELLOW).a("uit > ").reset().toString());
-                interpretREPL(line, reader);
+                interpretREPL(line);
             } catch (UserInterruptException e) {
                 return;
             } catch (EndOfFileException e) {
@@ -108,19 +109,19 @@ public class Main {
      *
      * @param input REPL ကနေလာတဲ့ string input ပေါ့။
      */
-    private static void interpretREPL(String input, LineReader reader) {
+    private static void interpretREPL(String input) {
         if (".clear".equals(input)) {
             System.out.print("\033[H\033[2J");
             System.out.flush();
             // သူက editor လိုချင်တာလား ?
         } else if (input.equals(".editor")) {
-            runFromString(createEditor(reader), true, "repl", reader);
+            runFromString(createEditor(), true, "repl");
             // exit မှာလား
         } else if (".exit".equals(input) || ".quit".equals(input)) {
             System.exit(0);
         } else {
             // ဘာမှန်းမသိလို့ ဒီအတိုင်း run လိုက်မယ်။
-            runFromString(input, true, "repl", reader);
+            runFromString(input, true, "repl");
         }
     }
 
@@ -130,7 +131,7 @@ public class Main {
      * @return stdin ကရတဲ့ string
      * @throws IOException
      */
-    private static String getStringFromStandardInput(LineReader reader) {
+    private static String getStringFromStandardInput() {
         // အဓိကကတော့ shell redirection အတွက်ရည်ရွယ်ပြီး ထည့်ထားတာပါ။
         List<String> lines = new ArrayList<>();
         String[] code = new String[] {};
@@ -154,12 +155,12 @@ public class Main {
      *
      * @throws IOException
      */
-    private static void runFromStandardInput(LineReader reader) {
+    private static void runFromStandardInput() {
         // ထုံးစံအတိုင်း code string ရပြီးဆိုတော့ interpret မယ်။
-        runFromString(getStringFromStandardInput(reader), false, "stdin", reader);
+        runFromString(getStringFromStandardInput(), false, "stdin");
     }
 
-    private static String createEditor(LineReader reader) {
+    private static String createEditor() {
         List<String> lines = new ArrayList<>();
         String[] code = new String[] {};
         String line = null;
@@ -183,13 +184,13 @@ public class Main {
      * @param path ဒါကတော့ interpret မယ့် file ရဲ့ path ပေါ့။
      * @throws IOException
      */
-    private static void runFile(String path, LineReader reader) throws IOException {
+    private static void runFile(String path) throws IOException {
         // file class တစ်ခု create တယ်။
         File script = new File(path);
         if (script.canRead()) {
             // file content ကို ဖတ်ပြီး run မယ်။
             byte[] bytes = Files.readAllBytes(Paths.get(path));
-            runFromString(new String(bytes, Charset.defaultCharset()), false, script.getName(), reader);
+            runFromString(new String(bytes, Charset.defaultCharset()), false, script.getName());
             // အဲ့တော့ file content ကို ဖတ်လို့မရရင် error ပြမယ်။
         } else {
             // error မို့လို့ standard error ထဲကို write မယ်။
@@ -207,7 +208,7 @@ public class Main {
      * @param fromREPL ဒါက REPL ကလာတာလား file က လာတာလား ခွဲချင်လို့ပါ။ REPL ကဆိုရင်
      *                 error တက်လည်း script exit မဖြစ်အောင်ပေါ့။
      */
-    private static void runFromString(String code, boolean fromREPL, String filename, LineReader reader) {
+    private static void runFromString(String code, boolean fromREPL, String filename) {
         // error handler ကို initialize လုပ်မယ်။
         ErrorHandler errorHandler = new ErrorHandler(code, filename, fromREPL);
 
@@ -321,8 +322,6 @@ public class Main {
     private static LineReader createReader() {
         DefaultParser parser = new DefaultParser();
         parser.setEscapeChars(null);
-        LineReader reader = LineReaderBuilder.builder().option(Option.INSERT_TAB, true).parser(parser).build();
-
-        return reader;
+        return LineReaderBuilder.builder().option(Option.INSERT_TAB, true).parser(parser).build();
     }
 }

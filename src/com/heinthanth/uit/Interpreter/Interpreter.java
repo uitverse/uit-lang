@@ -38,10 +38,7 @@ import com.heinthanth.uit.Utils.ErrorHandler;
 
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
-import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.UserInterruptException;
-import org.jline.reader.LineReader.Option;
-import org.jline.reader.impl.DefaultParser;
 
 class BreakSignal extends RuntimeException {
 
