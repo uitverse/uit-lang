@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.heinthanth.uit.Lexer.token_t;
+import com.heinthanth.uit.Runtime.UitCallable;
+import com.heinthanth.uit.Runtime.UitFunction;
 
 public class TypeMapper {
     /**
@@ -65,6 +67,8 @@ public class TypeMapper {
             put(String.class, "String");
             put(Boolean.class, "Boolean");
             put(Void.class, "void");
+            put(UitCallable.class, "callable");
+            put(UitFunction.class, "function");
         }
     };
 }
