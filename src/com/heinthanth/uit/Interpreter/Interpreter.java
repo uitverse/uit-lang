@@ -13,27 +13,6 @@ import com.heinthanth.uit.Runtime.Statement;
 import com.heinthanth.uit.Runtime.UitCallable;
 import com.heinthanth.uit.Runtime.UitFunction;
 import com.heinthanth.uit.Runtime.RuntimeError;
-import com.heinthanth.uit.Runtime.Expression.BinaryExpression;
-import com.heinthanth.uit.Runtime.Expression.CallExpression;
-import com.heinthanth.uit.Runtime.Expression.DecrementExpression;
-import com.heinthanth.uit.Runtime.Expression.GroupingExpression;
-import com.heinthanth.uit.Runtime.Expression.IncrementExpression;
-import com.heinthanth.uit.Runtime.Expression.InputExpression;
-import com.heinthanth.uit.Runtime.Expression.LiteralExpression;
-import com.heinthanth.uit.Runtime.Expression.LogicalExpression;
-import com.heinthanth.uit.Runtime.Expression.UnaryExpression;
-import com.heinthanth.uit.Runtime.Expression.VariableAccessExpression;
-import com.heinthanth.uit.Runtime.Expression.VariableAssignExpression;
-import com.heinthanth.uit.Runtime.Statement.BlockStatement;
-import com.heinthanth.uit.Runtime.Statement.BreakStatement;
-import com.heinthanth.uit.Runtime.Statement.ContinueStatement;
-import com.heinthanth.uit.Runtime.Statement.ExpressionStatement;
-import com.heinthanth.uit.Runtime.Statement.FunctionStatement;
-import com.heinthanth.uit.Runtime.Statement.IfStatement;
-import com.heinthanth.uit.Runtime.Statement.OutputStatement;
-import com.heinthanth.uit.Runtime.Statement.ReturnStatement;
-import com.heinthanth.uit.Runtime.Statement.VariableDeclarationStatement;
-import com.heinthanth.uit.Runtime.Statement.WhileStatement;
 import com.heinthanth.uit.Utils.ErrorHandler;
 
 import org.jline.reader.EndOfFileException;
@@ -162,9 +141,9 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
         this.reader = reader;
 
         try {
-            if (fromREPL && statements.size() == 1 && statements.get(0) instanceof ExpressionStatement) {
+            if (fromREPL && statements.size() == 1 && statements.get(0) instanceof Statement.ExpressionStatement) {
                 // REPL မှာ expression statement run ခဲ့ရင် auto output ထုတ်ပေးမယ်။
-                ExpressionStatement statement = (ExpressionStatement) statements.get(0);
+                Statement.ExpressionStatement statement = (Statement.ExpressionStatement) statements.get(0);
                 Object value = evaluate(statement.expression);
                 if (value != null)
                     System.out.println(stringify(value));
@@ -183,14 +162,14 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
      * function call တွေကို interpret မယ်။
      */
     @Override
-    public Void visitFunctionStatement(FunctionStatement statement) {
+    public Void visitFunctionStatement(Statement.FunctionStatement statement) {
         UitFunction function = new UitFunction(statement, environment);
         environment.define(statement.identifier, function);
         return null;
     }
 
     @Override
-    public Void visitReturnStatement(ReturnStatement statement) {
+    public Void visitReturnStatement(Statement.ReturnStatement statement) {
         Object value = null;
         if (statement.value != null)
             value = evaluate(statement.value);
@@ -201,7 +180,7 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
      * variable declare မယ်။
      */
     @Override
-    public Void visitVariableDeclarationStatement(VariableDeclarationStatement statement) {
+    public Void visitVariableDeclarationStatement(Statement.VariableDeclarationStatement statement) {
         Object value = null;
         switch (statement.type.type) {
             case VT_STRING:
@@ -230,7 +209,7 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
      * @return
      */
     @Override
-    public Void visitIfStatement(IfStatement statement) {
+    public Void visitIfStatement(Statement.IfStatement statement) {
         for (Map.Entry<Expression, Statement> stmt : statement.branches.entrySet()) {
             if (isTrue(evaluate(stmt.getKey()))) {
                 execute(stmt.getValue());
@@ -250,7 +229,7 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
      * @return
      */
     @Override
-    public Void visitWhileStatement(WhileStatement statement) {
+    public Void visitWhileStatement(Statement.WhileStatement statement) {
         while (isTrue(evaluate(statement.condition))) {
             try {
                 execute(statement.instructions);
@@ -265,18 +244,18 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
 
     // loop break မယ်။
     @Override
-    public Void visitBreakStatement(BreakStatement statement) {
+    public Void visitBreakStatement(Statement.BreakStatement statement) {
         throw new BreakSignal();
     }
 
     // continue break မယ်။
     @Override
-    public Void visitContinueStatement(ContinueStatement statement) {
+    public Void visitContinueStatement(Statement.ContinueStatement statement) {
         throw new ContinueSignal();
     }
 
     @Override
-    public Object visitLogicalExpression(LogicalExpression expression) {
+    public Object visitLogicalExpression(Expression.LogicalExpression expression) {
         Object left = evaluate(expression.left);
         if (expression.operator.type == token_t.OR) {
             if (isTrue(left))
@@ -292,7 +271,7 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
      * block statement တွေကို interpret လုပ်မယ်။
      */
     @Override
-    public Void visitBlockStatement(BlockStatement statement) {
+    public Void visitBlockStatement(Statement.BlockStatement statement) {
         executeBlock(statement.statements, new Environment(this.environment));
         return null;
     }
@@ -301,7 +280,7 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
      * output statement ကို interpret မယ်။
      */
     @Override
-    public Void visitOutputStatement(OutputStatement statement) {
+    public Void visitOutputStatement(Statement.OutputStatement statement) {
         Object value = evaluate(statement.expression);
         System.out.print(stringify(value));
         return null;
@@ -311,7 +290,7 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
      * expression statement ကို interpret မယ်။
      */
     @Override
-    public Void visitExpressionStatement(ExpressionStatement statement) {
+    public Void visitExpressionStatement(Statement.ExpressionStatement statement) {
         evaluate(statement.expression);
         return null;
     }
@@ -320,7 +299,7 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
      * function call တွေကို interpret မယ်။
      */
     @Override
-    public Object visitCallExpression(CallExpression expression) {
+    public Object visitCallExpression(Expression.CallExpression expression) {
         Object callee = evaluate(expression.callee);
 
         List<Object> arguments = new ArrayList<>();
@@ -342,7 +321,7 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
     }
 
     @Override
-    public Object visitInputExpression(InputExpression expression) {
+    public Object visitInputExpression(Expression.InputExpression expression) {
         String input = "";
         try {
             input = reader.readLine();
@@ -364,7 +343,7 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
      * variable ကို value အသစ်ထည့်မယ်။
      */
     @Override
-    public Object visitVariableAssignExpression(VariableAssignExpression expression) {
+    public Object visitVariableAssignExpression(Expression.VariableAssignExpression expression) {
         Object value = evaluate(expression.value);
 
         Integer distance = locals.get(expression);
@@ -381,9 +360,9 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
      * prefix / postfix increment လုပ်မယ်။
      */
     @Override
-    public Object visitIncrementExpression(IncrementExpression expression) {
-        if (expression.identifier instanceof VariableAccessExpression) {
-            VariableAccessExpression variable = (VariableAccessExpression) expression.identifier;
+    public Object visitIncrementExpression(Expression.IncrementExpression expression) {
+        if (expression.identifier instanceof Expression.VariableAccessExpression) {
+            Expression.VariableAccessExpression variable = (Expression.VariableAccessExpression) expression.identifier;
             Object previous = evaluate(variable);
 
             if (previous instanceof Double) {
@@ -413,9 +392,9 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
      * prefix / postfix decrement လုပ်မယ်။
      */
     @Override
-    public Object visitDecrementExpression(DecrementExpression expression) {
-        if (expression.identifier instanceof VariableAccessExpression) {
-            VariableAccessExpression variable = (VariableAccessExpression) expression.identifier;
+    public Object visitDecrementExpression(Expression.DecrementExpression expression) {
+        if (expression.identifier instanceof Expression.VariableAccessExpression) {
+            Expression.VariableAccessExpression variable = (Expression.VariableAccessExpression) expression.identifier;
             Object previous = evaluate(variable);
             if (previous instanceof Double) {
                 Object current = (double) previous - 1;
@@ -444,7 +423,7 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
      * literal expression တစ်ခုကနေ value ကိုယူမယ်။
      */
     @Override
-    public Object visitLiteralExpression(LiteralExpression expression) {
+    public Object visitLiteralExpression(Expression.LiteralExpression expression) {
         return expression.value.getValue();
     }
 
@@ -452,7 +431,7 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
      * grouping expression ကို evaluate လုပ်မယ်။
      */
     @Override
-    public Object visitGroupingExpression(GroupingExpression expression) {
+    public Object visitGroupingExpression(Expression.GroupingExpression expression) {
         return evaluate(expression.expression);
     }
 
@@ -460,7 +439,7 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
      * unary operation တွေကို ေဖြရှင်းမယ်။
      */
     @Override
-    public Object visitUnaryExpression(UnaryExpression expression) {
+    public Object visitUnaryExpression(Expression.UnaryExpression expression) {
         Object right = evaluate(expression.right);
         switch (expression.operator.type) {
             case NOT:
@@ -477,7 +456,7 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
      * binary expression တွေကို solve မယ်။
      */
     @Override
-    public Object visitBinaryExpression(BinaryExpression expression) {
+    public Object visitBinaryExpression(Expression.BinaryExpression expression) {
         Object left = evaluate(expression.left);
         Object right = evaluate(expression.right);
 
@@ -529,7 +508,7 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
      * variable ကနေ တန်ဖိုးကိုယူမယ်။
      */
     @Override
-    public Object visitVariableAccessExpression(VariableAccessExpression expression) {
+    public Object visitVariableAccessExpression(Expression.VariableAccessExpression expression) {
         return lookUpVariable(expression.identifier, expression);
     }
 

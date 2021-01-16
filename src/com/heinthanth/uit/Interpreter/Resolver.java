@@ -8,27 +8,6 @@ import java.util.Stack;
 import com.heinthanth.uit.Lexer.Token;
 import com.heinthanth.uit.Runtime.Expression;
 import com.heinthanth.uit.Runtime.Statement;
-import com.heinthanth.uit.Runtime.Expression.BinaryExpression;
-import com.heinthanth.uit.Runtime.Expression.CallExpression;
-import com.heinthanth.uit.Runtime.Expression.DecrementExpression;
-import com.heinthanth.uit.Runtime.Expression.GroupingExpression;
-import com.heinthanth.uit.Runtime.Expression.IncrementExpression;
-import com.heinthanth.uit.Runtime.Expression.InputExpression;
-import com.heinthanth.uit.Runtime.Expression.LiteralExpression;
-import com.heinthanth.uit.Runtime.Expression.LogicalExpression;
-import com.heinthanth.uit.Runtime.Expression.UnaryExpression;
-import com.heinthanth.uit.Runtime.Expression.VariableAccessExpression;
-import com.heinthanth.uit.Runtime.Expression.VariableAssignExpression;
-import com.heinthanth.uit.Runtime.Statement.BlockStatement;
-import com.heinthanth.uit.Runtime.Statement.BreakStatement;
-import com.heinthanth.uit.Runtime.Statement.ContinueStatement;
-import com.heinthanth.uit.Runtime.Statement.ExpressionStatement;
-import com.heinthanth.uit.Runtime.Statement.FunctionStatement;
-import com.heinthanth.uit.Runtime.Statement.IfStatement;
-import com.heinthanth.uit.Runtime.Statement.OutputStatement;
-import com.heinthanth.uit.Runtime.Statement.ReturnStatement;
-import com.heinthanth.uit.Runtime.Statement.VariableDeclarationStatement;
-import com.heinthanth.uit.Runtime.Statement.WhileStatement;
 import com.heinthanth.uit.Utils.ErrorHandler;
 
 public class Resolver implements Expression.Visitor<Void>, Statement.Visitor<Void> {
@@ -62,7 +41,7 @@ public class Resolver implements Expression.Visitor<Void>, Statement.Visitor<Voi
     }
 
     @Override
-    public Void visitBlockStatement(BlockStatement statement) {
+    public Void visitBlockStatement(Statement.BlockStatement statement) {
         // scope အသစ်လုပ်မယ်။
         beginScope();
         resolve(statement.statements);
@@ -72,7 +51,7 @@ public class Resolver implements Expression.Visitor<Void>, Statement.Visitor<Voi
     }
 
     @Override
-    public Void visitVariableDeclarationStatement(VariableDeclarationStatement statement) {
+    public Void visitVariableDeclarationStatement(Statement.VariableDeclarationStatement statement) {
         declare(statement.identifier);
         if (statement.initializer != null)
             resolve(statement.initializer);
@@ -81,7 +60,7 @@ public class Resolver implements Expression.Visitor<Void>, Statement.Visitor<Voi
     }
 
     @Override
-    public Void visitVariableAccessExpression(VariableAccessExpression expression) {
+    public Void visitVariableAccessExpression(Expression.VariableAccessExpression expression) {
         if (!scopes.isEmpty() && scopes.peek().get(expression.identifier.lexeme) == Boolean.FALSE) {
             errorHandler.reportError(expression.identifier, "Can't read local variable in its own initializer.");
         }
@@ -90,34 +69,34 @@ public class Resolver implements Expression.Visitor<Void>, Statement.Visitor<Voi
     }
 
     @Override
-    public Void visitInputExpression(InputExpression expression) {
+    public Void visitInputExpression(Expression.InputExpression expression) {
         resolveLocal(expression, expression.identifier);
         return null;
     }
 
     @Override
-    public Void visitVariableAssignExpression(VariableAssignExpression expression) {
+    public Void visitVariableAssignExpression(Expression.VariableAssignExpression expression) {
         resolve(expression.value);
         resolveLocal(expression, expression.identifier);
         return null;
     }
 
     @Override
-    public Void visitIncrementExpression(IncrementExpression expression) {
-        VariableAccessExpression var = (VariableAccessExpression) expression.identifier;
+    public Void visitIncrementExpression(Expression.IncrementExpression expression) {
+        Expression.VariableAccessExpression var = (Expression.VariableAccessExpression) expression.identifier;
         resolveLocal(var, var.identifier);
         return null;
     }
 
     @Override
-    public Void visitDecrementExpression(DecrementExpression expression) {
-        VariableAccessExpression var = (VariableAccessExpression) expression.identifier;
+    public Void visitDecrementExpression(Expression.DecrementExpression expression) {
+        Expression.VariableAccessExpression var = (Expression.VariableAccessExpression) expression.identifier;
         resolveLocal(var, var.identifier);
         return null;
     }
 
     @Override
-    public Void visitFunctionStatement(FunctionStatement stmt) {
+    public Void visitFunctionStatement(Statement.FunctionStatement stmt) {
         declare(stmt.identifier);
         define(stmt.identifier);
 
@@ -126,13 +105,13 @@ public class Resolver implements Expression.Visitor<Void>, Statement.Visitor<Voi
     }
 
     @Override
-    public Void visitExpressionStatement(ExpressionStatement statement) {
+    public Void visitExpressionStatement(Statement.ExpressionStatement statement) {
         resolve(statement.expression);
         return null;
     }
 
     @Override
-    public Void visitIfStatement(IfStatement stmt) {
+    public Void visitIfStatement(Statement.IfStatement stmt) {
         for (Map.Entry<Expression, Statement> branch : stmt.branches.entrySet()) {
             resolve(branch.getKey());
             resolve(branch.getValue());
@@ -143,13 +122,13 @@ public class Resolver implements Expression.Visitor<Void>, Statement.Visitor<Voi
     }
 
     @Override
-    public Void visitOutputStatement(OutputStatement statement) {
+    public Void visitOutputStatement(Statement.OutputStatement statement) {
         resolve(statement.expression);
         return null;
     }
 
     @Override
-    public Void visitReturnStatement(ReturnStatement stmt) {
+    public Void visitReturnStatement(Statement.ReturnStatement stmt) {
         if (currentFunction == function_t.NONE) {
             errorHandler.reportError(stmt.ret, "Can't use return from top-level code (outside of function).");
         }
@@ -160,28 +139,28 @@ public class Resolver implements Expression.Visitor<Void>, Statement.Visitor<Voi
     }
 
     @Override
-    public Void visitWhileStatement(WhileStatement statement) {
+    public Void visitWhileStatement(Statement.WhileStatement statement) {
         resolve(statement.condition);
         resolve(statement.instructions);
         return null;
     }
 
     @Override
-    public Void visitBinaryExpression(BinaryExpression expression) {
+    public Void visitBinaryExpression(Expression.BinaryExpression expression) {
         resolve(expression.left);
         resolve(expression.right);
         return null;
     }
 
     @Override
-    public Void visitLogicalExpression(LogicalExpression expression) {
+    public Void visitLogicalExpression(Expression.LogicalExpression expression) {
         resolve(expression.left);
         resolve(expression.right);
         return null;
     }
 
     @Override
-    public Void visitCallExpression(CallExpression expression) {
+    public Void visitCallExpression(Expression.CallExpression expression) {
         resolve(expression.callee);
         for (Expression argument : expression.arguments) {
             resolve(argument);
@@ -190,28 +169,28 @@ public class Resolver implements Expression.Visitor<Void>, Statement.Visitor<Voi
     }
 
     @Override
-    public Void visitGroupingExpression(GroupingExpression expression) {
+    public Void visitGroupingExpression(Expression.GroupingExpression expression) {
         resolve(expression.expression);
         return null;
     }
 
     @Override
-    public Void visitLiteralExpression(LiteralExpression expression) {
+    public Void visitLiteralExpression(Expression.LiteralExpression expression) {
         return null;
     }
 
     @Override
-    public Void visitBreakStatement(BreakStatement statement) {
+    public Void visitBreakStatement(Statement.BreakStatement statement) {
         return null;
     }
 
     @Override
-    public Void visitContinueStatement(ContinueStatement statement) {
+    public Void visitContinueStatement(Statement.ContinueStatement statement) {
         return null;
     }
 
     @Override
-    public Void visitUnaryExpression(UnaryExpression expression) {
+    public Void visitUnaryExpression(Expression.UnaryExpression expression) {
         resolve(expression.right);
         return null;
     }
