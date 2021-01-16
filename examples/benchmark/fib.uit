@@ -1,0 +1,10 @@
+Num fib(Num n) 
+    if (n < 2) => return n;
+    return fib(n - 2) + fib(n - 1);
+endfunc
+
+start
+    Num s = time();
+    output (fib(35) == 9227465) . "\n";
+    output "Consumed " . (time() - s) . "s\n";
+stop

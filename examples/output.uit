@@ -1,0 +1,4 @@
+start
+    output "Hello, World\n";
+    output "Hello, " . "John!\n";
+stop
