@@ -10,7 +10,10 @@ import com.heinthanth.uit.Lexer.Token;
 import com.heinthanth.uit.Lexer.token_t;
 import com.heinthanth.uit.Runtime.Expression;
 import com.heinthanth.uit.Runtime.Statement;
+import com.heinthanth.uit.Runtime.Expression.ThisExpression;
+import com.heinthanth.uit.Runtime.Expression.VariableAccessExpression;
 import com.heinthanth.uit.Utils.ErrorHandler;
+
 import static com.heinthanth.uit.Lexer.token_t.*;
 
 class ParseError extends RuntimeException {
@@ -74,10 +77,14 @@ public class Parser {
         try {
             if (match(START))
                 return mainFunctionDeclaration();
+            if (match(CLASS))
+                return classDeclaration();
             if (match(FRT_VOID))
                 return functionDeclaration();
             if (match(VT_NUMBER, VT_STRING, VT_BOOLEAN))
                 return variableDeclaration();
+            if (match(OBJECT))
+                return objectDeclaration();
             return statement();
         } catch (ParseError error) {
             synchronize();
@@ -95,17 +102,50 @@ public class Parser {
         return new Statement.FunctionStatement(null, name, new ArrayList<>(), instructions);
     }
 
+    private Statement classDeclaration() {
+        Token identifier = expect(IDENTIFIER, "Expect class identifier.");
+        Map<Statement.VariableDeclarationStatement, Token> properties = new HashMap<>();
+        Map<Statement.FunctionStatement, Token> methods = new HashMap<>();
+
+        while (!check(ENDCLASS) && !isEOF()) {
+            if (check(PUBLIC) || check(PRIVATE) || check(PROTECTED)) {
+                Token access = advance();
+                advance();
+
+                Statement field = variableDeclaration();
+                if (field instanceof Statement.VariableDeclarationStatement) {
+                    properties.put((Statement.VariableDeclarationStatement) field, access);
+                } else if (field instanceof Statement.FunctionStatement) {
+                    methods.put((Statement.FunctionStatement) field, access);
+                }
+            }
+        }
+        expect(ENDCLASS, "Expect 'endclass' after class statement.");
+        return new Statement.ClassStatement(identifier, properties, methods);
+    }
+
     /**
      * variable အသစ်ကို declare လုပ်မယ်။
      */
     private Statement variableDeclaration() {
         Token type = previous();
-
         Token next = peekNext();
         if (next != null && next.type == LEFT_PAREN) {
             return functionDeclaration();
         }
+        Token identifier = expect(IDENTIFIER, "Expect variable identifier.");
 
+        Expression initializer = null;
+        if (match(ASSIGN)) {
+            initializer = expression();
+        }
+        expect(SEMICOLON, "Expect ';' after statement.");
+
+        return new Statement.VariableDeclarationStatement(type, identifier, initializer);
+    }
+
+    private Statement objectDeclaration() {
+        Token type = previous();
         Token identifier = expect(IDENTIFIER, "Expect variable identifier.");
 
         Expression initializer = null;
@@ -375,13 +415,21 @@ public class Parser {
      */
     private Expression assignment() {
         if (match(SET)) {
-            Token identifier = expect(IDENTIFIER, "Expect variable identifier.");
-            expect(ASSIGN, "Expect '=' in variable assignment.");
+            Expression identifier = logicOr();
+            Token eq = expect(ASSIGN, "Expect '=' in variable assignment.");
             Expression value = assignment();
-            return new Expression.VariableAssignExpression(identifier, value);
-        } else {
-            return logicOr();
+
+            if (identifier instanceof Expression.VariableAccessExpression) {
+                Token name = ((Expression.VariableAccessExpression) identifier).identifier;
+                return new Expression.VariableAssignExpression(name, value);
+            } else if (identifier instanceof Expression.GetExpression) {
+                Expression.GetExpression member = (Expression.GetExpression) identifier;
+                return new Expression.SetExpression(member.object, member.name, value, member.fromThis);
+            } else {
+                error(eq, "Invalid assignment.");
+            }
         }
+        return logicOr();
     }
 
     // expression ထက်ပိုမြင့်တာက logic and
@@ -513,10 +561,22 @@ public class Parser {
 
     // call expression
     private Expression call() {
+        if (match(NEW)) {
+            Expression expr = primary();
+            expect(LEFT_PAREN, "Expect '(' after class identifier.");
+            return finishCall(expr);
+        }
         Expression expr = primary();
         while (true) {
             if (match(LEFT_PAREN)) {
                 expr = finishCall(expr);
+            } else if (match(DART)) {
+                Token name = expect(IDENTIFIER, "Expect member name after '->'.");
+                if (expr instanceof VariableAccessExpression) {
+                    expr = new Expression.GetExpression(expr, name, false);
+                } else if (expr instanceof ThisExpression) {
+                    expr = new Expression.GetExpression(expr, name, true);
+                }
             } else {
                 break;
             }
@@ -543,6 +603,9 @@ public class Parser {
     private Expression primary() {
         if (match(NUMBER_LITERAL, STRING_LITERAL, BOOLEAN_LITERAL))
             return new Expression.LiteralExpression(previous());
+
+        if (match(THIS))
+            return new Expression.ThisExpression(previous());
 
         if (match(IDENTIFIER))
             return new Expression.VariableAccessExpression(previous());

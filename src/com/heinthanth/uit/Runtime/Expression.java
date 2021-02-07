@@ -17,6 +17,9 @@ public abstract class Expression {
         R visitIncrementExpression(IncrementExpression expression);
         R visitDecrementExpression(DecrementExpression expression);
         R visitCallExpression(CallExpression expression);
+        R visitGetExpression(GetExpression expression);
+        R visitSetExpression(SetExpression expression);
+        R visitThisExpression(ThisExpression expression);
     }
 
     public abstract <R> R accept(Visitor<R> visitor);
@@ -196,6 +199,58 @@ public abstract class Expression {
         @Override
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitCallExpression(this);
+        }
+    }
+
+    public static class GetExpression extends Expression {
+
+        public final Expression object;
+        public final Token name;
+        public final boolean fromThis;
+
+        public GetExpression(Expression object, Token name, boolean fromThis) {
+            this.object = object;
+            this.name = name;
+            this.fromThis = fromThis;
+        }
+
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitGetExpression(this);
+        }
+    }
+
+    public static class SetExpression extends Expression {
+
+        public final Expression object;
+        public final Token name;
+        public final Expression value;
+        public final boolean fromThis;
+
+        public SetExpression(Expression object, Token name, Expression value, boolean fromThis) {
+            this.object = object;
+            this.name = name;
+            this.value = value;
+            this.fromThis = fromThis;
+        }
+
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitSetExpression(this);
+        }
+    }
+
+    public static class ThisExpression extends Expression {
+
+        public final Token thiss;
+
+        public ThisExpression(Token thiss) {
+            this.thiss = thiss;
+        }
+
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitThisExpression(this);
         }
     }
 

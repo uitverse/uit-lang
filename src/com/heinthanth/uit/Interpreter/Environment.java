@@ -85,18 +85,22 @@ public class Environment {
     public void assign(Token identifier, Object value) {
         if (values.containsKey(identifier.lexeme)) {
             Object old = values.get(identifier.lexeme);
-            if (value.getClass() == old.getClass()) {
-                values.put(identifier.lexeme, value);
+            if (old != null) {
+                if (value.getClass() == old.getClass()) {
+                    values.put(identifier.lexeme, value);
+                } else {
+                    StringBuilder msg = new StringBuilder();
+                    msg.append("Cannot assign ");
+                    msg.append(TypeMapper.JavaT2String.get(value.getClass()));
+                    msg.append(" to ");
+                    msg.append(TypeMapper.JavaT2String.get(old.getClass()));
+                    msg.append(" variable '");
+                    msg.append(identifier.lexeme);
+                    msg.append("'.");
+                    throw new RuntimeError(identifier, msg.toString());
+                }
             } else {
-                StringBuilder msg = new StringBuilder();
-                msg.append("Cannot assign ");
-                msg.append(TypeMapper.JavaT2String.get(value.getClass()));
-                msg.append(" to ");
-                msg.append(TypeMapper.JavaT2String.get(old.getClass()));
-                msg.append(" variable '");
-                msg.append(identifier.lexeme);
-                msg.append("'.");
-                throw new RuntimeError(identifier, msg.toString());
+                values.put(identifier.lexeme, value);
             }
         } else if (parent != null) {
             parent.assign(identifier, value);
@@ -126,18 +130,22 @@ public class Environment {
 
     void assignAt(int distance, Token identifier, Object value) {
         Object old = ancestor(distance).values.get(identifier.lexeme);
-        if (value.getClass() == old.getClass()) {
-            ancestor(distance).values.put(identifier.lexeme, value);
+        if (old != null) {
+            if (value.getClass() == old.getClass()) {
+                ancestor(distance).values.put(identifier.lexeme, value);
+            } else {
+                StringBuilder msg = new StringBuilder();
+                msg.append("Cannot assign ");
+                msg.append(TypeMapper.JavaT2String.get(value.getClass()));
+                msg.append(" to ");
+                msg.append(TypeMapper.JavaT2String.get(old.getClass()));
+                msg.append(" variable '");
+                msg.append(identifier.lexeme);
+                msg.append("'.");
+                throw new RuntimeError(identifier, msg.toString());
+            }
         } else {
-            StringBuilder msg = new StringBuilder();
-            msg.append("Cannot assign ");
-            msg.append(TypeMapper.JavaT2String.get(value.getClass()));
-            msg.append(" to ");
-            msg.append(TypeMapper.JavaT2String.get(old.getClass()));
-            msg.append(" variable '");
-            msg.append(identifier.lexeme);
-            msg.append("'.");
-            throw new RuntimeError(identifier, msg.toString());
+            ancestor(distance).values.put(identifier.lexeme, value);
         }
     }
 

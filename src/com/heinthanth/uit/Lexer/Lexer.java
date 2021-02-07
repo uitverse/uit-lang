@@ -24,9 +24,9 @@ public class Lexer {
 
     static {
         reserved = new HashMap<>();
-        reserved.put("String", VT_STRING);
-        reserved.put("Num", VT_NUMBER);
-        reserved.put("Boolean", VT_BOOLEAN);
+        reserved.put("string", VT_STRING);
+        reserved.put("num", VT_NUMBER);
+        reserved.put("boolean", VT_BOOLEAN);
         reserved.put("void", FRT_VOID);
         reserved.put("start", START);
         reserved.put("stop", STOP);
@@ -47,6 +47,15 @@ public class Lexer {
         reserved.put("func", FUNC);
         reserved.put("endfunc", ENDFUNC);
         reserved.put("return", RETURN);
+        reserved.put("class", CLASS);
+        reserved.put("endclass", ENDCLASS);
+        reserved.put("new", NEW);
+        reserved.put("object", OBJECT);
+        reserved.put("this", THIS);
+        reserved.put("public", PUBLIC);
+        reserved.put("private", PRIVATE);
+        reserved.put("protected", PROTECTED);
+        reserved.put("extends", EXTENDS);
         reserved.put("set", SET);
         reserved.put("input", INPUT);
         reserved.put("output", OUTPUT);
@@ -92,9 +101,16 @@ public class Lexer {
             case '+':
                 addToken(match('+') ? INCREMENT : PLUS);
                 break;
-            case '-':
-                addToken(match('-') ? DECREMENT : MINUS);
+            case '-': {
+                token_t type = MINUS;
+                if (match('-')) {
+                    type = DECREMENT;
+                } else if (match('>')) {
+                    type = DART;
+                }
+                addToken(type);
                 break;
+            }
             case '*':
                 addToken(STAR);
                 break;
@@ -141,7 +157,7 @@ public class Lexer {
             case '!':
                 addToken(match('=') ? NOT_EQUAL : NOT);
                 break;
-            case '=':
+            case '=': {
                 token_t type = ASSIGN;
                 if (match('=')) {
                     type = EQUAL;
@@ -150,8 +166,9 @@ public class Lexer {
                 }
                 addToken(type);
                 break;
-            case '<':
-                type = LESS;
+            }
+            case '<': {
+                token_t type = LESS;
                 if (match('>')) {
                     type = NOT_EQUAL;
                 } else if (match('=')) {
@@ -159,6 +176,7 @@ public class Lexer {
                 }
                 addToken(type);
                 break;
+            }
             case '>':
                 addToken(match('=') ? GREATER_EQUAL : GREATER);
                 break;

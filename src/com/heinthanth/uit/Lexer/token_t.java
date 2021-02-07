@@ -10,7 +10,7 @@ public enum token_t {
     // literal တွေ
     STRING_LITERAL, NUMBER_LITERAL, BOOLEAN_LITERAL, IDENTIFIER,
     // variable declaration အတွက် type (eg. String demo = "HELLO")
-    VT_STRING, VT_NUMBER, VT_BOOLEAN, FRT_VOID,
+    VT_STRING, VT_NUMBER, VT_BOOLEAN, FRT_VOID, OBJECT,
     // program main function start & stop
     START, STOP,
     // and or
@@ -27,8 +27,10 @@ public enum token_t {
     BREAK, CONTINUE,
     // function
     FUNC, ENDFUNC, RETURN,
+    // class
+    CLASS, ENDCLASS, NEW, DART, PUBLIC, PRIVATE, PROTECTED, EXTENDS, THIS,
     // other keywords
     SET, INPUT, OUTPUT,
     // other operator
-    ASSIGN, COMMA, DOT, SEMICOLON, EOF
+    ASSIGN, COMMA, DOT, SEMICOLON, EOF,
 }

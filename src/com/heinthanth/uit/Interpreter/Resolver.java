@@ -8,6 +8,12 @@ import java.util.Stack;
 import com.heinthanth.uit.Lexer.Token;
 import com.heinthanth.uit.Runtime.Expression;
 import com.heinthanth.uit.Runtime.Statement;
+import com.heinthanth.uit.Runtime.Expression.GetExpression;
+import com.heinthanth.uit.Runtime.Expression.SetExpression;
+import com.heinthanth.uit.Runtime.Expression.ThisExpression;
+import com.heinthanth.uit.Runtime.Statement.ClassStatement;
+import com.heinthanth.uit.Runtime.Statement.FunctionStatement;
+import com.heinthanth.uit.Runtime.Statement.VariableDeclarationStatement;
 import com.heinthanth.uit.Utils.ErrorHandler;
 
 public class Resolver implements Expression.Visitor<Void>, Statement.Visitor<Void> {
@@ -37,8 +43,14 @@ public class Resolver implements Expression.Visitor<Void>, Statement.Visitor<Voi
     }
 
     private enum function_t {
-        NONE, FUNCTION
+        NONE, FUNCTION, METHOD, INITIALIZER
     }
+
+    private enum class_t {
+        NONE, CLASS
+    }
+
+    private class_t currentClass = class_t.NONE;
 
     @Override
     public Void visitBlockStatement(Statement.BlockStatement statement) {
@@ -47,6 +59,48 @@ public class Resolver implements Expression.Visitor<Void>, Statement.Visitor<Voi
         resolve(statement.statements);
         // scope ပြန်ဖျက်မယ်။
         endScope();
+        return null;
+    }
+
+    @Override
+    public Void visitThisExpression(ThisExpression expression) {
+        if (currentClass == class_t.NONE) {
+            errorHandler.reportError(expression.thiss, "Can't use this from outside of a class.");
+            return null;
+        }
+        resolveLocal(expression, expression.thiss);
+        return null;
+    }
+
+    @Override
+    public Void visitClassStatement(ClassStatement statement) {
+        class_t enclosingClass = currentClass;
+        currentClass = class_t.CLASS;
+
+        declare(statement.identifier);
+        define(statement.identifier);
+
+        beginScope();
+        scopes.peek().put("this", true);
+
+        for (Map.Entry<VariableDeclarationStatement, Token> var : statement.properties.entrySet()) {
+            declare(var.getKey().identifier);
+            if (var.getKey().initializer != null)
+                resolve(var.getKey().initializer);
+            define(var.getKey().identifier);
+        }
+
+        for (Map.Entry<FunctionStatement, Token> method : statement.methods.entrySet()) {
+            function_t declaration = function_t.METHOD;
+            if ("__construct".equals(method.getKey().identifier.lexeme)) {
+                declaration = function_t.INITIALIZER;
+            }
+            resolveFunction(method.getKey(), declaration);
+        }
+
+        endScope();
+
+        currentClass = enclosingClass;
         return null;
     }
 
@@ -133,6 +187,9 @@ public class Resolver implements Expression.Visitor<Void>, Statement.Visitor<Voi
             errorHandler.reportError(stmt.ret, "Can't use return from top-level code (outside of function).");
         }
         if (stmt.value != null) {
+            if (currentFunction == function_t.INITIALIZER) {
+                errorHandler.reportError(stmt.ret, "Can't return a value from a constructor.");
+            }
             resolve(stmt.value);
         }
         return null;
@@ -165,6 +222,19 @@ public class Resolver implements Expression.Visitor<Void>, Statement.Visitor<Voi
         for (Expression argument : expression.arguments) {
             resolve(argument);
         }
+        return null;
+    }
+
+    @Override
+    public Void visitGetExpression(GetExpression expression) {
+        resolve(expression.object);
+        return null;
+    }
+
+    @Override
+    public Void visitSetExpression(SetExpression expression) {
+        resolve(expression.value);
+        resolve(expression.object);
         return null;
     }
 

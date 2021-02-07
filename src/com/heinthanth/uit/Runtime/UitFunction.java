@@ -27,16 +27,25 @@ public class UitFunction implements UitCallable {
     /**
      * မူရင်း function declaration ကိုသိမ်းဖို့
      */
-    private final FunctionStatement declaration;
+    public final FunctionStatement declaration;
+
+    private final boolean isInitializer;
 
     /**
      * closure environment
      */
     private final Environment closure;
 
-    public UitFunction(FunctionStatement declaration, Environment closure) {
+    public UitFunction(FunctionStatement declaration, Environment closure, boolean isInitializer) {
+        this.isInitializer = isInitializer;
         this.declaration = declaration;
         this.closure = closure;
+    }
+
+    public UitFunction bind(UitInstance instance) {
+        Environment environment = new Environment(closure);
+        environment._define("this", instance);
+        return new UitFunction(declaration, environment, isInitializer);
     }
 
     @Override
@@ -49,6 +58,8 @@ public class UitFunction implements UitCallable {
         try {
             interpreter.executeBlock(declaration.instructions, environment);
         } catch (ReturnSignal sig) {
+            if (isInitializer)
+                return closure.getAt(0, "this");
             if (sig.value.getClass() != TypeMapper.Uit2Java.get(declaration.type.type)) {
                 StringBuilder msg = new StringBuilder();
                 msg.append("Cannot return ");
@@ -62,6 +73,9 @@ public class UitFunction implements UitCallable {
             }
             return sig.value;
         }
+
+        if (isInitializer)
+            return closure.getAt(0, "this");
         return null;
     }
 

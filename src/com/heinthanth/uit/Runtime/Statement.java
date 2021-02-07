@@ -17,6 +17,7 @@ public abstract class Statement {
         R visitContinueStatement(ContinueStatement statement);
         R visitFunctionStatement(FunctionStatement statement);
         R visitReturnStatement(ReturnStatement statement);
+        R visitClassStatement(ClassStatement statement);
     }
 
     public abstract <R> R accept(Visitor<R> visitor);
@@ -170,6 +171,24 @@ public abstract class Statement {
         @Override
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitReturnStatement(this);
+        }
+    }
+
+    public static class ClassStatement extends Statement {
+
+        public final Token identifier;
+        public final Map<Statement.VariableDeclarationStatement,Token> properties;
+        public final Map<Statement.FunctionStatement,Token> methods;
+
+        public ClassStatement(Token identifier, Map<Statement.VariableDeclarationStatement,Token> properties, Map<Statement.FunctionStatement,Token> methods) {
+            this.identifier = identifier;
+            this.properties = properties;
+            this.methods = methods;
+        }
+
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitClassStatement(this);
         }
     }
 

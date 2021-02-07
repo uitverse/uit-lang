@@ -1,14 +1,19 @@
 program             ->  declaration* EOF
                     |   "start" declaration* "stop"
 
-declaration         ->  variableDeclaration
-                    |   functionDeclaration
+declaration         ->  classDeclaration
+                    |   variableDeclaration
                     |   statement
 
-variableDeclaration ->  ( "Num" | "String" | "Boolean" ) IDENTIFIER ( "=" expression )? ";"
-functionDeclaration ->  ( "void" | "Num" | "String" | "Boolean" ) IDENTIFIER
+classDeclaration    ->  "class" IDENTIFIER memberDeclaration* "endclass"
+memberDeclaration   ->  ( ( "public" | "private" | "protected" ) variableDeclaration )*
+
+variableDeclaration ->  ( "num" | "string" | "boolean" ) IDENTIFIER ( "=" expression )? ";"
+                    |   functionDeclaration
+
+functionDeclaration ->  ( "void" | "num" | "string" | "boolean" ) IDENTIFIER
                         "("parameters? ")" "=>" statement
-                    |   ( "void" | "Num" | "String" | "Boolean" ) IDENTIFIER
+                    |   ( "void" | "num" | "string" | "boolean" ) IDENTIFIER
                         "("parameters? ")" declaration* "endfunc"
 
 statement           ->  expressionStatement
@@ -45,11 +50,11 @@ inputStatement      ->  "input" IDENTIFIER ";"
 expressionStatement ->  expression ";"
 
 expression          ->  assignment
-assignment          ->  "set" IDENTIFIER "=" assignment
+assignment          ->  "set" ( call "->" )? IDENTIFIER "=" assignment
                     |   logicOr
 logicOr             ->  logicAnd ( "or" | "||" logicAnd )*
 logicAnd            ->  logicEqual ( "and" | "&&" logicEqual )*
-logicEqual               ->  comparison ( ( "!=" | "==" ) comparison )*
+logicEqual          ->  comparison ( ( "!=" | "==" ) comparison )*
 comparison          ->  term ( ( ">" | ">=" | "<" | "<=" ) term )*
 term                ->  factor ( ( "+" | "-" ) factor )*
 factor              ->  power ( ( "*" | "/" | "%" ) power )*
@@ -59,7 +64,8 @@ unary               ->  ( "!" | "-" ) unary
 prefix              ->  ( "++" | "--" ) prefix
                     |   postfix
 postfix             ->  call ( "++" | "--" )*
-call                ->  primary ( "(" arguments ")" )*
+call                ->  "new" primary "(" arguments* ")"
+                    |   primary ( "(" arguments ")" )*
 primary             ->  literal | grouping | IDENTIFIER
 
 grouping            ->  "(" expression ")"

@@ -11,7 +11,9 @@ import com.heinthanth.uit.Lexer.token_t;
 import com.heinthanth.uit.Runtime.Expression;
 import com.heinthanth.uit.Runtime.Statement;
 import com.heinthanth.uit.Runtime.UitCallable;
+import com.heinthanth.uit.Runtime.UitClass;
 import com.heinthanth.uit.Runtime.UitFunction;
+import com.heinthanth.uit.Runtime.UitInstance;
 import com.heinthanth.uit.Runtime.RuntimeError;
 import com.heinthanth.uit.Utils.ErrorHandler;
 
@@ -46,88 +48,7 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
 
     // builtin function တွေကို define ဖို့ constructor
     public Interpreter() {
-
-        // native time function -> return Unix Epoch
-        globals._define("time", new UitCallable() {
-            @Override
-            public int argsCount() {
-                return 0;
-            }
-
-            @Override
-            public Object invoke(Interpreter interpreter, List<Object> arguments) {
-                return (double) Instant.now().getEpochSecond();
-            }
-
-            @Override
-            public String toString() {
-                return "[ builtin fn - time ]";
-            }
-        });
-        ;
-
-        // string
-        globals._define("toString", new UitCallable() {
-            @Override
-            public int argsCount() {
-                return 1;
-            }
-
-            @Override
-            public Object invoke(Interpreter interpreter, List<Object> arguments) {
-                return stringify(arguments.get(0));
-            }
-
-            @Override
-            public String toString() {
-                return "[ builtin fn - toString ]";
-            }
-        });
-
-        // string to number
-        globals._define("String2Num", new UitCallable() {
-            @Override
-            public int argsCount() {
-                return 1;
-            }
-
-            @Override
-            public Object invoke(Interpreter interpreter, List<Object> arguments) {
-                try {
-                    return Double.valueOf((String) arguments.get(0));
-                } catch (Exception e) {
-                    return 0.0;
-                }
-            }
-
-            @Override
-            public String toString() {
-                return "[ builtin fn - String2Num ]";
-            }
-        });
-
-        globals._define("exit", new UitCallable() {
-            @Override
-            public int argsCount() {
-                return 1;
-            }
-
-            @Override
-            public Object invoke(Interpreter interpreter, List<Object> arguments) {
-                try {
-                    int exitCode = Integer.valueOf((String) arguments.get(0));
-                    System.exit(exitCode);
-                } catch (Exception e) {
-                    System.exit(0);
-                }
-                return null;
-            }
-
-            @Override
-            public String toString() {
-                return "[ builtin fn - exit ]";
-            }
-        });
+        loadBuiltins();
     }
 
     /**
@@ -163,7 +84,7 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
      */
     @Override
     public Void visitFunctionStatement(Statement.FunctionStatement statement) {
-        UitFunction function = new UitFunction(statement, environment);
+        UitFunction function = new UitFunction(statement, environment, false);
         environment.define(statement.identifier, function);
         return null;
     }
@@ -174,6 +95,47 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
         if (statement.value != null)
             value = evaluate(statement.value);
         throw new UitFunction.ReturnSignal(value);
+    }
+
+    @Override
+    public Void visitClassStatement(Statement.ClassStatement statement) {
+        environment.define(statement.identifier, null);
+
+        Map<String, Token> accessModifier = new HashMap<>();
+        Map<String, UitFunction> methods = new HashMap<>();
+        Map<String, Object> props = new HashMap<>();
+
+        for (Map.Entry<Statement.VariableDeclarationStatement, Token> var : statement.properties.entrySet()) {
+            Object value = null;
+            switch (var.getKey().type.type) {
+                case VT_STRING:
+                    value = "";
+                    break;
+                case VT_BOOLEAN:
+                    value = false;
+                    break;
+                case VT_NUMBER:
+                    value = 0.0;
+                    break;
+                default:
+                    break;
+            }
+            if (var.getKey().initializer != null) {
+                value = evaluate(var.getKey().initializer);
+            }
+            props.put(var.getKey().identifier.lexeme, value);
+            accessModifier.put(var.getKey().identifier.lexeme, var.getValue());
+        }
+        for (Map.Entry<Statement.FunctionStatement, Token> method : statement.methods.entrySet()) {
+            UitFunction function = new UitFunction(method.getKey(), environment,
+                    "__construct".equals(method.getKey().identifier.lexeme));
+            methods.put(method.getKey().identifier.lexeme, function);
+            accessModifier.put(method.getKey().identifier.lexeme, method.getValue());
+        }
+
+        UitClass klass = new UitClass(statement.identifier.lexeme, props, methods, accessModifier);
+        environment.assign(statement.identifier, klass);
+        return null;
     }
 
     /**
@@ -318,6 +280,32 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
         }
 
         return function.invoke(this, arguments);
+    }
+
+    @Override
+    public Object visitGetExpression(Expression.GetExpression expression) {
+        Object object = evaluate(expression.object);
+        if (object instanceof UitInstance) {
+            return ((UitInstance) object).get(expression.name, expression.fromThis);
+        }
+        throw new RuntimeError(expression.name, "Cannot get member from non-object.");
+    }
+
+    @Override
+    public Object visitSetExpression(Expression.SetExpression expression) {
+        Object object = evaluate(expression.object);
+        if (!(object instanceof UitInstance)) {
+            throw new RuntimeError(expression.name, "Cannot assign member to non-object.");
+        }
+
+        Object value = evaluate(expression.value);
+        ((UitInstance) object).set(expression.name, value, expression.fromThis);
+        return value;
+    }
+
+    @Override
+    public Object visitThisExpression(Expression.ThisExpression expression) {
+        return lookUpVariable(expression.thiss, expression);
     }
 
     @Override
@@ -561,6 +549,90 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
      */
     private Object evaluate(Expression expression) {
         return expression.accept(this);
+    }
+
+    private void loadBuiltins() {
+        // native time function -> return Unix Epoch
+        globals._define("time", new UitCallable() {
+            @Override
+            public int argsCount() {
+                return 0;
+            }
+
+            @Override
+            public Object invoke(Interpreter interpreter, List<Object> arguments) {
+                return (double) Instant.now().getEpochSecond();
+            }
+
+            @Override
+            public String toString() {
+                return "[ builtin fn - time ]";
+            }
+        });
+        ;
+
+        // string
+        globals._define("toString", new UitCallable() {
+            @Override
+            public int argsCount() {
+                return 1;
+            }
+
+            @Override
+            public Object invoke(Interpreter interpreter, List<Object> arguments) {
+                return stringify(arguments.get(0));
+            }
+
+            @Override
+            public String toString() {
+                return "[ builtin fn - toString ]";
+            }
+        });
+
+        // string to number
+        globals._define("String2Num", new UitCallable() {
+            @Override
+            public int argsCount() {
+                return 1;
+            }
+
+            @Override
+            public Object invoke(Interpreter interpreter, List<Object> arguments) {
+                try {
+                    return Double.valueOf((String) arguments.get(0));
+                } catch (Exception e) {
+                    return 0.0;
+                }
+            }
+
+            @Override
+            public String toString() {
+                return "[ builtin fn - String2Num ]";
+            }
+        });
+
+        globals._define("exit", new UitCallable() {
+            @Override
+            public int argsCount() {
+                return 1;
+            }
+
+            @Override
+            public Object invoke(Interpreter interpreter, List<Object> arguments) {
+                try {
+                    int exitCode = Integer.valueOf((String) arguments.get(0));
+                    System.exit(exitCode);
+                } catch (Exception e) {
+                    System.exit(0);
+                }
+                return null;
+            }
+
+            @Override
+            public String toString() {
+                return "[ builtin fn - exit ]";
+            }
+        });
     }
 
     /**

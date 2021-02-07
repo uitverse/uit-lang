@@ -1,0 +1,16 @@
+class Dog
+    private string name;
+
+    public void __construct(string name)
+        set this->name = name;
+    endfunc
+
+    public void greet()
+        output "Hello, I'm " . this->name . "\n";
+    endfunc
+endclass
+
+start
+    object bob = new Dog("Bob");
+    bob->greet();
+stop

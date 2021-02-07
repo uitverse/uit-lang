@@ -1,6 +1,6 @@
 start
-    Num i = 0;
-    Num loopStart = time();
+    num i = 0;
+    num loopStart = time();
 
     while (i < 10000000)
         set i = i + 1;
@@ -10,9 +10,9 @@ start
         "str"; "str"; "str"; "stru"; "str"; 1; "str"; "str"; true;
     endwhile
 
-    Num loopTime = time() - loopStart;
+    num loopTime = time() - loopStart;
 
-    Num start_time = time();
+    num start_time = time();
 
     set i = 0;
     while (i < 10000000)
@@ -24,7 +24,7 @@ start
         "str" == "str"; "str" == "stru"; "str" == 1; "str" == "str" == true;
     endwhile
 
-    Num elapsed = time() - start_time;
+    num elapsed = time() - start_time;
     output "loop\n";
     output loopTime . "\n";
     output "elapsed\n";

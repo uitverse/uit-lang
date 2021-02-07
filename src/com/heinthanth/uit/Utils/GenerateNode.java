@@ -23,9 +23,12 @@ public class GenerateNode {
                 "VariableAssignExpression : Token identifier, Expression value",
                 "LogicalExpression  : Expression left, Token operator, Expression right",
                 "InputExpression    : Token identifier",
-                "IncrementExpression   : Expression identifier, Token operator, String mode",
-                "DecrementExpression   : Expression identifier, Token operator, String mode",
-                "CallExpression     : Expression callee, Token paren, List<Expression> arguments"
+                "IncrementExpression: Expression identifier, Token operator, String mode",
+                "DecrementExpression: Expression identifier, Token operator, String mode",
+                "CallExpression     : Expression callee, Token paren, List<Expression> arguments",
+                "GetExpression      : Expression object, Token name, boolean fromThis",
+                "SetExpression      : Expression object, Token name, Expression value, boolean fromThis",
+                "ThisExpression     : Token thiss"
             ),
             Arrays.asList(
                 "java.util.List",
@@ -43,7 +46,8 @@ public class GenerateNode {
                 "BreakStatement     : ",
                 "ContinueStatement  : ",
                 "FunctionStatement  : Token type, Token identifier, List<List<Token>> parameters, List<Statement> instructions",
-                "ReturnStatement    : Token ret, Expression value"
+                "ReturnStatement    : Token ret, Expression value",
+                "ClassStatement     : Token identifier, Map<Statement.VariableDeclarationStatement,Token> properties, Map<Statement.FunctionStatement,Token> methods"
             ),
             Arrays.asList(
                 "java.util.List",
