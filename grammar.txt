@@ -5,7 +5,9 @@ declaration         ->  classDeclaration
                     |   variableDeclaration
                     |   statement
 
-classDeclaration    ->  "class" IDENTIFIER memberDeclaration* "endclass"
+classDeclaration    ->  "class" IDENTIFIER "extends" IDENTIFIER
+                            memberDeclaration* 
+                        "endclass"
 memberDeclaration   ->  ( ( "public" | "private" | "protected" ) variableDeclaration )*
 
 variableDeclaration ->  ( "num" | "string" | "boolean" ) IDENTIFIER ( "=" expression )? ";"
@@ -69,7 +71,7 @@ call                ->  "new" primary "(" arguments* ")"
 primary             ->  literal | grouping | IDENTIFIER
 
 grouping            ->  "(" expression ")"
-literal             ->  NUMBER | STRING | BOOLEAN
+literal             ->  NUMBER | STRING | BOOLEAN | "this"
 operator            ->  "==" | "!=" | ">" | ">=" | "<" | "<="
                     |   "+" | "-" | "*" | "/" | "%" | "^"
                     |   "."

@@ -76,7 +76,7 @@ public class UitFunction implements UitCallable {
 
         if (isInitializer)
             return closure.getAt(0, "this");
-        return null;
+        return "";
     }
 
     @Override

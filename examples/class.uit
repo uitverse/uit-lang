@@ -1,16 +1,18 @@
-class Dog
-    private string name;
+class Animal
+    protected string name = "Dog";
 
-    public void __construct(string name)
-        set this->name = name;
+    protected void greet()
+        output "Hello";
     endfunc
+endclass
 
-    public void greet()
-        output "Hello, I'm " . this->name . "\n";
+class Dog extends Animal
+    public void debug()
+        output this->greet();
     endfunc
 endclass
 
 start
-    object bob = new Dog("Bob");
-    bob->greet();
+    object bob = new Dog();
+    bob->debug();
 stop

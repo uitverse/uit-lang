@@ -80,6 +80,10 @@ public class Resolver implements Expression.Visitor<Void>, Statement.Visitor<Voi
         declare(statement.identifier);
         define(statement.identifier);
 
+        if (statement.parent != null && statement.identifier.lexeme.equals(statement.parent.identifier.lexeme)) {
+            errorHandler.reportError(statement.parent.identifier, "A class can't inherit from itself.");
+        }
+
         beginScope();
         scopes.peek().put("this", true);
 

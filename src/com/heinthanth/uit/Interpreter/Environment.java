@@ -16,7 +16,7 @@ public class Environment {
     /**
      * nested loop တွေအတွက် parent variable
      */
-    private final Environment parent;
+    public final Environment parent;
 
     /**
      * assign parent environment

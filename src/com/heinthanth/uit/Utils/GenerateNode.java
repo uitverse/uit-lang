@@ -47,7 +47,7 @@ public class GenerateNode {
                 "ContinueStatement  : ",
                 "FunctionStatement  : Token type, Token identifier, List<List<Token>> parameters, List<Statement> instructions",
                 "ReturnStatement    : Token ret, Expression value",
-                "ClassStatement     : Token identifier, Map<Statement.VariableDeclarationStatement,Token> properties, Map<Statement.FunctionStatement,Token> methods"
+                "ClassStatement     : Token identifier, Expression.VariableAccessExpression parent, Map<Statement.VariableDeclarationStatement,Token> properties, Map<Statement.FunctionStatement,Token> methods"
             ),
             Arrays.asList(
                 "java.util.List",

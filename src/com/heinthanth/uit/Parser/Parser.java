@@ -10,8 +10,6 @@ import com.heinthanth.uit.Lexer.Token;
 import com.heinthanth.uit.Lexer.token_t;
 import com.heinthanth.uit.Runtime.Expression;
 import com.heinthanth.uit.Runtime.Statement;
-import com.heinthanth.uit.Runtime.Expression.ThisExpression;
-import com.heinthanth.uit.Runtime.Expression.VariableAccessExpression;
 import com.heinthanth.uit.Utils.ErrorHandler;
 
 import static com.heinthanth.uit.Lexer.token_t.*;
@@ -107,6 +105,12 @@ public class Parser {
         Map<Statement.VariableDeclarationStatement, Token> properties = new HashMap<>();
         Map<Statement.FunctionStatement, Token> methods = new HashMap<>();
 
+        Expression.VariableAccessExpression parent = null;
+        if (match(EXTENDS)) {
+            expect(IDENTIFIER, "Expect superclass name.");
+            parent = new Expression.VariableAccessExpression(previous());
+        }
+
         while (!check(ENDCLASS) && !isEOF()) {
             if (check(PUBLIC) || check(PRIVATE) || check(PROTECTED)) {
                 Token access = advance();
@@ -121,7 +125,7 @@ public class Parser {
             }
         }
         expect(ENDCLASS, "Expect 'endclass' after class statement.");
-        return new Statement.ClassStatement(identifier, properties, methods);
+        return new Statement.ClassStatement(identifier, parent, properties, methods);
     }
 
     /**
@@ -572,9 +576,9 @@ public class Parser {
                 expr = finishCall(expr);
             } else if (match(DART)) {
                 Token name = expect(IDENTIFIER, "Expect member name after '->'.");
-                if (expr instanceof VariableAccessExpression) {
+                if (expr instanceof Expression.VariableAccessExpression) {
                     expr = new Expression.GetExpression(expr, name, false);
-                } else if (expr instanceof ThisExpression) {
+                } else if (expr instanceof Expression.ThisExpression) {
                     expr = new Expression.GetExpression(expr, name, true);
                 }
             } else {

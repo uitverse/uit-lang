@@ -99,6 +99,14 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
 
     @Override
     public Void visitClassStatement(Statement.ClassStatement statement) {
+        Object superclass = null;
+        if (statement.parent != null) {
+            superclass = evaluate(statement.parent);
+            if (!(superclass instanceof UitClass)) {
+                throw new RuntimeError(statement.parent.identifier, "Parent must be a class.");
+            }
+        }
+
         environment.define(statement.identifier, null);
 
         Map<String, Token> accessModifier = new HashMap<>();
@@ -133,7 +141,9 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
             accessModifier.put(method.getKey().identifier.lexeme, method.getValue());
         }
 
-        UitClass klass = new UitClass(statement.identifier.lexeme, props, methods, accessModifier);
+        UitClass klass = new UitClass(statement.identifier.lexeme, (UitClass) superclass, props, methods,
+                accessModifier);
+
         environment.assign(statement.identifier, klass);
         return null;
     }

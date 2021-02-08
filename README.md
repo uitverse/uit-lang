@@ -8,7 +8,15 @@
 
 ## Documentation
 
-Since it's under development, documentations hasn't been written yet.
+Since it's under development, documentations hasn't been written yet. It's basically heavy modified version of Lox Lang ( `CraftingInterpreters` ).
+
+## New Features
+
+- [x] Static Data Types
+- [x] `Modulo`, `Exponent`, `Prefix`, `Postfix` operators
+- [x] Loop Control ( `Break`, `Continue` )
+- [x] OOP with Access Modifier (`Public`, `Private`, `Protected`)
+- [ ] `Super` 
 
 ## Installation
 

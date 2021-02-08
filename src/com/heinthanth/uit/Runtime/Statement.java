@@ -177,11 +177,13 @@ public abstract class Statement {
     public static class ClassStatement extends Statement {
 
         public final Token identifier;
+        public final Expression.VariableAccessExpression parent;
         public final Map<Statement.VariableDeclarationStatement,Token> properties;
         public final Map<Statement.FunctionStatement,Token> methods;
 
-        public ClassStatement(Token identifier, Map<Statement.VariableDeclarationStatement,Token> properties, Map<Statement.FunctionStatement,Token> methods) {
+        public ClassStatement(Token identifier, Expression.VariableAccessExpression parent, Map<Statement.VariableDeclarationStatement,Token> properties, Map<Statement.FunctionStatement,Token> methods) {
             this.identifier = identifier;
+            this.parent = parent;
             this.properties = properties;
             this.methods = methods;
         }

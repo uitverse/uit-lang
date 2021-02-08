@@ -13,13 +13,11 @@ uit: classes manifest
 
 classes: clean
 	@echo "[x] Compiling Java."
-	@bash -c 'JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8 javac -g:none -Werror -d "tmp" -cp "lib/*:src" src/com/heinthanth/uit/Main.java 2> >(grep -v "^Picked up JAVA_TOOL_OPTIONS:" >&2)'
+	@bash -c 'JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8 javac -Werror -d "tmp" -cp "lib/*:src" src/com/heinthanth/uit/Main.java 2> >(grep -v "^Picked up JAVA_TOOL_OPTIONS:" >&2)'
 
 node:
 	@echo "[x] Generating Runtime Nodes."
-	# create node generator
 	@javac -d "tmp" src/com/heinthanth/uit/Utils/GenerateNode.java >/dev/null
-	# Generate Expression and Statement nodes
 	@java -cp "tmp" com.heinthanth.uit.Utils.GenerateNode src/com/heinthanth/uit/Runtime >/dev/null
 
 manifest:

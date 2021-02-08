@@ -28,7 +28,7 @@ public enum token_t {
     // function
     FUNC, ENDFUNC, RETURN,
     // class
-    CLASS, ENDCLASS, NEW, DART, PUBLIC, PRIVATE, PROTECTED, EXTENDS, THIS,
+    CLASS, ENDCLASS, NEW, DART, PUBLIC, PRIVATE, PROTECTED, EXTENDS, THIS, SUPER,
     // other keywords
     SET, INPUT, OUTPUT,
     // other operator
